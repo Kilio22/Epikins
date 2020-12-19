@@ -1,0 +1,52 @@
+.jobs-checkbox {
+    height: 20px;
+    width: 20px;
+}
+
+.fa-color-play {
+    color: lightgreen !important;
+}
+
+.fa-color-clock {
+    color: black !important;
+    height: 12px;
+    width: 12px;
+}
+
+.build-toolbox {
+    display: inline;
+    margin-left: 15px;
+}
+
+.remaining-builds-red {
+    color: red;
+}
+
+.remaining-builds-tomato {
+    color: #FF6347;
+}
+
+.remaining-builds-orange {
+    color: orange;
+}
+
+.remaining-builds-yellow {
+    color: yellowgreen;
+}
+
+.remaining-builds-green {
+    color: #32CD32;
+}
+
+.fu-switch {
+    display: inline-block !important;
+    margin-left: 10px;
+}
+
+@media (max-width: 768px) {
+    .build-toolbox {
+        margin-top: 10px;
+        margin-left: 4px;
+        display: inline-block;
+    }
+}
