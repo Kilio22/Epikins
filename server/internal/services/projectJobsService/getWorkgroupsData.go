@@ -24,7 +24,7 @@ func getWorkgroupsData(workgroups []libJenkins.Workgroup, project string, collec
 
 	var workgroupsData []WorkgroupData
 	for _, workgroup := range workgroups {
-		if mongoGroupData, ok := utils.HasMongoWorkgoupData(workgroup.Job.Name, projectData.MongoWorkgroupsData); ok {
+		if mongoGroupData, ok := utils.HasMongoWorkgroupData(workgroup.Job.Name, projectData.MongoWorkgroupsData); ok {
 			workgroupsData = append(workgroupsData, WorkgroupData{
 				GroupJob:       workgroup,
 				MongoGroupData: mongoGroupData,

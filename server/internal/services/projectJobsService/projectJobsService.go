@@ -36,12 +36,12 @@ func ProjectJobsService(projectName string, userLogs libJenkins.Logs, appData *i
 		return []WorkgroupData{}, internal.MyError{Err: nil, StatusCode: http.StatusOK}
 	}
 
-	workgroupsData, err := getWorkgroupsData(workgroups, projectName, appData.Collection)
+	workgroupsData, err := getWorkgroupsData(workgroups, projectName, appData.ProjectsCollection)
 	if err != nil {
 		return []WorkgroupData{}, internal.MyError{
 			Err:        errors.New("cannot get workgroups associated to project \"" + projectName + "\": " + err.Error()),
 			StatusCode: http.StatusInternalServerError,
 		}
 	}
-	return workgroupsData, internal.MyError{Err: nil, StatusCode: http.StatusOK}
+	return workgroupsData, internal.MyError{}
 }

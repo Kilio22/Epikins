@@ -17,7 +17,7 @@ type GroupBuildData struct {
 func getGroupsBuildData(jobs []libJenkins.Job, studentsData []internal.MongoWorkgroupData, project string, collection *mongo.Collection) ([]GroupBuildData, error) {
 	var jobsBuildData []GroupBuildData
 	for _, job := range jobs {
-		if groupMongoData, ok := utils.HasMongoWorkgoupData(job.Name, studentsData); ok {
+		if groupMongoData, ok := utils.HasMongoWorkgroupData(job.Name, studentsData); ok {
 			jobsBuildData = append(jobsBuildData, GroupBuildData{
 				groupJob:       job,
 				mongoGroupData: groupMongoData,

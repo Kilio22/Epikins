@@ -11,7 +11,7 @@ COPY config ./config
 COPY internal ./internal
 COPY pkg ./pkg
 
-RUN go build -o ./epikins_api cmd/main.go
+RUN go build -o ./epikins_api cmd
 
 EXPOSE 80
 CMD ["/app/epikins_api"]

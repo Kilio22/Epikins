@@ -2,17 +2,15 @@ package mongoUtils
 
 import (
 	"context"
-	"errors"
-	"log"
-
 	"epikins-api/config"
 	"epikins-api/internal"
 	"epikins-api/pkg/libJenkins"
-
+	"errors"
 	"go.mongodb.org/mongo-driver/mongo"
+	"log"
 )
 
-func AddProject(project string, jobs []libJenkins.Job, collection *mongo.Collection) (internal.MongoProjectData, error) {
+func addProject(project string, jobs []libJenkins.Job, collection *mongo.Collection) (internal.MongoProjectData, error) {
 	var mongoWorkgroupsData []internal.MongoWorkgroupData
 	for _, job := range jobs {
 		mongoWorkgroupsData = append(mongoWorkgroupsData, internal.MongoWorkgroupData{

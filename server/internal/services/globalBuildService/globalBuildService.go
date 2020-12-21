@@ -34,5 +34,5 @@ func GlobalBuildService(globalBuildParams GlobalBuildParams, userLogs libJenkins
 	if err != nil {
 		return internal.MyError{Err: errors.New("cannot build: " + err.Error()), StatusCode: http.StatusInternalServerError}
 	}
-	return internal.MyError{Err: nil, StatusCode: http.StatusCreated}
+	return internal.MyError{}
 }

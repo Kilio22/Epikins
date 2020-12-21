@@ -1,48 +1,34 @@
 package controllers
 
 import (
-	"log"
+	"epikins-api/internal/services/loginService"
 	"net/http"
 
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 
 	"epikins-api/config"
 	"epikins-api/internal"
 	"epikins-api/internal/controllers/utils"
-	"epikins-api/internal/services/loginService"
 	"epikins-api/internal/services/projectsService"
 	"epikins-api/pkg/libJenkins"
 )
 
-func sendProjectList(c *fiber.Ctx, projectList []libJenkins.Job) {
-	err := c.JSON(projectList)
-	if err != nil {
-		log.Println(err)
-		c.SendStatus(http.StatusInternalServerError)
-	} else {
-		c.SendStatus(http.StatusOK)
-	}
-}
-
-func ProjectsController(appData *internal.AppData, c *fiber.Ctx) {
+func ProjectsController(appData *internal.AppData, c *fiber.Ctx) error {
 	accessToken := c.Get("Authorization")
 	userEmail, err := loginService.LoginService(appData.AppId, accessToken)
 	if err != nil {
-		sendMessage(c, err.Error(), http.StatusUnauthorized)
-		return
+		return SendMessage(c, err.Error(), http.StatusUnauthorized)
 	}
 
-	shouldUpdateProjectList, err := utils.GetQueryBoolValue("update", c)
+	shouldUpdateProjectList, err := utils.GetQueryBoolValue("update", false, c)
 	if err != nil {
-		sendMessage(c, "invalid query parameter", http.StatusBadRequest)
-		return
+		return SendMessage(c, "invalid query parameter", http.StatusBadRequest)
 	}
 
 	userLogs := libJenkins.JenkinsLogs[config.AuthorizedUsers[userEmail]]
 	projectList, myError := projectsService.ProjectsService(shouldUpdateProjectList, userLogs, appData)
 	if myError.Err != nil {
-		sendMessage(c, myError.Err.Error(), myError.StatusCode)
-		return
+		return SendMessage(c, myError.Err.Error(), myError.StatusCode)
 	}
-	sendProjectList(c, projectList)
+	return c.JSON(projectList)
 }

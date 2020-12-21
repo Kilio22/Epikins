@@ -5,12 +5,11 @@ import (
 	"epikins-api/internal"
 	"epikins-api/internal/controllers/utils"
 	"epikins-api/internal/services/globalBuildService"
-	"epikins-api/internal/services/loginService"
 	"epikins-api/pkg/libJenkins"
 	"errors"
 	"net/http"
 
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 )
 
 func getGlobalBuildParams(c *fiber.Ctx) (globalBuildService.GlobalBuildParams, internal.MyError) {
@@ -26,25 +25,17 @@ func getGlobalBuildParams(c *fiber.Ctx) (globalBuildService.GlobalBuildParams, i
 	return globalBuildService.GlobalBuildParams{Project: project, Visibility: visibility}, internal.MyError{Err: nil, StatusCode: http.StatusOK}
 }
 
-func GlobalBuildController(appData *internal.AppData, c *fiber.Ctx) {
-	accessToken := c.Get("Authorization")
-	userEmail, err := loginService.LoginService(appData.AppId, accessToken)
-	if err != nil {
-		sendMessage(c, err.Error(), http.StatusUnauthorized)
-		return
-	}
-
+func GlobalBuildController(appData *internal.AppData, c *fiber.Ctx) error {
+	userEmail := c.Get("email")
 	globalBuildParams, myErr := getGlobalBuildParams(c)
 	if myErr.Err != nil {
-		sendMessage(c, myErr.Err.Error(), myErr.StatusCode)
-		return
+		return SendMessage(c, myErr.Err.Error(), myErr.StatusCode)
 	}
 
 	userLogs := libJenkins.JenkinsLogs[config.AuthorizedUsers[userEmail]]
 	myError := globalBuildService.GlobalBuildService(globalBuildParams, userLogs, appData)
 	if myError.Err != nil {
-		sendMessage(c, myError.Err.Error(), myError.StatusCode)
-		return
+		return SendMessage(c, myError.Err.Error(), myError.StatusCode)
 	}
-	c.SendStatus(http.StatusCreated)
+	return c.SendStatus(http.StatusCreated)
 }

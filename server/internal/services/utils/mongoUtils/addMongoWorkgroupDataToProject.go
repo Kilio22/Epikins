@@ -19,10 +19,10 @@ func getNewMongoworkgroupData(job libJenkins.Job) internal.MongoWorkgroupData {
 }
 
 func AddMongoWorkgroupDataToProject(job libJenkins.Job, project string, collection *mongo.Collection) (internal.MongoWorkgroupData, error) {
-	newMongoworkgroupData := getNewMongoworkgroupData(job)
-	err := UpdateProject(project, bson.M{"$push": bson.M{"mongoworkgroupsdata": newMongoworkgroupData}}, collection)
+	newMongoWorkgroupData := getNewMongoworkgroupData(job)
+	err := UpdateProject(project, bson.M{"$push": bson.M{"mongoworkgroupsdata": newMongoWorkgroupData}}, collection)
 	if err != nil {
 		return internal.MongoWorkgroupData{}, errors.New("cannot add workgroup data in DB: " + err.Error())
 	}
-	return newMongoworkgroupData, nil
+	return newMongoWorkgroupData, nil
 }

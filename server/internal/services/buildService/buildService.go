@@ -37,9 +37,9 @@ func BuildService(buildParams BuildParams, appData *internal.AppData, userLogs l
 		return internal.MyError{Err: errors.New("cannot build: no jobs to build for this project"), StatusCode: http.StatusBadRequest}
 	}
 
-	err = startBuilds(buildParams, jobs, appData.Collection, userLogs)
+	err = startBuilds(buildParams, jobs, appData.ProjectsCollection, userLogs)
 	if err != nil {
 		return internal.MyError{Err: errors.New("cannot build: " + err.Error()), StatusCode: http.StatusInternalServerError}
 	}
-	return internal.MyError{Err: nil, StatusCode: http.StatusCreated}
+	return internal.MyError{}
 }

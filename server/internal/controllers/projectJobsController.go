@@ -3,35 +3,18 @@ package controllers
 import (
 	"epikins-api/config"
 	"epikins-api/internal"
-	"epikins-api/internal/services/loginService"
 	"epikins-api/internal/services/projectJobsService"
 	"epikins-api/pkg/libJenkins"
-	"log"
-	"net/http"
-
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 )
 
-func ProjectJobsController(appData *internal.AppData, c *fiber.Ctx) {
-	accessToken := c.Get("Authorization")
-	userEmail, err := loginService.LoginService(appData.AppId, accessToken)
-	if err != nil {
-		sendMessage(c, err.Error(), http.StatusUnauthorized)
-		return
-	}
-
+func ProjectJobsController(appData *internal.AppData, c *fiber.Ctx) error {
+	userEmail := c.Get("email")
 	projectName := c.Params("project")
 	userLogs := libJenkins.JenkinsLogs[config.AuthorizedUsers[userEmail]]
 	groupsData, myError := projectJobsService.ProjectJobsService(projectName, userLogs, appData)
 	if myError.Err != nil {
-		sendMessage(c, myError.Err.Error(), myError.StatusCode)
-		return
+		return SendMessage(c, myError.Err.Error(), myError.StatusCode)
 	}
-	err = c.JSON(groupsData)
-	if err != nil {
-		log.Println(err)
-		c.SendStatus(http.StatusInternalServerError)
-		return
-	}
-	c.SendStatus(http.StatusOK)
+	return c.JSON(groupsData)
 }

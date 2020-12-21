@@ -25,8 +25,5 @@ func ProjectsService(shouldUpdateProjectList bool, userLogs libJenkins.Logs, app
 			StatusCode: http.StatusInternalServerError,
 		}
 	}
-	return appData.ProjectsData[userLogs.AccountType].ProjectList, internal.MyError{
-		Err:        nil,
-		StatusCode: http.StatusOK,
-	}
+	return appData.ProjectsData[userLogs.AccountType].ProjectList, internal.MyError{}
 }

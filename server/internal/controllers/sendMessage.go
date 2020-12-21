@@ -1,8 +1,8 @@
 package controllers
 
-import "github.com/gofiber/fiber"
+import "github.com/gofiber/fiber/v2"
 
-func sendMessage(c *fiber.Ctx, message string, status int) {
+func SendMessage(c *fiber.Ctx, message string, status int) error {
 	c.Status(status)
-	c.Send(message)
+	return c.SendString(message)
 }

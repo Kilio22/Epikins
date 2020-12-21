@@ -4,7 +4,7 @@ import (
 	"epikins-api/pkg/libJenkins"
 	"errors"
 
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 )
 
 func GetVisibilityQueryParam(c *fiber.Ctx) (libJenkins.Visibility, error) {

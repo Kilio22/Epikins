@@ -2,12 +2,10 @@ package mongoUtils
 
 import (
 	"context"
-	"epikins-api/internal/services/utils"
 	"errors"
-	"log"
-
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"log"
 
 	"epikins-api/internal"
 	"epikins-api/pkg/libJenkins"
@@ -19,14 +17,14 @@ func FetchProjectData(project string, jobs []libJenkins.Job, collection *mongo.C
 		context.TODO(), bson.M{"name": project}).Decode(&projectData)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			return AddProject(project, jobs, collection)
+			return addProject(project, jobs, collection)
 		}
 		log.Println(err)
 		return internal.MongoProjectData{}, errors.New("cannot fetch data in DB: " + err.Error())
 	}
 
-	if utils.ShouldResetWorkgroupsRemainingBuilds(projectData) {
-		err = ResetWorkgroupsRemainingBuilds(&projectData, collection)
+	if shouldResetWorkgroupsRemainingBuilds(projectData) {
+		err = resetWorkgroupsRemainingBuilds(&projectData, collection)
 		if err != nil {
 			return internal.MongoProjectData{}, errors.New("cannot update workgroups remaining builds: " + err.Error())
 		}
