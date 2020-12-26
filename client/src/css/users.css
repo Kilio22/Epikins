@@ -1,0 +1,12 @@
+table {
+    text-align: center;
+}
+
+.trash:hover {
+    color: red;
+    cursor: pointer;
+}
+
+.trash-not-allowed:hover {
+    cursor: not-allowed;
+}

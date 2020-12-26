@@ -1,31 +1,51 @@
-import {ComponentClass, FunctionComponent} from "react";
-import Projects from "../components/projects/Projects";
-import Home from "../components/Home";
-import {RouteComponentProps} from "react-router-dom";
-import ProjectJobs from "../components/projectJobs/ProjectJobs";
+import { ComponentClass, FunctionComponent } from 'react';
+import Projects from '../components/projects/Projects';
+import Home from '../components/Home';
+import { RouteComponentProps } from 'react-router-dom';
+import ProjectJobs from '../components/projectJobs/ProjectJobs';
+import Users from '../components/users/Users';
 
 interface IRoute {
     path: string,
-    component: ComponentClass<any> | FunctionComponent<any>
+    name: string,
+    component: ComponentClass<any> | FunctionComponent<any>,
+    role: string,
+    inNavbar: boolean
 }
 
 export interface IRouteProps<PARAMS> {
     routeProps: RouteComponentProps<PARAMS>
 }
 
-export const routePrefix: string = "/";
+export const routePrefix: string = '/';
 
 export const routes: IRoute[] = [
     {
         path: routePrefix,
-        component: Home
+        name: '',
+        component: Home,
+        role: '',
+        inNavbar: false
     },
     {
-        path: routePrefix + "projects",
-        component: Projects
+        path: routePrefix + 'projects',
+        name: 'Projects',
+        component: Projects,
+        role: 'projects',
+        inNavbar: true
     },
     {
-        path: routePrefix + "projects/:project",
-        component: ProjectJobs
+        path: routePrefix + 'projects/:project',
+        name: '',
+        component: ProjectJobs,
+        role: 'projects',
+        inNavbar: false
+    },
+    {
+        path: routePrefix + 'users',
+        name: 'Users',
+        component: Users,
+        role: 'users',
+        inNavbar: true
     }
-]
+];

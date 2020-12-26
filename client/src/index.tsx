@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import './css/index.css';
 import './css/jobsRenderer.css';
 import './css/footer.css';
+import './css/users.css';
 import * as serviceWorker from './serviceWorker';
 import App from './components/App';
 

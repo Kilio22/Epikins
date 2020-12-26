@@ -2,12 +2,12 @@ export interface IUser {
     name: string,
     email: string,
     isLoggedIn: boolean,
-    canAccess: boolean
+    roles: string[]
 }
 
 export const userInitialState: IUser = {
-    name: "",
-    email: "",
+    name: '',
+    email: '',
     isLoggedIn: false,
-    canAccess: false
+    roles: []
 };

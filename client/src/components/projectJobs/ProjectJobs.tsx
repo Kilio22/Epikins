@@ -1,18 +1,22 @@
-import React from "react";
-import EpikinsApiService from "../../services/EpikinsApiService";
-import {apiBaseURI} from "../../Config";
-import {IProjectJobsMatchParams, IProjectJobsState, projectJobsInitialState} from "../../interfaces/jobs/IProjectJobs";
-import ProjectJobsRenderer from "./ProjectJobsRenderer";
-import {IGroupData} from "../../interfaces/IGroupData";
-import {IRouteProps} from "../../interfaces/IRoute";
-import {appInitialContext} from "../../interfaces/IAppContext";
-import {authServiceObj} from "../../services/AuthService";
-import Loading from "../Loading";
-import {userInitialState} from "../../interfaces/IUser";
+import React from 'react';
+import EpikinsApiService from '../../services/EpikinsApiService';
+import { apiBaseURI } from '../../Config';
+import {
+    IProjectJobsMatchParams,
+    IProjectJobsState,
+    projectJobsInitialState
+} from '../../interfaces/jobs/IProjectJobs';
+import ProjectJobsRenderer from './ProjectJobsRenderer';
+import { IGroupData } from '../../interfaces/IGroupData';
+import { IRouteProps } from '../../interfaces/IRoute';
+import { appInitialContext } from '../../interfaces/IAppContext';
+import { authServiceObj } from '../../services/AuthService';
+import Loading from '../Loading';
+import { userInitialState } from '../../interfaces/IUser';
 
 class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams>, IProjectJobsState> {
     static contextType = appInitialContext;
-    context!: React.ContextType<typeof appInitialContext>
+    context!: React.ContextType<typeof appInitialContext>;
     private mounted = false;
 
     constructor(props: IRouteProps<IProjectJobsMatchParams>) {
@@ -54,12 +58,15 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams>, 
 
     async getJobsByProject(shouldCallback: boolean) {
         const accessToken: string = await authServiceObj.getToken();
-        if (accessToken === "" && this.context.changeAppStateByProperty != null) {
-            this.context.changeAppStateByProperty("user", userInitialState, false);
+        if (accessToken === '') {
+            if (this.context.changeAppStateByProperty != null) {
+                this.context.changeAppStateByProperty('user', userInitialState, false);
+            }
+            return;
         }
 
         const res: IGroupData[] | null = await EpikinsApiService.getGroupsData(
-            apiBaseURI + "projects/" + this.props.routeProps.match.params.project, accessToken);
+            apiBaseURI + 'projects/' + this.props.routeProps.match.params.project, accessToken);
         if (res) {
             const newGroupsOfJobs: IGroupData[] = res.sort((a, b) => {
                 return a.groupJob.job.name.localeCompare(b.groupJob.job.name);
@@ -82,11 +89,11 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams>, 
         } else {
             this.setState({
                 ...this.state,
-                groupsData: [],
+                groupsData: []
             });
             if (this.context.changeAppStateByProperty) {
-                this.context.changeAppStateByProperty("errorMessage",
-                    "Cannot fetch data, please try to reload the page.", true);
+                this.context.changeAppStateByProperty('errorMessage',
+                    'Cannot fetch data, please try to reload the page.', true);
             }
         }
     }
@@ -112,8 +119,8 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams>, 
             await this.getJobsByProject(false);
         } else {
             if (this.context.changeAppStateByProperty) {
-                this.context.changeAppStateByProperty("errorMessage",
-                    "Cannot build jobs, see console for more infos", true);
+                this.context.changeAppStateByProperty('errorMessage',
+                    'Cannot build jobs, see console for more infos', true);
             }
         }
         this.setState({
@@ -131,8 +138,11 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams>, 
         });
 
         const accessToken: string = await authServiceObj.getToken();
-        if (accessToken === "" && this.context.changeAppStateByProperty != null) {
-            this.context.changeAppStateByProperty("user", userInitialState, false);
+        if (accessToken === '') {
+            if (this.context.changeAppStateByProperty != null) {
+                this.context.changeAppStateByProperty('user', userInitialState, false);
+            }
+            return;
         }
 
         await this.handleBuildResponse(await EpikinsApiService.buildJobs(
@@ -148,8 +158,11 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams>, 
         });
 
         const accessToken: string = await authServiceObj.getToken();
-        if (accessToken === "" && this.context.changeAppStateByProperty != null) {
-            this.context.changeAppStateByProperty("user", userInitialState, false);
+        if (accessToken === '') {
+            if (this.context.changeAppStateByProperty != null) {
+                this.context.changeAppStateByProperty('user', userInitialState, false);
+            }
+            return;
         }
 
         await this.handleBuildResponse(await EpikinsApiService.globalBuild(this.props.routeProps.match.params.project, visibility, accessToken));

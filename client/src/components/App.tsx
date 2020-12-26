@@ -40,7 +40,9 @@ class App extends Component<{}, IAppState> {
                                     return (
                                         <PrivateRoute component={value.component}
                                                       onSignOutClick={this.onSignOutClick}
-                                                      routeProps={props}/>
+                                                      routeProps={props}
+                                                      routeRole={value.role}
+                                        />
                                     );
                                 }} key={index}/>;
                             }))

@@ -1,18 +1,19 @@
-import React, {Component} from "react";
+import React, { Component } from 'react';
 import loginWith from '../assets/login_with_microsoft.png';
-import {Redirect} from "react-router-dom";
-import {ILoginProps, ILoginState, loginInitialState} from "../interfaces/ILogin";
-import {IUser, userInitialState} from "../interfaces/IUser";
-import EpikinsApiService from "../services/EpikinsApiService";
-import {routePrefix} from "../interfaces/IRoute";
-import {appInitialContext} from "../interfaces/IAppContext";
-import {authServiceObj} from "../services/AuthService";
-import {AccountInfo, AuthenticationResult} from "@azure/msal-browser";
-import Loading from "./Loading";
+import { Redirect } from 'react-router-dom';
+import { ILoginProps, ILoginState, loginInitialState } from '../interfaces/ILogin';
+import { IUser, userInitialState } from '../interfaces/IUser';
+import EpikinsApiService from '../services/EpikinsApiService';
+import { routePrefix } from '../interfaces/IRoute';
+import { appInitialContext } from '../interfaces/IAppContext';
+import { authServiceObj } from '../services/AuthService';
+import { AccountInfo, AuthenticationResult } from '@azure/msal-browser';
+import Loading from './Loading';
+import { IApiUser } from '../interfaces/IApiUser';
 
 class Login extends Component<ILoginProps, ILoginState> {
     static contextType = appInitialContext;
-    context!: React.ContextType<typeof appInitialContext>
+    context!: React.ContextType<typeof appInitialContext>;
 
     constructor(props: any) {
         super(props);
@@ -52,13 +53,13 @@ class Login extends Component<ILoginProps, ILoginState> {
                         this.props.routeProps.location.state?.from ?
                             <Redirect to={{pathname: this.props.routeProps.location.state.from.pathname}}/>
                             :
-                            <Redirect to={{pathname: routePrefix + "projects"}}/>
+                            <Redirect to={{pathname: routePrefix + 'projects'}}/>
                         :
                         this.state.isConnecting ?
                             <Loading/>
                             :
-                            <div className={"h-100 d-flex justify-content-center align-items-center"}>
-                                <input type={"image"} src={loginWith} alt={"login button"}
+                            <div className={'h-100 d-flex justify-content-center align-items-center'}>
+                                <input type={'image'} src={loginWith} alt={'login button'}
                                        onClick={this.login}/>
                             </div>
                 )}
@@ -80,10 +81,13 @@ class Login extends Component<ILoginProps, ILoginState> {
     }
 
     async getUserProfile() {
-        let newUser: IUser = userInitialState
+        let newUser: IUser = userInitialState;
         let accessToken: string = await authServiceObj.getToken();
-        if (accessToken === "" && this.context.changeAppStateByProperty != null) {
-            this.context.changeAppStateByProperty("user", userInitialState, false);
+        if (accessToken === '') {
+            if (this.context.changeAppStateByProperty != null) {
+                this.context.changeAppStateByProperty('user', userInitialState, false);
+            }
+            return;
         }
 
         try {
@@ -98,23 +102,23 @@ class Login extends Component<ILoginProps, ILoginState> {
                 name: decodedJWT.name,
                 email: decodedJWT.email,
                 isLoggedIn: true
-            }
+            };
         } catch (err) {
             console.log(err);
             this.setState(loginInitialState);
             return;
         }
 
-        const res: boolean = await EpikinsApiService.login(accessToken);
+        const res: IApiUser | null = await EpikinsApiService.login(accessToken);
         if (res) {
             newUser = {
                 ...newUser,
-                canAccess: true
+                roles: res.roles
             };
         }
 
         if (this.context.changeAppStateByProperty) {
-            this.context.changeAppStateByProperty("user", newUser, false);
+            this.context.changeAppStateByProperty('user', newUser, false);
         }
     }
 }
