@@ -49,7 +49,7 @@ class AddUserForm extends Component<IAddUserFormProps, IAddUserFormState> {
                             <Form.Control type="email"
                                           placeholder="Enter email"
                                           required
-                                          onChange={(event => this.changeUserByProperty('email', event.target.value))}/>
+                                          onChange={(event => this.changeUserByProperty('email', event.target.value.trim()))}/>
                             <Form.Control.Feedback type="invalid">
                                 Please provide a valid email.
                             </Form.Control.Feedback>
