@@ -46,7 +46,7 @@ func getForm(visibility Visibility) (form url.Values) {
 	return
 }
 
-func BuildJob(postUrl string, visibility Visibility, logs Logs) error {
+func BuildJob(postUrl string, visibility Visibility, logs JenkinsCredentials) error {
 	form := getForm(visibility)
 	fullUrl := getFullUrl(postUrl)
 	req, err := http.NewRequest(http.MethodPost, fullUrl, strings.NewReader(form.Encode()))
@@ -55,7 +55,7 @@ func BuildJob(postUrl string, visibility Visibility, logs Logs) error {
 		return errors.New("cannot build job: " + err.Error())
 	}
 
-	req.SetBasicAuth(logs.Login, logs.Password)
+	req.SetBasicAuth(logs.Login, logs.ApiKey)
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {

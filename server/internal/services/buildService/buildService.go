@@ -16,12 +16,12 @@ type BuildParams struct {
 	Visibility  libJenkins.Visibility
 }
 
-func BuildService(buildParams BuildParams, appData *internal.AppData, userLogs libJenkins.Logs) internal.MyError {
+func BuildService(buildParams BuildParams, appData *internal.AppData, userLogs libJenkins.JenkinsCredentials) internal.MyError {
 	if err := utils.CheckProjectsData(userLogs, appData); err != nil {
 		return internal.MyError{Err: errors.New("cannot build: " + err.Error()), StatusCode: http.StatusInternalServerError}
 	}
 
-	projectsData := appData.ProjectsData[userLogs.AccountType]
+	projectsData := appData.ProjectsData[userLogs.Login]
 	askedProjectData, err := utils.GetAskedProject(projectsData.ProjectList, buildParams.Project)
 	if err != nil {
 		return internal.MyError{

@@ -4,7 +4,7 @@ import (
 	"errors"
 )
 
-func getCitiesList(url string, userLogs Logs) ([]Job, error) {
+func getCitiesList(url string, userLogs JenkinsCredentials) ([]Job, error) {
 	citiesList, err := GetJobsByURL(url, userLogs)
 	if err != nil {
 		return []Job{}, errors.New("something went wrong when reaching cities list: " + err.Error())

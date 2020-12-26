@@ -4,7 +4,7 @@ import (
 	"errors"
 )
 
-func GetJobsByProject(project Job, userLogs Logs) ([]Job, error) {
+func GetJobsByProject(project Job, userLogs JenkinsCredentials) ([]Job, error) {
 	yearList, err := getYearList(project, userLogs)
 	if err != nil || len(yearList) == 0 {
 		return []Job{}, err

@@ -22,7 +22,7 @@ type JobInfos struct {
 	LastBuild Build `json:"lastBuild"`
 }
 
-func getJobInfosByURL(url string, logs Logs) (JobInfos, error) {
+func getJobInfosByURL(url string, logs JenkinsCredentials) (JobInfos, error) {
 	res, err := makeHttpRequest(http.MethodGet, url, logs)
 	if err != nil {
 		return JobInfos{}, errors.New("cannot get job infos: " + err.Error())

@@ -14,7 +14,7 @@ func getWantedGlobalJobUrl(citiesList []Job, wantedGlobalJob string) string {
 	return ""
 }
 
-func GetGlobalJobUrlByProject(project Job, userLogs Logs) (string, error) {
+func GetGlobalJobUrlByProject(project Job, userLogs JenkinsCredentials) (string, error) {
 	yearList, err := getYearList(project, userLogs)
 	if err != nil || len(yearList) == 0 {
 		return "", err

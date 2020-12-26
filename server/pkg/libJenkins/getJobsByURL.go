@@ -11,7 +11,7 @@ type JobList struct {
 	Jobs []Job
 }
 
-func GetJobsByURL(url string, userLogs Logs) ([]Job, error) {
+func GetJobsByURL(url string, userLogs JenkinsCredentials) ([]Job, error) {
 	res, err := makeHttpRequest(http.MethodGet, url, userLogs)
 	if err != nil {
 		return []Job{}, errors.New("cannot get jobs: " + err.Error())

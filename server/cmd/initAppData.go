@@ -3,7 +3,6 @@ package main
 import (
 	"epikins-api/internal"
 	"epikins-api/internal/services/utils"
-	"epikins-api/pkg/libJenkins"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -21,7 +20,7 @@ func initAppData(mongoClient *mongo.Client) *internal.AppData {
 		ProjectsCollection:           projectsCollection,
 		JenkinsCredentialsCollection: credentialsCollection,
 		UsersCollection:              usersCollection,
-		ProjectsData:                 make(map[libJenkins.AccountType]internal.ProjectsData),
+		ProjectsData:                 make(map[string]internal.ProjectsData),
 		AppId:                        utils.GetEnvVariable("APP_ID"),
 	}
 }

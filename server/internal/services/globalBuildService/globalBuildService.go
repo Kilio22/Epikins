@@ -14,12 +14,12 @@ type GlobalBuildParams struct {
 	Visibility libJenkins.Visibility
 }
 
-func GlobalBuildService(globalBuildParams GlobalBuildParams, userLogs libJenkins.Logs, appData *internal.AppData) internal.MyError {
+func GlobalBuildService(globalBuildParams GlobalBuildParams, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) internal.MyError {
 	if err := utils.CheckProjectsData(userLogs, appData); err != nil {
 		return internal.MyError{Err: errors.New("cannot build: " + err.Error()), StatusCode: http.StatusInternalServerError}
 	}
 
-	projectsData := appData.ProjectsData[userLogs.AccountType]
+	projectsData := appData.ProjectsData[userLogs.Login]
 	askedProject, err := utils.GetAskedProject(projectsData.ProjectList, globalBuildParams.Project)
 	if err != nil {
 		return internal.MyError{Err: errors.New("cannot build: " + err.Error()), StatusCode: http.StatusBadRequest}

@@ -1,11 +1,9 @@
 package controllers
 
 import (
-	"epikins-api/config"
 	"epikins-api/internal"
 	"epikins-api/internal/controllers/utils"
 	"epikins-api/internal/services/globalBuildService"
-	"epikins-api/pkg/libJenkins"
 	"errors"
 	"net/http"
 
@@ -32,7 +30,10 @@ func GlobalBuildController(appData *internal.AppData, c *fiber.Ctx) error {
 		return SendMessage(c, myErr.Err.Error(), myErr.StatusCode)
 	}
 
-	userLogs := libJenkins.JenkinsLogs[config.AuthorizedUsers[userEmail]]
+	userLogs, err := utils.GetUserJenkinsCredentials(userEmail, appData.UsersCollection, appData.JenkinsCredentialsCollection)
+	if err != nil {
+		return SendMessage(c, "cannot start build: "+err.Error(), http.StatusInternalServerError)
+	}
 	myError := globalBuildService.GlobalBuildService(globalBuildParams, userLogs, appData)
 	if myError.Err != nil {
 		return SendMessage(c, myError.Err.Error(), myError.StatusCode)

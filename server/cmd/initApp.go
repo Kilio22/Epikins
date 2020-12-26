@@ -1,26 +1,15 @@
 package main
 
 import (
+	"epikins-api/config"
 	"epikins-api/internal"
 	"epikins-api/internal/controllers"
 	"epikins-api/internal/controllers/jenkinsCredentials"
 	"epikins-api/internal/controllers/users"
-	"epikins-api/internal/services/loginService"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"net/http"
 )
-
-func isAuthenticated(appData *internal.AppData, c *fiber.Ctx) error {
-	accessToken := c.Get("Authorization")
-	email, err := loginService.LoginService(appData.AppId, accessToken)
-	if err != nil {
-		return controllers.SendMessage(c, err.Error(), http.StatusUnauthorized)
-	}
-	c.Request().Header.Set("email", email)
-	return c.Next()
-}
 
 func setupApp(appData *internal.AppData) *fiber.App {
 	app := fiber.New()
@@ -30,15 +19,23 @@ func setupApp(appData *internal.AppData) *fiber.App {
 		return isAuthenticated(appData, ctx)
 	})
 
-	app.Post("/login", controllers.LoginController)
-	app.Get("/projects", func(ctx *fiber.Ctx) error {
+	app.Post("/login", func(ctx *fiber.Ctx) error {
+		return controllers.LoginController(appData, ctx)
+	})
+
+	projectsGroup := app.Group("/projects", func(ctx *fiber.Ctx) error {
+		return checkUserRole(appData, config.PROJECTS, ctx)
+	})
+	projectsGroup.Get("/", func(ctx *fiber.Ctx) error {
 		return controllers.ProjectsController(appData, ctx)
 	})
-	app.Get("/projects/:project", func(ctx *fiber.Ctx) error {
+	projectsGroup.Get("/:project", func(ctx *fiber.Ctx) error {
 		return controllers.ProjectJobsController(appData, ctx)
 	})
 
-	buildGroup := app.Group("/build")
+	buildGroup := app.Group("/build", func(ctx *fiber.Ctx) error {
+		return checkUserRole(appData, config.PROJECTS, ctx)
+	})
 	buildGroup.Post("/", func(ctx *fiber.Ctx) error {
 		return controllers.BuildController(appData, ctx)
 	})
@@ -46,21 +43,22 @@ func setupApp(appData *internal.AppData) *fiber.App {
 		return controllers.GlobalBuildController(appData, ctx)
 	})
 
-	credentialsGroup := app.Group("/credentials")
-	credentialsGroup.Get("/", func(ctx *fiber.Ctx) error {
+	app.Get("/credentials", func(ctx *fiber.Ctx) error {
 		return jenkinsCredentials.GetJenkinsCredentialsController(appData, ctx)
 	})
-	credentialsGroup.Post("/", func(ctx *fiber.Ctx) error {
+	protectedCredentialsGroup := app.Group("/credentials", func(ctx *fiber.Ctx) error {
+		return checkUserRole(appData, config.CREDENTIALS, ctx)
+	})
+	protectedCredentialsGroup.Post("/", func(ctx *fiber.Ctx) error {
 		return jenkinsCredentials.AddJenkinsCredentialController(appData, ctx)
 	})
-	credentialsGroup.Put("/", func(ctx *fiber.Ctx) error {
-		return jenkinsCredentials.UpdateJenkinsCredentialsController(appData, ctx)
-	})
-	credentialsGroup.Delete("/:username", func(ctx *fiber.Ctx) error {
+	protectedCredentialsGroup.Delete("/:username", func(ctx *fiber.Ctx) error {
 		return jenkinsCredentials.DeleteJenkinsCredentialController(appData, ctx)
 	})
 
-	usersGroup := app.Group("/users")
+	usersGroup := app.Group("/users", func(ctx *fiber.Ctx) error {
+		return checkUserRole(appData, config.USERS, ctx)
+	})
 	usersGroup.Get("/", func(ctx *fiber.Ctx) error {
 		return users.GetUsersController(appData, ctx)
 	})

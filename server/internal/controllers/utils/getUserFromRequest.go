@@ -1,11 +1,30 @@
 package utils
 
 import (
+	"epikins-api/config"
 	"epikins-api/internal"
 	"errors"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
+
+func areRolesValid(roles []internal.Role) bool {
+	var isValid = false
+
+	for _, role := range roles {
+		for _, value := range config.Roles {
+			if role == value {
+				isValid = true
+				break
+			}
+		}
+		if !isValid {
+			return false
+		}
+		isValid = false
+	}
+	return true
+}
 
 func GetUserFromRequest(c *fiber.Ctx) (internal.User, error) {
 	var user internal.User
@@ -15,7 +34,7 @@ func GetUserFromRequest(c *fiber.Ctx) (internal.User, error) {
 		return internal.User{}, errors.New("wrong body")
 	}
 	err = validator.New().Struct(user)
-	if err != nil {
+	if err != nil || !areRolesValid(user.Roles) {
 		return internal.User{}, errors.New("wrong body")
 	}
 	return user, nil

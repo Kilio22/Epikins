@@ -4,12 +4,9 @@ import (
 	"errors"
 	"net/http"
 
-	"epikins-api/config"
 	"epikins-api/internal"
 	"epikins-api/internal/controllers/utils"
 	"epikins-api/internal/services/buildService"
-	"epikins-api/pkg/libJenkins"
-
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -60,7 +57,10 @@ func BuildController(appData *internal.AppData, c *fiber.Ctx) error {
 		return SendMessage(c, myErr.Err.Error(), myErr.StatusCode)
 	}
 
-	userLogs := libJenkins.JenkinsLogs[config.AuthorizedUsers[userEmail]]
+	userLogs, err := utils.GetUserJenkinsCredentials(userEmail, appData.UsersCollection, appData.JenkinsCredentialsCollection)
+	if err != nil {
+		return SendMessage(c, "cannot start builds: "+err.Error(), http.StatusInternalServerError)
+	}
 	myError := buildService.BuildService(buildParams, appData, userLogs)
 	if myError.Err != nil {
 		return SendMessage(c, myError.Err.Error(), myError.StatusCode)

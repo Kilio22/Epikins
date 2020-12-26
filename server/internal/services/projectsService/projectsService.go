@@ -10,8 +10,8 @@ import (
 	"epikins-api/pkg/libJenkins"
 )
 
-func ProjectsService(shouldUpdateProjectList bool, userLogs libJenkins.Logs, appData *internal.AppData) ([]libJenkins.Job, internal.MyError) {
-	projectsData, ok := appData.ProjectsData[userLogs.AccountType]
+func ProjectsService(shouldUpdateProjectList bool, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) ([]libJenkins.Job, internal.MyError) {
+	projectsData, ok := appData.ProjectsData[userLogs.Login]
 	if ok && !shouldUpdateProjectList && time.Since(projectsData.LastUpdate).Hours() < 1 {
 		return projectsData.ProjectList, internal.MyError{
 			Err:        nil,
@@ -25,5 +25,5 @@ func ProjectsService(shouldUpdateProjectList bool, userLogs libJenkins.Logs, app
 			StatusCode: http.StatusInternalServerError,
 		}
 	}
-	return appData.ProjectsData[userLogs.AccountType].ProjectList, internal.MyError{}
+	return appData.ProjectsData[userLogs.Login].ProjectList, internal.MyError{}
 }

@@ -4,7 +4,7 @@ import (
 	"errors"
 )
 
-func GetProjects(userLogs Logs) ([]Job, error) {
+func GetProjects(userLogs JenkinsCredentials) ([]Job, error) {
 	moduleList, err := GetJobsByURL(JenkinsBaseURL, userLogs)
 	if err != nil {
 		return []Job{}, errors.New("cannot get projects: something went wrong when reaching module list: " + err.Error())

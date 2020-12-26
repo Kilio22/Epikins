@@ -9,7 +9,7 @@ import (
 	"epikins-api/pkg/libJenkins"
 )
 
-func ProjectJobsService(projectName string, userLogs libJenkins.Logs, appData *internal.AppData) ([]WorkgroupData, internal.MyError) {
+func ProjectJobsService(projectName string, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) ([]WorkgroupData, internal.MyError) {
 	if err := utils.CheckProjectsData(userLogs, appData); err != nil {
 		return []WorkgroupData{}, internal.MyError{
 			Err:        errors.New("cannot get workgroups associated to project \"" + projectName + "\": " + err.Error()),
@@ -17,7 +17,7 @@ func ProjectJobsService(projectName string, userLogs libJenkins.Logs, appData *i
 		}
 	}
 
-	projectsData := appData.ProjectsData[userLogs.AccountType]
+	projectsData := appData.ProjectsData[userLogs.Login]
 	askedProject, err := utils.GetAskedProject(projectsData.ProjectList, projectName)
 	if err != nil {
 		return []WorkgroupData{}, internal.MyError{

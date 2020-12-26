@@ -9,7 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func buildLoop(buildParams BuildParams, groupsBuildData []GroupBuildData, userLogs libJenkins.Logs) error {
+func buildLoop(buildParams BuildParams, groupsBuildData []GroupBuildData, userLogs libJenkins.JenkinsCredentials) error {
 	for _, jobName := range buildParams.JobsToBuild {
 		for idx := range groupsBuildData {
 			if groupsBuildData[idx].groupJob.Name != jobName {
@@ -27,7 +27,7 @@ func buildLoop(buildParams BuildParams, groupsBuildData []GroupBuildData, userLo
 	return nil
 }
 
-func startBuilds(buildParams BuildParams, jobs []libJenkins.Job, collection *mongo.Collection, userLogs libJenkins.Logs) error {
+func startBuilds(buildParams BuildParams, jobs []libJenkins.Job, collection *mongo.Collection, userLogs libJenkins.JenkinsCredentials) error {
 	projectData, err := mongoUtils.FetchProjectData(buildParams.Project, jobs, collection)
 	if err != nil {
 		return errors.New("cannot start builds: " + err.Error())

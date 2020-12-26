@@ -10,8 +10,8 @@ import (
 	"net/http"
 )
 
-func DeleteCredentialsService(username string, appData *internal.AppData) (myError internal.MyError) {
-	res := appData.JenkinsCredentialsCollection.FindOneAndDelete(context.TODO(), bson.M{"username": username})
+func DeleteCredentialsService(login string, appData *internal.AppData) (myError internal.MyError) {
+	res := appData.JenkinsCredentialsCollection.FindOneAndDelete(context.TODO(), bson.M{"login": login})
 	if res.Err() != nil {
 		if res.Err() == mongo.ErrNoDocuments {
 			myError = internal.MyError{

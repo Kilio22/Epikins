@@ -8,7 +8,7 @@ import (
 
 const JenkinsAPIPart string = "/api/json"
 
-func makeHttpRequest(method string, url string, userLogs Logs) (*http.Response, error) {
+func makeHttpRequest(method string, url string, userLogs JenkinsCredentials) (*http.Response, error) {
 	var fullUrl string
 	if url[len(url)-1:] == "/" {
 		fullUrl = url[:len(url)-1] + JenkinsAPIPart
@@ -22,7 +22,7 @@ func makeHttpRequest(method string, url string, userLogs Logs) (*http.Response, 
 		return nil, err
 	}
 
-	req.SetBasicAuth(userLogs.Login, userLogs.Password)
+	req.SetBasicAuth(userLogs.Login, userLogs.ApiKey)
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		log.Println(err)

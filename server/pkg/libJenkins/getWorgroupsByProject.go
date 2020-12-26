@@ -29,7 +29,7 @@ func getWantedCityJobUrl(citiesList []Job, wantedCity string) string {
 	return ""
 }
 
-func getWorkgroups(jobsList []Job, userLogs Logs) ([]Workgroup, error) {
+func getWorkgroups(jobsList []Job, userLogs JenkinsCredentials) ([]Workgroup, error) {
 	var groupsOfJobs []Workgroup
 	for _, job := range jobsList {
 		jobInfos, err := getJobInfosByURL(job.Url, userLogs)
@@ -41,7 +41,7 @@ func getWorkgroups(jobsList []Job, userLogs Logs) ([]Workgroup, error) {
 	return groupsOfJobs, nil
 }
 
-func GetWorkgroupsByProject(project Job, userLogs Logs) ([]Workgroup, error) {
+func GetWorkgroupsByProject(project Job, userLogs JenkinsCredentials) ([]Workgroup, error) {
 	yearList, err := getYearList(project, userLogs)
 	if err != nil || len(yearList) == 0 {
 		return []Workgroup{}, err

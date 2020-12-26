@@ -3,6 +3,7 @@ package getCredentialsService
 import (
 	"context"
 	"epikins-api/internal"
+	"epikins-api/pkg/libJenkins"
 	"errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -10,13 +11,8 @@ import (
 	"net/http"
 )
 
-type JenkinsCredentialsPublicData struct {
-	Id       string `json:"id"`
-	Username string `json:"username"`
-}
-
-func getPublicData(cursor *mongo.Cursor) ([]JenkinsCredentialsPublicData, internal.MyError) {
-	var credentialsList []internal.JenkinsCredentials
+func getPublicData(cursor *mongo.Cursor) ([]string, internal.MyError) {
+	var credentialsList []libJenkins.JenkinsCredentials
 	err := cursor.All(context.TODO(), &credentialsList)
 	if err != nil {
 		log.Println(err)
@@ -26,17 +22,14 @@ func getPublicData(cursor *mongo.Cursor) ([]JenkinsCredentialsPublicData, intern
 		}
 	}
 
-	var publicData []JenkinsCredentialsPublicData
+	var publicData []string
 	for _, credentials := range credentialsList {
-		publicData = append(publicData, JenkinsCredentialsPublicData{
-			Id:       credentials.Id.Hex(),
-			Username: credentials.Username,
-		})
+		publicData = append(publicData, credentials.Login)
 	}
 	return publicData, internal.MyError{}
 }
 
-func GetCredentialsService(appData *internal.AppData) ([]JenkinsCredentialsPublicData, internal.MyError) {
+func GetCredentialsService(appData *internal.AppData) ([]string, internal.MyError) {
 	cursor, err := appData.JenkinsCredentialsCollection.Find(context.TODO(), bson.M{})
 	if err != nil {
 		log.Println(err)

@@ -16,7 +16,7 @@ func checkYearList(yearList []Job) error {
 	return nil
 }
 
-func getYearList(project Job, userLogs Logs) ([]Job, error) {
+func getYearList(project Job, userLogs JenkinsCredentials) ([]Job, error) {
 	yearList, err := GetJobsByURL(project.Url, userLogs)
 	if err != nil {
 		return []Job{}, errors.New("something went wrong when reaching year list: " + err.Error())

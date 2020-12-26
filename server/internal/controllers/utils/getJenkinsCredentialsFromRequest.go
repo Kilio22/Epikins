@@ -1,22 +1,22 @@
 package utils
 
 import (
-	"epikins-api/internal"
+	"epikins-api/pkg/libJenkins"
 	"errors"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
 
-func GetJenkinsCredentialsFromRequest(c *fiber.Ctx) (internal.JenkinsCredentials, error) {
-	var credentials internal.JenkinsCredentials
+func GetJenkinsCredentialsFromRequest(c *fiber.Ctx) (libJenkins.JenkinsCredentials, error) {
+	var credentials libJenkins.JenkinsCredentials
 
 	err := c.BodyParser(&credentials)
 	if err != nil {
-		return internal.JenkinsCredentials{}, errors.New("wrong body")
+		return libJenkins.JenkinsCredentials{}, errors.New("wrong body")
 	}
 	err = validator.New().Struct(credentials)
 	if err != nil {
-		return internal.JenkinsCredentials{}, errors.New("wrong body")
+		return libJenkins.JenkinsCredentials{}, errors.New("wrong body")
 	}
 	return credentials, nil
 }
