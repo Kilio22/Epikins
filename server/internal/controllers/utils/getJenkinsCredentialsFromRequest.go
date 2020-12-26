@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"strings"
 )
 
 func GetJenkinsCredentialsFromRequest(c *fiber.Ctx) (libJenkins.JenkinsCredentials, error) {
@@ -14,6 +15,7 @@ func GetJenkinsCredentialsFromRequest(c *fiber.Ctx) (libJenkins.JenkinsCredentia
 	if err != nil {
 		return libJenkins.JenkinsCredentials{}, errors.New("wrong body")
 	}
+	credentials.Login = strings.TrimSpace(credentials.Login)
 	err = validator.New().Struct(credentials)
 	if err != nil {
 		return libJenkins.JenkinsCredentials{}, errors.New("wrong body")

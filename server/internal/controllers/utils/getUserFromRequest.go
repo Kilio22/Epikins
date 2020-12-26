@@ -6,7 +6,16 @@ import (
 	"errors"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"strings"
 )
+
+func trimValues(user *internal.User) {
+	user.JenkinsLogin = strings.TrimSpace(user.JenkinsLogin)
+	user.Email = strings.TrimSpace(user.Email)
+	for idx, role := range user.Roles {
+		user.Roles[idx] = internal.Role(strings.TrimSpace(string(role)))
+	}
+}
 
 func areRolesValid(roles []internal.Role) bool {
 	var isValid = false
@@ -33,6 +42,7 @@ func GetUserFromRequest(c *fiber.Ctx) (internal.User, error) {
 	if err != nil {
 		return internal.User{}, errors.New("wrong body")
 	}
+	trimValues(&user)
 	err = validator.New().Struct(user)
 	if err != nil || !areRolesValid(user.Roles) {
 		return internal.User{}, errors.New("wrong body")
