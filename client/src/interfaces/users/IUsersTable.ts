@@ -4,8 +4,8 @@ import { ChangeUsersStateByProperty, OnButtonClick } from '../Functions';
 
 
 export interface IUsersTableProps {
-    user: IUser,
-    modifiedUsers: IApiUser[],
+    connectedUser: IUser,
+    users: IApiUser[],
     jenkinsCredentials: string[],
     isEditing: boolean,
     changeUsersStateByProperty: ChangeUsersStateByProperty,

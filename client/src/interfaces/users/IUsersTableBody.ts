@@ -5,8 +5,8 @@ type OnCheckboxClick = (modifiedUsers: IApiUser[], modifiedUser: IApiUser, modif
 type OnDeleteClick = (email: string) => void;
 
 export interface IUsersTableBodyProps {
-    user: IUser,
-    modifiedUsers: IApiUser[],
+    connectedUser: IUser,
+    users: IApiUser[],
     jenkinsCredentials: string[],
     isEditing: boolean,
     onCheckboxClick: OnCheckboxClick,

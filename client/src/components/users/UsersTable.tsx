@@ -23,8 +23,8 @@ class UsersTable extends Component<IUsersTableProps> {
         return (
             <Table bordered responsive={'md'} striped className={'mt-3'}>
                 <UsersTableHeader/>
-                <UsersTableBody user={this.props.user}
-                                modifiedUsers={this.props.modifiedUsers}
+                <UsersTableBody connectedUser={this.props.connectedUser}
+                                users={this.props.users}
                                 jenkinsCredentials={this.props.jenkinsCredentials}
                                 isEditing={this.props.isEditing}
                                 onCheckboxClick={this.onCheckboxClick}

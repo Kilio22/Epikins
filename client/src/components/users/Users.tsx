@@ -61,11 +61,11 @@ class Users extends Component<IRouteProps<{}>, IUsersState> {
                                           onCancelClick={this.onCancelClick}
                                           onEditClick={this.onEditClick}
                                           onAddClick={this.onAddClick}/>
-                            <UsersTable modifiedUsers={this.state.modifiedUsers}
+                            <UsersTable users={this.state.modifiedUsers}
                                         jenkinsCredentials={this.state.jenkinsCredentials}
                                         isEditing={this.state.isEditing}
                                         changeUsersStateByProperty={this.changeUsersStateByProperty}
-                                        user={context.user}
+                                        connectedUser={context.user}
                                         getUsers={this.getUsers}/>
                         </div>
                 )}

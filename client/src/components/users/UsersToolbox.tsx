@@ -15,23 +15,23 @@ const UsersToolbox: React.FunctionComponent<IUsersToolboxProps> = ({
             <ButtonGroup>
                 <Button disabled={isSaving}
                         onClick={onSaveClick}>
-                    <span><i className="far fa-check-circle"/> Save</span>
+                    <span><i className={'far fa-check-circle'}/> Save</span>
                 </Button>
                 <Button className={'ml-2'}
                         disabled={isSaving}
                         onClick={onCancelClick}>
-                    <span><i className="far fa-times-circle"/> Cancel</span>
+                    <span><i className={'far fa-times-circle'}/> Cancel</span>
                 </Button>
             </ButtonGroup>
             :
             <ButtonGroup>
                 <Button className={'ml-2'}
                         onClick={onEditClick}>
-                    <span><i className="far fa-edit"/> Edit</span>
+                    <span><i className={'far fa-edit'}/> Edit</span>
                 </Button>
                 <Button className={'ml-2'}
                         onClick={onAddClick}>
-                    <span><i className="far fa-plus-square"/> Add</span>
+                    <span><i className={'far fa-plus-square'}/> Add</span>
                 </Button>
             </ButtonGroup>
     );

@@ -4,30 +4,34 @@ import { IUsersTableBodyProps } from '../../interfaces/users/IUsersTableBody';
 import { roles } from './UsersTableHeader';
 
 const UsersTableBody: React.FunctionComponent<IUsersTableBodyProps> = ({
-                                                                           modifiedUsers,
-                                                                           user,
+                                                                           users,
+                                                                           connectedUser,
                                                                            isEditing,
                                                                            jenkinsCredentials,
                                                                            onCheckboxClick,
                                                                            onDeleteClick
                                                                        }) => {
+    const sortedUsers = users.sort(((a, b) => a.email.localeCompare(b.email)));
     return (
         <tbody>
         {
-            modifiedUsers.map((modifiedUser, modifiedUserIdx) => {
+            sortedUsers.map((user, userIdx) => {
+                if (!user.email.localeCompare(connectedUser.email)) {
+                    return null;
+                }
                 return (
-                    <tr key={modifiedUserIdx}>
-                        <td>{modifiedUser.email}</td>
+                    <tr key={userIdx}>
+                        <td>{user.email}</td>
                         {
                             roles.map((role, roleIdx) => {
                                 return (
                                     <td key={roleIdx}>
-                                        <div className="form-check">
-                                            <input type="checkbox"
-                                                   className="form-check-input"
-                                                   checked={modifiedUser.roles.includes(role.toLocaleLowerCase())}
+                                        <div className={'form-check'}>
+                                            <input type={'checkbox'}
+                                                   className={'form-check-input'}
+                                                   checked={user.roles.includes(role.toLocaleLowerCase())}
                                                    disabled={!isEditing}
-                                                   onChange={() => onCheckboxClick(modifiedUsers, modifiedUser, modifiedUserIdx, role)}
+                                                   onChange={() => onCheckboxClick(users, user, userIdx, role)}
                                             />
                                         </div>
                                     </td>
@@ -38,9 +42,9 @@ const UsersTableBody: React.FunctionComponent<IUsersTableBodyProps> = ({
                             <NativeSelect variant={'standard'} fullWidth
                                           disabled={!isEditing}
                                           onChange={(event => {
-                                              modifiedUsers[modifiedUserIdx].jenkinsLogin = event.target.value;
+                                              users[userIdx].jenkinsLogin = event.target.value;
                                           })}
-                                          defaultValue={modifiedUser.jenkinsLogin}>
+                                          defaultValue={user.jenkinsLogin}>
                                 {
                                     jenkinsCredentials.map((value, index) => {
                                         return (
@@ -54,8 +58,8 @@ const UsersTableBody: React.FunctionComponent<IUsersTableBodyProps> = ({
                         </td>
                         {
                             <td>
-                                <i className={'far fa-trash-alt mr-2 ' + (modifiedUser.email.localeCompare(user.email) === 0 ? 'trash-not-allowed' : 'trash')}
-                                   onClick={() => modifiedUser.email.localeCompare(user.email) !== 0 && onDeleteClick(modifiedUser.email)}/>
+                                <i className={'far fa-trash-alt mr-2 trash'}
+                                   onClick={() => onDeleteClick(user.email)}/>
                             </td>
                         }
                     </tr>

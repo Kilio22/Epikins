@@ -35,7 +35,7 @@ class AddUserForm extends Component<IAddUserFormProps, IAddUserFormState> {
         return (
             <Modal show
                    onHide={() => this.props.changeUsersStateByProperty('isAdding', false)}
-                   size="lg"
+                   size={'lg'}
                    centered>
                 <Modal.Header closeButton>
                     <Modal.Title>
@@ -46,11 +46,11 @@ class AddUserForm extends Component<IAddUserFormProps, IAddUserFormState> {
                     <Form noValidate validated={this.state.validation} onSubmit={event => this.onSubmit(event)}>
                         <Form.Group>
                             <Form.Label>Email address</Form.Label>
-                            <Form.Control type="email"
-                                          placeholder="Enter email"
+                            <Form.Control type={'email'}
+                                          placeholder={'Enter email'}
                                           required
                                           onChange={(event => this.changeUserByProperty('email', event.target.value.trim()))}/>
-                            <Form.Control.Feedback type="invalid">
+                            <Form.Control.Feedback type={'invalid'}>
                                 Please provide a valid email.
                             </Form.Control.Feedback>
                         </Form.Group>
@@ -59,7 +59,7 @@ class AddUserForm extends Component<IAddUserFormProps, IAddUserFormState> {
                             {
                                 roles.map((role, index) => {
                                     return (
-                                        <Form.Check type="checkbox" label={role} key={index}
+                                        <Form.Check type={'checkbox'} label={role} key={index}
                                                     checked={this.state.user.roles.includes(role.toLocaleLowerCase())}
                                                     onChange={() => this.onCheckboxChange(role.toLocaleLowerCase())}/>
                                     );
@@ -83,7 +83,7 @@ class AddUserForm extends Component<IAddUserFormProps, IAddUserFormState> {
                             </Form.Control>
                         </Form.Group>
                         <div className={'d-flex justify-content-center'}>
-                            <Button variant="primary" type="submit" disabled={this.state.isLoading}>
+                            <Button variant={'primary'} type={'submit'} disabled={this.state.isLoading}>
                                 {
                                     this.state.isLoading ?
                                         <Spinner animation={'border'}/>
