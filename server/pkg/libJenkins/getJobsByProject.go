@@ -16,7 +16,7 @@ func GetJobsByProject(project Job, userLogs JenkinsCredentials) ([]Job, error) {
 		return []Job{}, err
 	}
 
-	jobsUrl := getWantedCityJobUrl(citiesList, "REN")
+	jobsUrl := getDesiredCityJobsUrl(citiesList, "REN")
 	if jobsUrl == "" {
 		return []Job{}, errors.New("cannot get jobs for given project: no city containing string \"REN\" in its name found")
 	}

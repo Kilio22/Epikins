@@ -23,7 +23,7 @@ type JobInfos struct {
 }
 
 func getJobInfosByURL(url string, logs JenkinsCredentials) (JobInfos, error) {
-	res, err := makeHttpRequest(http.MethodGet, url, logs)
+	res, err := makeHttpRequest(http.MethodGet, url, JenkinsAPIPart, logs, "")
 	if err != nil {
 		return JobInfos{}, errors.New("cannot get job infos: " + err.Error())
 	}
@@ -39,7 +39,7 @@ func getJobInfosByURL(url string, logs JenkinsCredentials) (JobInfos, error) {
 	if jobInfos.LastBuild.Number == 0 {
 		return jobInfos, nil
 	}
-	res, err = makeHttpRequest(http.MethodGet, jobInfos.LastBuild.Url, logs)
+	res, err = makeHttpRequest(http.MethodGet, jobInfos.LastBuild.Url, JenkinsAPIPart, logs, "")
 	if err != nil {
 		return JobInfos{}, errors.New("cannot get job infos: " + err.Error())
 	}
