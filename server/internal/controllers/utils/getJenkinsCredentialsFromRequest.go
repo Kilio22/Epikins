@@ -16,6 +16,7 @@ func GetJenkinsCredentialsFromRequest(c *fiber.Ctx) (libJenkins.JenkinsCredentia
 		return libJenkins.JenkinsCredentials{}, errors.New("wrong body")
 	}
 	credentials.Login = strings.TrimSpace(credentials.Login)
+	credentials.ApiKey = strings.TrimSpace(credentials.ApiKey)
 	err = validator.New().Struct(credentials)
 	if err != nil {
 		return libJenkins.JenkinsCredentials{}, errors.New("wrong body")
