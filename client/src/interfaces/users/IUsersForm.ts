@@ -1,20 +1,19 @@
 import { ChangeUsersStateByProperty, OnButtonClick } from '../Functions';
-import { apiUserInitialState, IApiUser } from '../IApiUser';
+import { apiUserInitialState, IApiUser } from './IApiUser';
 
-export interface IAddUserFormProps {
+export interface IUsersFormProps {
     changeUsersStateByProperty: ChangeUsersStateByProperty,
     getUsers: OnButtonClick,
-    isAdding: boolean,
     jenkinsCredentials: string[]
 }
 
-export interface IAddUserFormState {
+export interface IUsersFormState {
     user: IApiUser
     validation: boolean,
     isLoading: boolean
 }
 
-export const usersFormInitialState: IAddUserFormState = {
+export const usersFormInitialState: IUsersFormState = {
     user: apiUserInitialState,
     validation: false,
     isLoading: false

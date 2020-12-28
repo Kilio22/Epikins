@@ -9,7 +9,7 @@ import { appInitialContext } from '../interfaces/IAppContext';
 import { authServiceObj } from '../services/AuthService';
 import { AccountInfo, AuthenticationResult } from '@azure/msal-browser';
 import Loading from './Loading';
-import { IApiUser } from '../interfaces/IApiUser';
+import { IApiUser } from '../interfaces/users/IApiUser';
 
 class Login extends Component<ILoginProps, ILoginState> {
     static contextType = appInitialContext;

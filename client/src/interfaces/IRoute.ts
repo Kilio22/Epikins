@@ -4,6 +4,7 @@ import Home from '../components/Home';
 import { RouteComponentProps } from 'react-router-dom';
 import ProjectJobs from '../components/projectJobs/ProjectJobs';
 import Users from '../components/users/Users';
+import JenkinsCredentials from '../components/jenkinsCredentials/JenkinsCredentials';
 
 interface IRoute {
     path: string,
@@ -46,6 +47,13 @@ export const routes: IRoute[] = [
         name: 'Users',
         component: Users,
         role: 'users',
+        inNavbar: true
+    },
+    {
+        path: routePrefix + 'credentials',
+        name: 'Jenkins credentials',
+        component: JenkinsCredentials,
+        role: 'credentials',
         inNavbar: true
     }
 ];

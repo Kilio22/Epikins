@@ -1,22 +1,16 @@
 import * as React from 'react';
 import { Component } from 'react';
-import { IApiUser } from '../../interfaces/IApiUser';
+import { IApiUser } from '../../interfaces/users/IApiUser';
 import { Table } from 'react-bootstrap';
 import UsersTableBody from './UsersTableBody';
 import UsersTableHeader from './UsersTableHeader';
 import { IUsersTableProps } from '../../interfaces/users/IUsersTable';
-import { authServiceObj } from '../../services/AuthService';
-import EpikinsApiService from '../../services/EpikinsApiService';
-import { userInitialState } from '../../interfaces/IUser';
 
 class UsersTable extends Component<IUsersTableProps> {
     constructor(props: IUsersTableProps) {
         super(props);
 
         this.onCheckboxClick = this.onCheckboxClick.bind(this);
-        this.onDeleteClick = this.onDeleteClick.bind(this);
-        this.resetUser = this.resetUser.bind(this);
-        this.setErrorMessage = this.setErrorMessage.bind(this);
     }
 
     render() {
@@ -28,21 +22,9 @@ class UsersTable extends Component<IUsersTableProps> {
                                 jenkinsCredentials={this.props.jenkinsCredentials}
                                 isEditing={this.props.isEditing}
                                 onCheckboxClick={this.onCheckboxClick}
-                                onDeleteClick={this.onDeleteClick}/>
+                                onFirstDeleteClick={this.props.onFirstDeleteClick}/>
             </Table>
         );
-    }
-
-    resetUser() {
-        if (this.context.changeAppStateByProperty != null) {
-            this.context.changeAppStateByProperty('user', userInitialState, false);
-        }
-    }
-
-    setErrorMessage(message: string) {
-        if (this.context.changeAppStateByProperty) {
-            this.context.changeAppStateByProperty('errorMessage', message, true);
-        }
     }
 
     onCheckboxClick(modifiedUsers: IApiUser[], modifiedUser: IApiUser, modifiedUserIdx: number, currentRole: string) {
@@ -54,20 +36,6 @@ class UsersTable extends Component<IUsersTableProps> {
             modifiedUsers[modifiedUserIdx].roles.splice(userRoleIdx, 1);
         }
         this.props.changeUsersStateByProperty('modifiedUsers', modifiedUsers);
-    }
-
-    async onDeleteClick(email: string) {
-        const accessToken: string = await authServiceObj.getToken();
-        if (accessToken === '') {
-            this.resetUser();
-            return;
-        }
-
-        const res = await EpikinsApiService.deleteUser(email, accessToken);
-        if (!res) {
-            this.setErrorMessage('Cannot delete user, please try to reload the page.');
-        }
-        await this.props.getUsers();
     }
 }
 

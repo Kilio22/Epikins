@@ -2,7 +2,8 @@ import Axios, { AxiosResponse } from 'axios';
 import { apiBaseURI } from '../Config';
 import { IGroupData } from '../interfaces/IGroupData';
 import { IJob } from '../interfaces/IJob';
-import { IApiUser } from '../interfaces/IApiUser';
+import { IApiUser } from '../interfaces/users/IApiUser';
+import { IApiJenkinsCredentials } from '../interfaces/IJenkinsCredentialsTable/IApiJenkinsCredentials';
 
 class EpikinsApiService {
     static async login(accessToken: string): Promise<IApiUser | null> {
@@ -132,6 +133,31 @@ class EpikinsApiService {
             console.log(e);
         }
         return null;
+    }
+
+    static async addJenkinsCredentials(newCredentials: IApiJenkinsCredentials, apiAccessToken: string): Promise<number> {
+        try {
+            await Axios.post(apiBaseURI + 'credentials', newCredentials,
+                {
+                    headers: {'Authorization': apiAccessToken}
+                });
+            return 201;
+        } catch (e) {
+            return e.response.status;
+        }
+    }
+
+    static async deleteJenkinsCredentials(login: string, apiAccessToken: string): Promise<boolean> {
+        try {
+            await Axios.delete(apiBaseURI + 'credentials/' + login,
+                {
+                    headers: {'Authorization': apiAccessToken}
+                });
+            return true;
+        } catch (e) {
+            console.log(e);
+        }
+        return false;
     }
 }
 

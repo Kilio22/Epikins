@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
-import { IUsersState, usersInitialState } from '../../interfaces/IUsers';
+import { IUsersState, usersInitialState } from '../../interfaces/users/IUsers';
 import UsersToolbox from './UsersToolbox';
 import { userInitialState } from '../../interfaces/IUser';
 import { authServiceObj } from '../../services/AuthService';
 import EpikinsApiService from '../../services/EpikinsApiService';
-import { IApiUser } from '../../interfaces/IApiUser';
+import { IApiUser } from '../../interfaces/users/IApiUser';
 import { IRouteProps } from '../../interfaces/IRoute';
 import { appInitialContext } from '../../interfaces/IAppContext';
 import UsersTable from './UsersTable';
-import AddUserForm from './AddUserForm';
+import UsersForm from './UsersForm';
 import Loading from '../Loading';
+import UsersDeletePopup from './UsersDeletePopup';
 
 class Users extends Component<IRouteProps<{}>, IUsersState> {
     static contextType = appInitialContext;
@@ -29,6 +30,8 @@ class Users extends Component<IRouteProps<{}>, IUsersState> {
         this.updateUser = this.updateUser.bind(this);
         this.updateUsers = this.updateUsers.bind(this);
         this.changeUsersStateByProperty = this.changeUsersStateByProperty.bind(this);
+        this.onDeleteClick = this.onDeleteClick.bind(this);
+        this.onFirstDeleteClick = this.onFirstDeleteClick.bind(this);
 
         this.state = usersInitialState;
     }
@@ -50,10 +53,14 @@ class Users extends Component<IRouteProps<{}>, IUsersState> {
                         <div>
                             {
                                 this.state.isAdding &&
-                                <AddUserForm changeUsersStateByProperty={this.changeUsersStateByProperty}
-                                             isAdding={this.state.isAdding}
-                                             jenkinsCredentials={this.state.jenkinsCredentials}
-                                             getUsers={this.getUsers}/>
+                                <UsersForm changeUsersStateByProperty={this.changeUsersStateByProperty}
+                                           jenkinsCredentials={this.state.jenkinsCredentials}
+                                           getUsers={this.getUsers}/>
+                            }
+                            {
+                                this.state.isDeleting &&
+                                <UsersDeletePopup onDeleteClick={this.onDeleteClick}
+                                                  changeUsersStateByProperty={this.changeUsersStateByProperty}/>
                             }
                             <UsersToolbox isEditing={this.state.isEditing}
                                           isSaving={this.state.isSaving}
@@ -64,9 +71,9 @@ class Users extends Component<IRouteProps<{}>, IUsersState> {
                             <UsersTable users={this.state.modifiedUsers}
                                         jenkinsCredentials={this.state.jenkinsCredentials}
                                         isEditing={this.state.isEditing}
+                                        onFirstDeleteClick={this.onFirstDeleteClick}
                                         changeUsersStateByProperty={this.changeUsersStateByProperty}
-                                        connectedUser={context.user}
-                                        getUsers={this.getUsers}/>
+                                        connectedUser={context.user}/>
                         </div>
                 )}
             </appInitialContext.Consumer>
@@ -83,6 +90,33 @@ class Users extends Component<IRouteProps<{}>, IUsersState> {
             ...this.state,
             isEditing: false,
             isSaving: false
+        });
+    }
+
+    async onDeleteClick() {
+        const accessToken: string = await authServiceObj.getToken();
+        if (accessToken === '') {
+            this.resetUser();
+            return;
+        }
+
+        const res = await EpikinsApiService.deleteUser(this.state.toDelete, accessToken);
+        if (!res) {
+            this.setErrorMessage('Cannot delete user, please try to reload the page.');
+        }
+        this.setState({
+            ...this.state,
+            toDelete: '',
+            isDeleting: false
+        });
+        await this.getUsers();
+    }
+
+    onFirstDeleteClick(toDelete: string) {
+        this.setState({
+            ...this.state,
+            isDeleting: true,
+            toDelete
         });
     }
 

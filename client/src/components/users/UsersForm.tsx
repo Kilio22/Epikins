@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
 import { Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { roles } from './UsersTableHeader';
-import { apiUserInitialState, IApiUser } from '../../interfaces/IApiUser';
+import { apiUserInitialState, IApiUser } from '../../interfaces/users/IApiUser';
 import { appInitialContext } from '../../interfaces/IAppContext';
 import { authServiceObj } from '../../services/AuthService';
 import EpikinsApiService from '../../services/EpikinsApiService';
 import { userInitialState } from '../../interfaces/IUser';
-import { IAddUserFormProps, IAddUserFormState, usersFormInitialState } from '../../interfaces/users/IAddUserForm';
+import { IUsersFormProps, IUsersFormState, usersFormInitialState } from '../../interfaces/users/IUsersForm';
 
-class AddUserForm extends Component<IAddUserFormProps, IAddUserFormState> {
+class UsersForm extends Component<IUsersFormProps, IUsersFormState> {
     static contextType = appInitialContext;
     context!: React.ContextType<typeof appInitialContext>;
 
-    constructor(props: IAddUserFormProps) {
+    constructor(props: IUsersFormProps) {
         super(props);
 
         this.onSubmit = this.onSubmit.bind(this);
@@ -21,6 +21,7 @@ class AddUserForm extends Component<IAddUserFormProps, IAddUserFormState> {
         this.changeUserByProperty = this.changeUserByProperty.bind(this);
         this.resetUser = this.resetUser.bind(this);
         this.setErrorMessage = this.setErrorMessage.bind(this);
+        this.checkFormValidity = this.checkFormValidity.bind(this);
 
         this.state = {
             ...usersFormInitialState,
@@ -145,18 +146,25 @@ class AddUserForm extends Component<IAddUserFormProps, IAddUserFormState> {
         }
     }
 
-    async onSubmit(event: React.FormEvent<HTMLElement>) {
-        event.preventDefault();
-        event.stopPropagation();
+    checkFormValidity(event: React.FormEvent<HTMLElement>): boolean {
         // @ts-ignore
         if (event.currentTarget.checkValidity() === false) {
             this.setState({
                 ...this.state,
                 validation: true
             });
+            return false;
+        }
+        return true;
+    }
+
+    async onSubmit(event: React.FormEvent<HTMLElement>) {
+        event.preventDefault();
+        event.stopPropagation();
+        // @ts-ignore
+        if (!this.checkFormValidity(event)) {
             return;
         }
-
         this.setState({
             ...this.state,
             isLoading: true
@@ -186,4 +194,4 @@ class AddUserForm extends Component<IAddUserFormProps, IAddUserFormState> {
     }
 }
 
-export default AddUserForm;
+export default UsersForm;

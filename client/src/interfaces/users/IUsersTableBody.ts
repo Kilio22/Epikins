@@ -1,8 +1,8 @@
-import { IApiUser } from '../IApiUser';
+import { IApiUser } from './IApiUser';
 import { IUser } from '../IUser';
+import { OnFirstDeleteClick } from '../Functions';
 
 type OnCheckboxClick = (modifiedUsers: IApiUser[], modifiedUser: IApiUser, modifiedUserIdx: number, currentRole: string) => void;
-type OnDeleteClick = (email: string) => void;
 
 export interface IUsersTableBodyProps {
     connectedUser: IUser,
@@ -10,5 +10,5 @@ export interface IUsersTableBodyProps {
     jenkinsCredentials: string[],
     isEditing: boolean,
     onCheckboxClick: OnCheckboxClick,
-    onDeleteClick: OnDeleteClick
+    onFirstDeleteClick: OnFirstDeleteClick
 }

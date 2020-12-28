@@ -9,7 +9,7 @@ const UsersTableBody: React.FunctionComponent<IUsersTableBodyProps> = ({
                                                                            isEditing,
                                                                            jenkinsCredentials,
                                                                            onCheckboxClick,
-                                                                           onDeleteClick
+                                                                           onFirstDeleteClick
                                                                        }) => {
     const sortedUsers = users.sort(((a, b) => a.email.localeCompare(b.email)));
     return (
@@ -59,7 +59,7 @@ const UsersTableBody: React.FunctionComponent<IUsersTableBodyProps> = ({
                         {
                             <td>
                                 <i className={'far fa-trash-alt mr-2 trash'}
-                                   onClick={() => onDeleteClick(user.email)}/>
+                                   onClick={() => onFirstDeleteClick(user.email)}/>
                             </td>
                         }
                     </tr>
