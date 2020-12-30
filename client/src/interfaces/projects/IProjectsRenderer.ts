@@ -1,8 +1,8 @@
-import {IJob} from "../IJob";
-import {RouteComponentProps} from "react-router-dom";
+import { RouteComponentProps } from 'react-router-dom';
+import { IProject } from './IProject';
 
 export interface IProjectsRendererProps {
-    projects: IJob[],
+    projects: IProject[],
     routeProps: RouteComponentProps<any>
 }
 
@@ -11,5 +11,5 @@ export interface IProjectsRendererState {
 }
 
 export const projectsRendererInitialState: IProjectsRendererState = {
-    queryString: ""
-}
+    queryString: ''
+};

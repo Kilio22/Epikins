@@ -4,6 +4,7 @@ import { IGroupData } from '../interfaces/IGroupData';
 import { IJob } from '../interfaces/IJob';
 import { IApiUser } from '../interfaces/users/IApiUser';
 import { IApiJenkinsCredentials } from '../interfaces/IJenkinsCredentialsTable/IApiJenkinsCredentials';
+import { IProject } from '../interfaces/projects/IProject';
 
 class EpikinsApiService {
     static async login(accessToken: string): Promise<IApiUser | null> {
@@ -33,6 +34,16 @@ class EpikinsApiService {
     static async getJobs(url: string, apiAccessToken: string): Promise<IJob[] | null> {
         try {
             const res: AxiosResponse<IJob[]> = await Axios.get<IJob[]>(url, {headers: {'Authorization': apiAccessToken}});
+            return res.data;
+        } catch (e) {
+            console.log(e);
+            return null;
+        }
+    }
+
+    static async getProjects(apiAccessToken: string): Promise<IProject[] | null> {
+        try {
+            const res = await Axios.get<IProject[]>(apiBaseURI + 'projects', {headers: {'Authorization': apiAccessToken}});
             return res.data;
         } catch (e) {
             console.log(e);

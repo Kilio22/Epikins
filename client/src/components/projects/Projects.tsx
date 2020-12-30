@@ -4,12 +4,11 @@ import { IProjectsState, projectsInitialState } from '../../interfaces/projects/
 import EpikinsApiService from '../../services/EpikinsApiService';
 import ProjectsRenderer from './ProjectsRenderer';
 import { IRouteProps, routePrefix } from '../../interfaces/IRoute';
-import { apiBaseURI } from '../../Config';
-import { IJob } from '../../interfaces/IJob';
 import { appInitialContext } from '../../interfaces/IAppContext';
 import { authServiceObj } from '../../services/AuthService';
 import Loading from '../Loading';
 import { userInitialState } from '../../interfaces/IUser';
+import { IProject } from '../../interfaces/projects/IProject';
 
 class Projects extends Component<IRouteProps<{}>, IProjectsState> {
     static contextType = appInitialContext;
@@ -46,17 +45,17 @@ class Projects extends Component<IRouteProps<{}>, IProjectsState> {
             return;
         }
 
-        const res: IJob[] | null = await EpikinsApiService.getJobs(apiBaseURI + 'projects', accessToken);
+        const res: IProject[] | null = await EpikinsApiService.getProjects(accessToken);
         if (res) {
-            const sortedJobs: IJob[] = res.sort((a, b) => {
-                return a.name.localeCompare(b.name);
+            const sortedProjects: IProject[] = res.sort((a, b) => {
+                return a.job.name.localeCompare(b.job.name);
             });
-            sortedJobs.forEach((job) => {
-                job.epikinsJobURL = routePrefix + 'projects/' + job.name;
+            sortedProjects.forEach((project) => {
+                project.epikinsProjectURL = routePrefix + 'projects/' + project.job.name;
             });
             this.setState({
                 ...this.state,
-                projects: sortedJobs
+                projects: sortedProjects
             });
         } else {
             this.setState({

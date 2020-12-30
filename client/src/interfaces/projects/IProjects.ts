@@ -1,11 +1,11 @@
-import {IJob} from "../IJob";
+import { IProject } from './IProject';
 
 export interface IProjectsState {
-    projects: IJob[],
+    projects: IProject[],
     isLoading: boolean
 }
 
 export const projectsInitialState: IProjectsState = {
     projects: [],
     isLoading: false
-}
+};
