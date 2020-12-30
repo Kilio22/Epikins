@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"epikins-api/internal"
-	"epikins-api/internal/controllers/utils"
+	"epikins-api/internal/controllers/util"
 	"epikins-api/internal/services/buildService"
 	"github.com/gofiber/fiber/v2"
 )
@@ -20,12 +20,12 @@ func getJobsToBuild(c *fiber.Ctx) ([]string, error) {
 }
 
 func getBuildParams(c *fiber.Ctx) (buildService.BuildParams, internal.MyError) {
-	visibility, err := utils.GetVisibilityQueryParam(c)
+	visibility, err := util.GetVisibilityQueryParam(c)
 	if err != nil {
 		return buildService.BuildParams{}, internal.MyError{Err: err, StatusCode: http.StatusBadRequest}
 	}
 
-	fuMode, err := utils.GetQueryBoolValue("fu", false, c)
+	fuMode, err := util.GetQueryBoolValue("fu", false, c)
 	if err != nil {
 		return buildService.BuildParams{}, internal.MyError{Err: err, StatusCode: http.StatusBadRequest}
 	}
@@ -57,7 +57,7 @@ func BuildController(appData *internal.AppData, c *fiber.Ctx) error {
 		return SendMessage(c, myErr.Err.Error(), myErr.StatusCode)
 	}
 
-	userLogs, err := utils.GetUserJenkinsCredentials(userEmail, appData.UsersCollection, appData.JenkinsCredentialsCollection)
+	userLogs, err := util.GetUserJenkinsCredentials(userEmail, appData.UsersCollection, appData.JenkinsCredentialsCollection)
 	if err != nil {
 		return SendMessage(c, "cannot start builds: "+err.Error(), http.StatusInternalServerError)
 	}

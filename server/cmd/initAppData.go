@@ -2,7 +2,7 @@ package main
 
 import (
 	"epikins-api/internal"
-	"epikins-api/internal/services/utils"
+	"epikins-api/internal/services/util"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -11,7 +11,7 @@ const JenkinsCredentialsCollectionName string = "credentials"
 const UsersCollectionName string = "users"
 
 func initAppData(mongoClient *mongo.Client) *internal.AppData {
-	epikinsDatabase := mongoClient.Database(utils.GetEnvVariable("MONGO_DB"))
+	epikinsDatabase := mongoClient.Database(util.GetEnvVariable("MONGO_DB"))
 	projectsCollection := epikinsDatabase.Collection(ProjectsCollectionName)
 	credentialsCollection := epikinsDatabase.Collection(JenkinsCredentialsCollectionName)
 	usersCollection := epikinsDatabase.Collection(UsersCollectionName)
@@ -21,6 +21,6 @@ func initAppData(mongoClient *mongo.Client) *internal.AppData {
 		JenkinsCredentialsCollection: credentialsCollection,
 		UsersCollection:              usersCollection,
 		ProjectsData:                 make(map[string]internal.ProjectsData),
-		AppId:                        utils.GetEnvVariable("APP_ID"),
+		AppId:                        util.GetEnvVariable("APP_ID"),
 	}
 }

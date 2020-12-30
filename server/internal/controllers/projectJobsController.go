@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"epikins-api/internal"
-	"epikins-api/internal/controllers/utils"
+	"epikins-api/internal/controllers/util"
 	"epikins-api/internal/services/projectJobsService"
 	"github.com/gofiber/fiber/v2"
 	"net/http"
@@ -11,7 +11,7 @@ import (
 func ProjectJobsController(appData *internal.AppData, c *fiber.Ctx) error {
 	userEmail := c.Get("email")
 	projectName := c.Params("project")
-	userLogs, err := utils.GetUserJenkinsCredentials(userEmail, appData.UsersCollection, appData.JenkinsCredentialsCollection)
+	userLogs, err := util.GetUserJenkinsCredentials(userEmail, appData.UsersCollection, appData.JenkinsCredentialsCollection)
 	if err != nil {
 		return SendMessage(c, "cannot start builds: "+err.Error(), http.StatusInternalServerError)
 	}

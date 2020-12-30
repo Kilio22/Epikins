@@ -2,14 +2,14 @@ package loginService
 
 import (
 	"encoding/json"
-	"epikins-api/internal/services/utils"
+	"epikins-api/internal/services/util"
 	"errors"
 	"net/http"
 
 	"github.com/dgrijalva/jwt-go"
 )
 
-var EpitechJWKSUri = "https://login.microsoftonline.com/" + utils.GetEnvVariable("TENANT_ID") + "/discovery/v2.0/keys"
+var EpitechJWKSUri = "https://login.microsoftonline.com/" + util.GetEnvVariable("TENANT_ID") + "/discovery/v2.0/keys"
 
 type JwksKey struct {
 	Kid string   `json:"kid"`

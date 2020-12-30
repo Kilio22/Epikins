@@ -2,15 +2,15 @@ package main
 
 import (
 	"context"
-	"epikins-api/internal/services/utils"
+	"epikins-api/internal/services/util"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 )
 
 func connectToDb() *mongo.Client {
-	clientOptions := options.Client().ApplyURI("mongodb://" + utils.GetEnvVariable("MONGO_HOST") + ":" + utils.GetEnvVariable("MONGO_PORT"))
-	clientOptions.SetAuth(options.Credential{Username: utils.GetEnvVariable("MONGO_INITDB_ROOT_USERNAME"), Password: utils.GetEnvVariable("MONGO_INITDB_ROOT_PASSWORD")})
+	clientOptions := options.Client().ApplyURI("mongodb://" + util.GetEnvVariable("MONGO_HOST") + ":" + util.GetEnvVariable("MONGO_PORT"))
+	clientOptions.SetAuth(options.Credential{Username: util.GetEnvVariable("MONGO_INITDB_ROOT_USERNAME"), Password: util.GetEnvVariable("MONGO_INITDB_ROOT_PASSWORD")})
 
 	mongoClient, err := mongo.Connect(context.TODO(), clientOptions)
 	if err != nil {
@@ -34,7 +34,7 @@ func main() {
 
 	appData := initAppData(mongoClient)
 	app := setupApp(appData)
-	appPort := utils.GetEnvVariable("SERVER_PORT")
+	appPort := util.GetEnvVariable("SERVER_PORT")
 	log.Println("Listening on port " + appPort)
 	log.Fatal(app.Listen(":" + appPort))
 }

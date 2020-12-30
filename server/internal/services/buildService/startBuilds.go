@@ -1,7 +1,7 @@
 package buildService
 
 import (
-	"epikins-api/internal/services/utils"
+	"epikins-api/internal/services/util"
 	"errors"
 
 	"epikins-api/pkg/libJenkins"
@@ -28,7 +28,7 @@ func buildLoop(buildParams BuildParams, groupsBuildData []GroupBuildData, userLo
 }
 
 func startBuilds(buildParams BuildParams, jobs []libJenkins.Job, collection *mongo.Collection, userLogs libJenkins.JenkinsCredentials) error {
-	projectData, err := utils.FetchProjectData(buildParams.Project, jobs, collection)
+	projectData, err := util.FetchProjectData(buildParams.Project, jobs, collection)
 	if err != nil {
 		return errors.New("cannot start builds: " + err.Error())
 	}

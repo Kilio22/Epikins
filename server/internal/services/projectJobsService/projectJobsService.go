@@ -5,12 +5,12 @@ import (
 	"net/http"
 
 	"epikins-api/internal"
-	"epikins-api/internal/services/utils"
+	"epikins-api/internal/services/util"
 	"epikins-api/pkg/libJenkins"
 )
 
 func ProjectJobsService(projectName string, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) ([]WorkgroupData, internal.MyError) {
-	if err := utils.CheckProjectsData(userLogs, appData); err != nil {
+	if err := util.CheckProjectsData(userLogs, appData); err != nil {
 		return []WorkgroupData{}, internal.MyError{
 			Err:        errors.New("cannot get workgroups associated to project \"" + projectName + "\": " + err.Error()),
 			StatusCode: http.StatusInternalServerError,
@@ -18,7 +18,7 @@ func ProjectJobsService(projectName string, userLogs libJenkins.JenkinsCredentia
 	}
 
 	projectsData := appData.ProjectsData[userLogs.Login]
-	askedProject, err := utils.GetAskedProject(projectsData.ProjectList, projectName)
+	askedProject, err := util.GetAskedProject(projectsData.ProjectList, projectName)
 	if err != nil {
 		return []WorkgroupData{}, internal.MyError{
 			Err:        errors.New("cannot get workgroups associated to project \"" + projectName + "\": " + err.Error()),

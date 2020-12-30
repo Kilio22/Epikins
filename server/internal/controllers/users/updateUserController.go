@@ -3,14 +3,14 @@ package users
 import (
 	"epikins-api/internal"
 	"epikins-api/internal/controllers"
-	"epikins-api/internal/controllers/utils"
+	"epikins-api/internal/controllers/util"
 	"epikins-api/internal/services/users/updateUserService"
 	"github.com/gofiber/fiber/v2"
 	"net/http"
 )
 
 func UpdateUserController(appData *internal.AppData, c *fiber.Ctx) error {
-	user, err := utils.GetUserFromRequest(c)
+	user, err := util.GetUserFromRequest(c)
 	if err != nil {
 		return controllers.SendMessage(c, err.Error(), http.StatusBadRequest)
 	}

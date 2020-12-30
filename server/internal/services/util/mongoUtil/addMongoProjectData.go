@@ -1,4 +1,4 @@
-package mongoUtils
+package mongoUtil
 
 import (
 	"context"

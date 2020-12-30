@@ -2,7 +2,7 @@ package updateProjectBuildLimitService
 
 import (
 	"epikins-api/internal"
-	"epikins-api/internal/services/utils/mongoUtils"
+	"epikins-api/internal/services/util/mongoUtil"
 	"epikins-api/pkg/libJenkins"
 	"errors"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -44,7 +44,7 @@ func UpdateProjectBuildLimitService(newLimit NewLimit, projectName string, jenki
 	shouldRetry, myError := checkError(err, true, projectName, jenkinsCredentials, appData)
 
 	if shouldRetry && myError.Err == nil {
-		_, err := mongoUtils.AddMongoProjectData(projectName, []libJenkins.Job{}, appData.ProjectsCollection)
+		_, err := mongoUtil.AddMongoProjectData(projectName, []libJenkins.Job{}, appData.ProjectsCollection)
 		if err != nil {
 			return internal.MyError{
 				Err:        errors.New("cannot update build limit: something went wrong when trying to add projectName in DB: " + err.Error()),

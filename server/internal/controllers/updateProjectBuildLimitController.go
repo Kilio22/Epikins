@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"epikins-api/internal"
-	"epikins-api/internal/controllers/utils"
+	"epikins-api/internal/controllers/util"
 	"epikins-api/internal/services/updateProjectBuildLimitService"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -30,7 +30,7 @@ func UpdateProjectBuildLimitController(appData *internal.AppData, c *fiber.Ctx) 
 		return SendMessage(c, "cannot update project limit: "+err.Error(), http.StatusBadRequest)
 	}
 
-	jenkinsCredentials, err := utils.GetUserJenkinsCredentials(userEmail, appData.UsersCollection, appData.JenkinsCredentialsCollection)
+	jenkinsCredentials, err := util.GetUserJenkinsCredentials(userEmail, appData.UsersCollection, appData.JenkinsCredentialsCollection)
 	myError := updateProjectBuildLimitService.UpdateProjectBuildLimitService(newLimit, projectName, jenkinsCredentials, appData)
 	if myError.Err != nil {
 		return SendMessage(c, myError.Err.Error(), myError.StatusCode)

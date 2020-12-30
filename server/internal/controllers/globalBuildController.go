@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"epikins-api/internal"
-	"epikins-api/internal/controllers/utils"
+	"epikins-api/internal/controllers/util"
 	"epikins-api/internal/services/globalBuildService"
 	"errors"
 	"net/http"
@@ -11,7 +11,7 @@ import (
 )
 
 func getGlobalBuildParams(c *fiber.Ctx) (globalBuildService.GlobalBuildParams, internal.MyError) {
-	visibility, err := utils.GetVisibilityQueryParam(c)
+	visibility, err := util.GetVisibilityQueryParam(c)
 	if err != nil {
 		return globalBuildService.GlobalBuildParams{}, internal.MyError{Err: err, StatusCode: http.StatusBadRequest}
 	}
@@ -30,7 +30,7 @@ func GlobalBuildController(appData *internal.AppData, c *fiber.Ctx) error {
 		return SendMessage(c, myErr.Err.Error(), myErr.StatusCode)
 	}
 
-	userLogs, err := utils.GetUserJenkinsCredentials(userEmail, appData.UsersCollection, appData.JenkinsCredentialsCollection)
+	userLogs, err := util.GetUserJenkinsCredentials(userEmail, appData.UsersCollection, appData.JenkinsCredentialsCollection)
 	if err != nil {
 		return SendMessage(c, "cannot start build: "+err.Error(), http.StatusInternalServerError)
 	}

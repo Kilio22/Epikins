@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"epikins-api/internal"
-	"epikins-api/internal/services/utils"
+	"epikins-api/internal/services/util"
 	"epikins-api/pkg/libJenkins"
 )
 
@@ -15,12 +15,12 @@ type GlobalBuildParams struct {
 }
 
 func GlobalBuildService(globalBuildParams GlobalBuildParams, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) internal.MyError {
-	if err := utils.CheckProjectsData(userLogs, appData); err != nil {
+	if err := util.CheckProjectsData(userLogs, appData); err != nil {
 		return internal.MyError{Err: errors.New("cannot build: " + err.Error()), StatusCode: http.StatusInternalServerError}
 	}
 
 	projectsData := appData.ProjectsData[userLogs.Login]
-	askedProject, err := utils.GetAskedProject(projectsData.ProjectList, globalBuildParams.Project)
+	askedProject, err := util.GetAskedProject(projectsData.ProjectList, globalBuildParams.Project)
 	if err != nil {
 		return internal.MyError{Err: errors.New("cannot build: " + err.Error()), StatusCode: http.StatusBadRequest}
 	}

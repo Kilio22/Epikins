@@ -2,7 +2,7 @@ package projectsService
 
 import (
 	"epikins-api/internal"
-	"epikins-api/internal/services/utils"
+	"epikins-api/internal/services/util"
 	"epikins-api/pkg/libJenkins"
 	"errors"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -13,7 +13,7 @@ func getProjectData(projectList []libJenkins.Project, collection *mongo.Collecti
 	var response []ProjectResponse
 
 	for _, project := range projectList {
-		projectData, err := utils.FetchProjectData(project.Job.Name, []libJenkins.Job{}, collection)
+		projectData, err := util.FetchProjectData(project.Job.Name, []libJenkins.Job{}, collection)
 		if err != nil {
 			return nil, internal.MyError{
 				Err:        errors.New("cannot get projects data: " + err.Error()),

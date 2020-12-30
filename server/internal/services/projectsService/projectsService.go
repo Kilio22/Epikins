@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"epikins-api/internal"
-	"epikins-api/internal/services/utils"
+	"epikins-api/internal/services/util"
 	"epikins-api/pkg/libJenkins"
 )
 
@@ -22,7 +22,7 @@ func ProjectsService(shouldUpdateProjectList bool, userLogs libJenkins.JenkinsCr
 		return getProjectData(projectsData.ProjectList, appData.ProjectsCollection)
 	}
 
-	if err := utils.UpdateProjectList(userLogs, appData); err != nil {
+	if err := util.UpdateProjectList(userLogs, appData); err != nil {
 		return []ProjectResponse{}, internal.MyError{
 			Err:        errors.New("cannot get projects: " + err.Error()),
 			StatusCode: http.StatusInternalServerError,

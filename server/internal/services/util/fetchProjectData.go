@@ -1,8 +1,8 @@
-package utils
+package util
 
 import (
 	"epikins-api/internal"
-	"epikins-api/internal/services/utils/mongoUtils"
+	"epikins-api/internal/services/util/mongoUtil"
 	"epikins-api/pkg/libJenkins"
 	"errors"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -10,10 +10,10 @@ import (
 )
 
 func FetchProjectData(project string, jobs []libJenkins.Job, collection *mongo.Collection) (internal.MongoProjectData, error) {
-	mongoProjectData, err := mongoUtils.FetchMongoProjectData(project, collection)
+	mongoProjectData, err := mongoUtil.FetchMongoProjectData(project, collection)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			return mongoUtils.AddMongoProjectData(project, jobs, collection)
+			return mongoUtil.AddMongoProjectData(project, jobs, collection)
 		}
 		log.Println(err)
 		return internal.MongoProjectData{}, errors.New("cannot fetch data in DB: " + err.Error())

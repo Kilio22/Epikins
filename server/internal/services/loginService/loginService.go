@@ -3,7 +3,7 @@ package loginService
 import (
 	"context"
 	"epikins-api/internal"
-	"epikins-api/internal/services/utils"
+	"epikins-api/internal/services/util"
 	"errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -12,7 +12,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-var IssuerURL = "https://login.microsoftonline.com/" + utils.GetEnvVariable("TENANT_ID") + "/v2.0"
+var IssuerURL = "https://login.microsoftonline.com/" + util.GetEnvVariable("TENANT_ID") + "/v2.0"
 
 type MyClaims struct {
 	Email string `json:"email"`
