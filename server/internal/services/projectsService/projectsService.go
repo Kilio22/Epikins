@@ -10,20 +10,23 @@ import (
 	"epikins-api/pkg/libJenkins"
 )
 
-func ProjectsService(shouldUpdateProjectList bool, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) ([]libJenkins.Job, internal.MyError) {
+type ProjectResponse struct {
+	BuildLimit int            `json:"buildLimit"`
+	Job        libJenkins.Job `json:"job"`
+	Module     string         `json:"module"`
+}
+
+func ProjectsService(shouldUpdateProjectList bool, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) ([]ProjectResponse, internal.MyError) {
 	projectsData, ok := appData.ProjectsData[userLogs.Login]
 	if ok && !shouldUpdateProjectList && time.Since(projectsData.LastUpdate).Hours() < 1 {
-		return projectsData.ProjectList, internal.MyError{
-			Err:        nil,
-			StatusCode: http.StatusOK,
-		}
+		return getProjectData(projectsData.ProjectList, appData.ProjectsCollection)
 	}
 
 	if err := utils.UpdateProjectList(userLogs, appData); err != nil {
-		return []libJenkins.Job{}, internal.MyError{
+		return []ProjectResponse{}, internal.MyError{
 			Err:        errors.New("cannot get projects: " + err.Error()),
 			StatusCode: http.StatusInternalServerError,
 		}
 	}
-	return appData.ProjectsData[userLogs.Login].ProjectList, internal.MyError{}
+	return getProjectData(appData.ProjectsData[userLogs.Login].ProjectList, appData.ProjectsCollection)
 }

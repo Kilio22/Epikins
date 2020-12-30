@@ -6,20 +6,19 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"epikins-api/config"
 	"epikins-api/internal"
 	"epikins-api/pkg/libJenkins"
 )
 
-func getNewMongoworkgroupData(job libJenkins.Job) internal.MongoWorkgroupData {
+func getNewMongoWorkgroupData(job libJenkins.Job, buildLimit int) internal.MongoWorkgroupData {
 	return internal.MongoWorkgroupData{
 		Name:            job.Name,
-		RemainingBuilds: config.DefaultBuildNb,
+		RemainingBuilds: buildLimit,
 	}
 }
 
-func AddMongoWorkgroupDataToProject(job libJenkins.Job, project string, collection *mongo.Collection) (internal.MongoWorkgroupData, error) {
-	newMongoWorkgroupData := getNewMongoworkgroupData(job)
+func AddMongoWorkgroupDataToProject(job libJenkins.Job, project string, buildLimit int, collection *mongo.Collection) (internal.MongoWorkgroupData, error) {
+	newMongoWorkgroupData := getNewMongoWorkgroupData(job, buildLimit)
 	err := UpdateProject(project, bson.M{"$push": bson.M{"mongoworkgroupsdata": newMongoWorkgroupData}}, collection)
 	if err != nil {
 		return internal.MongoWorkgroupData{}, errors.New("cannot add workgroup data in DB: " + err.Error())

@@ -6,11 +6,11 @@ import (
 	"epikins-api/pkg/libJenkins"
 )
 
-func GetAskedProject(projectList []libJenkins.Job, projectName string) (libJenkins.Job, error) {
+func GetAskedProject(projectList []libJenkins.Project, projectName string) (libJenkins.Project, error) {
 	for idx, project := range projectList {
-		if project.Name == projectName {
+		if project.Job.Name == projectName {
 			return projectList[idx], nil
 		}
 	}
-	return libJenkins.Job{}, errors.New("cannot find project with name \"" + projectName + "\"")
+	return libJenkins.Project{}, errors.New("cannot find project with name \"" + projectName + "\"")
 }

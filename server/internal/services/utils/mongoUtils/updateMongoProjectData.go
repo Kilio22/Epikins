@@ -9,10 +9,10 @@ import (
 )
 
 func UpdateProject(projectName string, fieldsToUpdate bson.M, collection *mongo.Collection) error {
-	_, err := collection.UpdateOne(context.TODO(), bson.M{"name": projectName}, fieldsToUpdate)
-	if err != nil {
-		log.Println(err)
-		return err
+	res := collection.FindOneAndUpdate(context.TODO(), bson.M{"name": projectName}, fieldsToUpdate)
+	if res.Err() != nil {
+		log.Println(res.Err())
+		return res.Err()
 	}
 	return nil
 }

@@ -1,4 +1,4 @@
-package mongoUtils
+package utils
 
 import (
 	"epikins-api/internal"

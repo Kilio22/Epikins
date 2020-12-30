@@ -24,7 +24,7 @@ func setupApp(appData *internal.AppData) *fiber.App {
 	})
 
 	projectsGroup := app.Group("/projects", func(ctx *fiber.Ctx) error {
-		return checkUserRole(appData, config.PROJECTS, ctx)
+		return checkUserRole(appData, ctx, config.PROJECTS, config.MODULE)
 	})
 	projectsGroup.Get("/", func(ctx *fiber.Ctx) error {
 		return controllers.ProjectsController(appData, ctx)
@@ -34,7 +34,7 @@ func setupApp(appData *internal.AppData) *fiber.App {
 	})
 
 	buildGroup := app.Group("/build", func(ctx *fiber.Ctx) error {
-		return checkUserRole(appData, config.PROJECTS, ctx)
+		return checkUserRole(appData, ctx, config.PROJECTS)
 	})
 	buildGroup.Post("/", func(ctx *fiber.Ctx) error {
 		return controllers.BuildController(appData, ctx)
@@ -47,7 +47,7 @@ func setupApp(appData *internal.AppData) *fiber.App {
 		return jenkinsCredentials.GetJenkinsCredentialsController(appData, ctx)
 	})
 	protectedCredentialsGroup := app.Group("/credentials", func(ctx *fiber.Ctx) error {
-		return checkUserRole(appData, config.CREDENTIALS, ctx)
+		return checkUserRole(appData, ctx, config.CREDENTIALS)
 	})
 	protectedCredentialsGroup.Post("/", func(ctx *fiber.Ctx) error {
 		return jenkinsCredentials.AddJenkinsCredentialController(appData, ctx)
@@ -57,7 +57,7 @@ func setupApp(appData *internal.AppData) *fiber.App {
 	})
 
 	usersGroup := app.Group("/users", func(ctx *fiber.Ctx) error {
-		return checkUserRole(appData, config.USERS, ctx)
+		return checkUserRole(appData, ctx, config.USERS)
 	})
 	usersGroup.Get("/", func(ctx *fiber.Ctx) error {
 		return users.GetUsersController(appData, ctx)
@@ -70,6 +70,13 @@ func setupApp(appData *internal.AppData) *fiber.App {
 	})
 	usersGroup.Delete("/:username", func(ctx *fiber.Ctx) error {
 		return users.DeleteUserController(appData, ctx)
+	})
+
+	moduleManagerGroup := app.Group("/projects", func(ctx *fiber.Ctx) error {
+		return checkUserRole(appData, ctx, config.MODULE)
+	})
+	moduleManagerGroup.Put("/:project", func(ctx *fiber.Ctx) error {
+		return controllers.UpdateProjectBuildLimitController(appData, ctx)
 	})
 
 	app.Use(func(c *fiber.Ctx) error {

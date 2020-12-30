@@ -16,8 +16,9 @@ type WorkgroupData struct {
 	MongoGroupData internal.MongoWorkgroupData `json:"mongoGroupData"`
 }
 
+// TODO: remove useless workgroups from db
 func getWorkgroupsData(workgroups []libJenkins.Workgroup, project string, collection *mongo.Collection) ([]WorkgroupData, error) {
-	projectData, err := mongoUtils.FetchProjectData(project, getJobsFromWorkgroups(workgroups), collection)
+	projectData, err := utils.FetchProjectData(project, getJobsFromWorkgroups(workgroups), collection)
 	if err != nil {
 		return []WorkgroupData{}, errors.New("cannot get workgroups remaining builds: " + err.Error())
 	}
@@ -30,13 +31,13 @@ func getWorkgroupsData(workgroups []libJenkins.Workgroup, project string, collec
 				MongoGroupData: mongoGroupData,
 			})
 		} else {
-			newMongoworkgroupData, err := mongoUtils.AddMongoWorkgroupDataToProject(workgroup.Job, project, collection)
+			newMongoWorkgroupData, err := mongoUtils.AddMongoWorkgroupDataToProject(workgroup.Job, project, projectData.BuildLimit, collection)
 			if err != nil {
 				return []WorkgroupData{}, err
 			}
 			workgroupsData = append(workgroupsData, WorkgroupData{
 				GroupJob:       workgroup,
-				MongoGroupData: newMongoworkgroupData,
+				MongoGroupData: newMongoWorkgroupData,
 			})
 		}
 	}

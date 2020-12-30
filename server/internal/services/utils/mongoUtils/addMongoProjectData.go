@@ -10,7 +10,7 @@ import (
 	"log"
 )
 
-func addProject(project string, jobs []libJenkins.Job, collection *mongo.Collection) (internal.MongoProjectData, error) {
+func AddMongoProjectData(projectName string, jobs []libJenkins.Job, collection *mongo.Collection) (internal.MongoProjectData, error) {
 	var mongoWorkgroupsData []internal.MongoWorkgroupData
 	for _, job := range jobs {
 		mongoWorkgroupsData = append(mongoWorkgroupsData, internal.MongoWorkgroupData{
@@ -19,14 +19,15 @@ func addProject(project string, jobs []libJenkins.Job, collection *mongo.Collect
 		})
 	}
 	newProjectData := internal.MongoProjectData{
-		Name:                project,
+		BuildLimit:          config.DefaultBuildNb,
+		LastUpdate:          GetLastMondayDate(),
 		MongoWorkgroupsData: mongoWorkgroupsData,
-		LastUpdate:          getLastMondayDate(),
+		Name:                projectName,
 	}
 	_, err := collection.InsertOne(context.TODO(), newProjectData)
 	if err != nil {
 		log.Println(err)
-		return internal.MongoProjectData{}, errors.New("cannot add new project in db: " + err.Error())
+		return internal.MongoProjectData{}, errors.New("cannot add new projectName in db: " + err.Error())
 	}
 	return newProjectData, nil
 }

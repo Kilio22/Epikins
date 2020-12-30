@@ -30,7 +30,7 @@ func BuildService(buildParams BuildParams, appData *internal.AppData, userLogs l
 		}
 	}
 
-	jobs, err := libJenkins.GetJobsByProject(askedProjectData, userLogs)
+	jobs, err := libJenkins.GetJobsByProject(askedProjectData.Job, userLogs)
 	if err != nil {
 		return internal.MyError{Err: errors.New("cannot build: " + err.Error()), StatusCode: http.StatusInternalServerError}
 	} else if len(jobs) == 0 {

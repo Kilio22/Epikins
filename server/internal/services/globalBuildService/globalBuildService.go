@@ -25,7 +25,7 @@ func GlobalBuildService(globalBuildParams GlobalBuildParams, userLogs libJenkins
 		return internal.MyError{Err: errors.New("cannot build: " + err.Error()), StatusCode: http.StatusBadRequest}
 	}
 
-	globalJobUrl, err := libJenkins.GetGlobalJobUrlByProject(askedProject, userLogs)
+	globalJobUrl, err := libJenkins.GetGlobalJobUrlByProject(askedProject.Job, userLogs)
 	if err != nil {
 		return internal.MyError{Err: errors.New("cannot build: " + err.Error()), StatusCode: http.StatusInternalServerError}
 	}

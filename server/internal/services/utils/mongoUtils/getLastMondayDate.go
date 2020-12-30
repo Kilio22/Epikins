@@ -2,7 +2,7 @@ package mongoUtils
 
 import "time"
 
-func getLastMondayDate() int64 {
+func GetLastMondayDate() int64 {
 	var lastMonday time.Time
 
 	currentDay := time.Now().Weekday()

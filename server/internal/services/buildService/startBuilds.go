@@ -1,9 +1,9 @@
 package buildService
 
 import (
+	"epikins-api/internal/services/utils"
 	"errors"
 
-	"epikins-api/internal/services/utils/mongoUtils"
 	"epikins-api/pkg/libJenkins"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -28,12 +28,12 @@ func buildLoop(buildParams BuildParams, groupsBuildData []GroupBuildData, userLo
 }
 
 func startBuilds(buildParams BuildParams, jobs []libJenkins.Job, collection *mongo.Collection, userLogs libJenkins.JenkinsCredentials) error {
-	projectData, err := mongoUtils.FetchProjectData(buildParams.Project, jobs, collection)
+	projectData, err := utils.FetchProjectData(buildParams.Project, jobs, collection)
 	if err != nil {
 		return errors.New("cannot start builds: " + err.Error())
 	}
 
-	groupsBuildData, err := getGroupsBuildData(jobs, projectData.MongoWorkgroupsData, buildParams.Project, collection)
+	groupsBuildData, err := getGroupsBuildData(jobs, projectData, buildParams.Project, collection)
 	if err != nil {
 		return errors.New("cannot start builds: " + err.Error())
 	}

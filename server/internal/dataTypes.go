@@ -9,7 +9,7 @@ import (
 )
 
 type ProjectsData struct {
-	ProjectList []libJenkins.Job
+	ProjectList []libJenkins.Project
 	LastUpdate  time.Time
 }
 
@@ -19,9 +19,10 @@ type MongoWorkgroupData struct {
 }
 
 type MongoProjectData struct {
-	Name                string               `json:"name"`
-	MongoWorkgroupsData []MongoWorkgroupData `json:"mongoWorkgroupsData"`
+	BuildLimit          int                  `json:"buildLimit"`
 	LastUpdate          int64                `json:"lastUpdate"`
+	MongoWorkgroupsData []MongoWorkgroupData `bson:"mongoworkgroupsdata,omitempty" json:"mongoWorkgroupsData"`
+	Name                string               `json:"name"`
 }
 
 type Role string

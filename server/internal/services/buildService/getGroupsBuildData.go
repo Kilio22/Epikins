@@ -14,16 +14,17 @@ type GroupBuildData struct {
 	mongoGroupData internal.MongoWorkgroupData
 }
 
-func getGroupsBuildData(jobs []libJenkins.Job, studentsData []internal.MongoWorkgroupData, project string, collection *mongo.Collection) ([]GroupBuildData, error) {
+// TODO: remove useless workgroups from db
+func getGroupsBuildData(jobs []libJenkins.Job, projectData internal.MongoProjectData, project string, collection *mongo.Collection) ([]GroupBuildData, error) {
 	var jobsBuildData []GroupBuildData
 	for _, job := range jobs {
-		if groupMongoData, ok := utils.HasMongoWorkgroupData(job.Name, studentsData); ok {
+		if groupMongoData, ok := utils.HasMongoWorkgroupData(job.Name, projectData.MongoWorkgroupsData); ok {
 			jobsBuildData = append(jobsBuildData, GroupBuildData{
 				groupJob:       job,
 				mongoGroupData: groupMongoData,
 			})
 		} else {
-			newMongoGroupData, err := mongoUtils.AddMongoWorkgroupDataToProject(job, project, collection)
+			newMongoGroupData, err := mongoUtils.AddMongoWorkgroupDataToProject(job, project, projectData.BuildLimit, collection)
 			if err != nil {
 				return []GroupBuildData{}, err
 			}

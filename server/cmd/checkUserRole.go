@@ -9,23 +9,25 @@ import (
 	"net/http"
 )
 
-func hasRole(roles []internal.Role, toFind internal.Role) bool {
+func hasRole(roles []internal.Role, acceptedRoles []internal.Role) bool {
 	for _, role := range roles {
-		if role == toFind {
-			return true
+		for _, acceptedRole := range acceptedRoles {
+			if role == acceptedRole {
+				return true
+			}
 		}
 	}
 	return false
 }
 
-func checkUserRole(appData *internal.AppData, role internal.Role, c *fiber.Ctx) error {
+func checkUserRole(appData *internal.AppData, c *fiber.Ctx, acceptedRoles ...internal.Role) error {
 	var user internal.User
 	err := appData.UsersCollection.FindOne(context.TODO(), bson.M{"email": c.Get("email")}).Decode(&user)
 
 	if err != nil {
 		return err
 	}
-	if hasRole(user.Roles, role) == false {
+	if hasRole(user.Roles, acceptedRoles) == false {
 		return controllers.SendMessage(c, "you're not authorized to access to this resource", http.StatusForbidden)
 	}
 	return c.Next()

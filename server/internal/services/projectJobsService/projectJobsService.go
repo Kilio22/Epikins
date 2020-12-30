@@ -26,7 +26,7 @@ func ProjectJobsService(projectName string, userLogs libJenkins.JenkinsCredentia
 		}
 	}
 
-	workgroups, err := libJenkins.GetWorkgroupsByProject(askedProject, userLogs)
+	workgroups, err := libJenkins.GetWorkgroupsByProject(askedProject.Job, userLogs)
 	if err != nil {
 		return []WorkgroupData{}, internal.MyError{
 			Err:        errors.New("cannot get workgroups associated to project \"" + projectName + "\": " + err.Error()),
