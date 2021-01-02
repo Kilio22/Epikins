@@ -87,6 +87,7 @@ class Login extends Component<ILoginProps, ILoginState> {
             if (this.context.changeAppStateByProperty != null) {
                 this.context.changeAppStateByProperty('user', userInitialState, false);
             }
+            this.setState(loginInitialState);
             return;
         }
 
