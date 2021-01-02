@@ -3,7 +3,7 @@ import { apiBaseURI } from '../Config';
 import { IGroupData } from '../interfaces/IGroupData';
 import { IJob } from '../interfaces/IJob';
 import { IApiUser } from '../interfaces/users/IApiUser';
-import { IApiJenkinsCredentials } from '../interfaces/IJenkinsCredentialsTable/IApiJenkinsCredentials';
+import { IApiJenkinsCredentials } from '../interfaces/jenkinsCredentials/IApiJenkinsCredentials';
 import { IProject } from '../interfaces/projects/IProject';
 
 class EpikinsApiService {
@@ -44,6 +44,20 @@ class EpikinsApiService {
     static async getProjects(apiAccessToken: string): Promise<IProject[] | null> {
         try {
             const res = await Axios.get<IProject[]>(apiBaseURI + 'projects', {headers: {'Authorization': apiAccessToken}});
+            return res.data;
+        } catch (e) {
+            console.log(e);
+            return null;
+        }
+    }
+
+    static async changeProjectBuildLimit(project: IProject, apiAccessToken: string): Promise<IProject[] | null> {
+        try {
+            const res = await Axios.put<IProject[]>(apiBaseURI + 'projects/' + project.job.name, {
+                'buildLimit': project.buildLimit
+            }, {
+                headers: {'Authorization': apiAccessToken}
+            });
             return res.data;
         } catch (e) {
             console.log(e);

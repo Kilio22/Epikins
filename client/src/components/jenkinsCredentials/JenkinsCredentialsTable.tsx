@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Table } from 'react-bootstrap';
 import JenkinsCredentialsTableBody from './JenkinsCredentialsTableBody';
 import JenkinsCredentialsTableHeader from './JenkinsCredentialsTableHeader';
-import { IJenkinsCredentialsTableProps } from '../../interfaces/IJenkinsCredentialsTable/IJenkinsCredentialsTable';
+import { IJenkinsCredentialsTableProps } from '../../interfaces/jenkinsCredentials/IJenkinsCredentialsTable';
 
 const JenkinsCredentialsTable: React.FunctionComponent<IJenkinsCredentialsTableProps> = ({
                                                                                              jenkinsCredentials,

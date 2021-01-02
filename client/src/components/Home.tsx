@@ -1,10 +1,12 @@
-import {Redirect} from "react-router-dom";
-import React from "react";
+import React from 'react';
 
 const Home = () => {
     return (
-        <Redirect to={"/projects"}/>
+        <div className={'h-100 d-flex flex-column justify-content-center align-items-center'}>
+            <h1>Welcome</h1>
+            <span>Start using the app by clicking on one of the tabs</span>
+        </div>
     );
-}
+};
 
 export default Home;

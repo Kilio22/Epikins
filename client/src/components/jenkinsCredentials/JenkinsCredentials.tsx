@@ -12,7 +12,7 @@ import JenkinsCredentialsDeletePopup from './JenkinsCredentialsDeletePopup';
 import {
     IJenkinsCredentialsState,
     jenkinsCredentialsInitialState
-} from '../../interfaces/IJenkinsCredentialsTable/IJenkinsCredentials';
+} from '../../interfaces/jenkinsCredentials/IJenkinsCredentials';
 
 class JenkinsCredentials extends Component<IRouteProps<{}>, IJenkinsCredentialsState> {
     static contextType = appInitialContext;

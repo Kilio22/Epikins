@@ -8,8 +8,8 @@ import {
     AddJenkinsCredentialsFormInitialState,
     IJenkinsCredentialsFormProps,
     IJenkinsCredentialsFormState
-} from '../../interfaces/IJenkinsCredentialsTable/IJenkinsCredentialsForm';
-import { IApiJenkinsCredentials } from '../../interfaces/IJenkinsCredentialsTable/IApiJenkinsCredentials';
+} from '../../interfaces/jenkinsCredentials/IJenkinsCredentialsForm';
+import { IApiJenkinsCredentials } from '../../interfaces/jenkinsCredentials/IApiJenkinsCredentials';
 
 class JenkinsCredentialsForm extends Component<IJenkinsCredentialsFormProps, IJenkinsCredentialsFormState> {
     static contextType = appInitialContext;
@@ -130,6 +130,7 @@ class JenkinsCredentialsForm extends Component<IJenkinsCredentialsFormProps, IJe
             ...this.state,
             isLoading: false
         });
+        await this.props.getJenkinsCredentials();
         this.props.changeJenkinsCredentialsStateByProperty('isAdding', false);
     }
 
@@ -146,7 +147,6 @@ class JenkinsCredentialsForm extends Component<IJenkinsCredentialsFormProps, IJe
         } else if (res !== 201) {
             this.setErrorMessage('Cannot add credentials, please try to reload the page.');
         }
-        await this.props.getJenkinsCredentials();
     }
 }
 

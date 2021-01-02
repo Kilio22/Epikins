@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Col, Form, Row } from 'react-bootstrap';
+import { Col, Form, Row } from 'react-bootstrap';
 import Fuse from 'fuse.js';
 import { TextField } from '@material-ui/core';
 import {
@@ -25,7 +25,6 @@ class ProjectsRenderer extends React.Component<IProjectsRendererProps, IProjects
 
         this.state = projectsRendererInitialState;
         this.onSearchFieldChange = this.onSearchFieldChange.bind(this);
-        this.onProjectClick = this.onProjectClick.bind(this);
     }
 
     render() {
@@ -46,16 +45,19 @@ class ProjectsRenderer extends React.Component<IProjectsRendererProps, IProjects
                            onChange={(event => this.onSearchFieldChange(event.target.value.trim()))}
                            className={'ml-1'}
                            autoFocus={true}/>
-                <Form className={'fu-switch p-1'}>
-                    <Form.Check
-                        type={'switch'}
-                        id={'custom-switch'}
-                        label={'Follow-up'}
-                        checked={this.context.fuMode}
-                        onChange={() => this.context.changeAppStateByProperty &&
-                            this.context.changeAppStateByProperty('fuMode', !this.context.fuMode, false)}
-                    />
-                </Form>
+                {
+                    this.props.showSwitch &&
+                    <Form className={'fu-switch p-1'}>
+                        <Form.Check
+                            type={'switch'}
+                            id={'custom-switch'}
+                            label={'Follow-up'}
+                            checked={this.context.fuMode}
+                            onChange={() => this.context.changeAppStateByProperty &&
+                                this.context.changeAppStateByProperty('fuMode', !this.context.fuMode, false)}
+                        />
+                    </Form>
+                }
                 {
                     projects.length === 0 ?
                         <h2 className={'text-center'}>No projects to display</h2>
@@ -65,12 +67,10 @@ class ProjectsRenderer extends React.Component<IProjectsRendererProps, IProjects
                                 projects.map((project, id) => {
                                     return (
                                         <Col md={4} key={id}>
-                                            <Button variant={'outline-primary'}
-                                                    className={'m-1 text-left'}
-                                                    block={true}
-                                                    onClick={() => this.onProjectClick(project)}>
-                                                <i className={'fas fa-folder'}/> {project.job.name}
-                                            </Button>
+                                            {
+                                                <this.props.ProjectRenderer onProjectClick={this.props.onProjectClick}
+                                                                            project={project}/>
+                                            }
                                         </Col>
                                     );
                                 })
@@ -87,9 +87,6 @@ class ProjectsRenderer extends React.Component<IProjectsRendererProps, IProjects
         });
     }
 
-    onProjectClick(project: IProject) {
-        this.props.routeProps.history.push(project.epikinsProjectURL);
-    }
 }
 
 export default ProjectsRenderer;

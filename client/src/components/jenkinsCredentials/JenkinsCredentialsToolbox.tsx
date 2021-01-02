@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button } from 'react-bootstrap';
-import { IJenkinsCredentialsToolboxProps } from '../../interfaces/IJenkinsCredentialsTable/IJenkinsCredentialsToolbox';
+import { IJenkinsCredentialsToolboxProps } from '../../interfaces/jenkinsCredentials/IJenkinsCredentialsToolbox';
 
 const JenkinsCredentialsToolbox: React.FunctionComponent<IJenkinsCredentialsToolboxProps> = ({
                                                                                                  onAddClick

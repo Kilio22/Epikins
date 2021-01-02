@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Modal } from 'react-bootstrap';
-import { IJenkinsCredentialsDeletePopupProps } from '../../interfaces/IJenkinsCredentialsTable/IJenkinsCredentialsDeletePopup';
+import { IJenkinsCredentialsDeletePopupProps } from '../../interfaces/jenkinsCredentials/IJenkinsCredentialsDeletePopup';
 
 const JenkinsCredentialsDeletePopup: React.FunctionComponent<IJenkinsCredentialsDeletePopupProps> = ({
                                                                                                          onDeleteClick,

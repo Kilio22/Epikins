@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IJenkinsCredentialsTableBodyProps } from '../../interfaces/IJenkinsCredentialsTable/IJenkinsCredentialsTableBody';
+import { IJenkinsCredentialsTableBodyProps } from '../../interfaces/jenkinsCredentials/IJenkinsCredentialsTableBody';
 
 const JenkinsCredentialsTableBody: React.FunctionComponent<IJenkinsCredentialsTableBodyProps> = ({
                                                                                                      jenkinsCredentials,
