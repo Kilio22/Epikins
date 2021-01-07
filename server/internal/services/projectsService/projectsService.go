@@ -19,14 +19,14 @@ type ProjectResponse struct {
 func ProjectsService(shouldUpdateProjectList bool, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) ([]ProjectResponse, internal.MyError) {
 	projectsData, ok := appData.ProjectsData[userLogs.Login]
 	if ok && !shouldUpdateProjectList && time.Since(projectsData.LastUpdate).Hours() < 1 {
-		return getProjectData(projectsData.ProjectList, appData.ProjectsCollection)
+		return getResponseFromProjectList(projectsData.ProjectList, appData.ProjectsCollection)
 	}
 
-	if err := util.UpdateProjectList(userLogs, appData); err != nil {
+	if err := util.UpdateLocalProjectList(userLogs, appData); err != nil {
 		return []ProjectResponse{}, internal.MyError{
 			Err:        errors.New("cannot get projects: " + err.Error()),
 			StatusCode: http.StatusInternalServerError,
 		}
 	}
-	return getProjectData(appData.ProjectsData[userLogs.Login].ProjectList, appData.ProjectsCollection)
+	return getResponseFromProjectList(appData.ProjectsData[userLogs.Login].ProjectList, appData.ProjectsCollection)
 }

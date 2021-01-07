@@ -9,21 +9,32 @@ import (
 	"epikins-api/pkg/libJenkins"
 )
 
-func ProjectJobsService(projectName string, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) ([]WorkgroupData, internal.MyError) {
-	if err := util.CheckProjectsData(userLogs, appData); err != nil {
-		return []WorkgroupData{}, internal.MyError{
+func getLocalProjectData(projectName string, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) (
+	libJenkins.Project, internal.MyError,
+) {
+	if err := util.CheckLocalProjectsData(userLogs, appData); err != nil {
+		return libJenkins.Project{}, internal.MyError{
 			Err:        errors.New("cannot get workgroups associated to project \"" + projectName + "\": " + err.Error()),
 			StatusCode: http.StatusInternalServerError,
 		}
 	}
-
 	projectsData := appData.ProjectsData[userLogs.Login]
-	askedProject, err := util.GetAskedProject(projectsData.ProjectList, projectName)
+	askedProject, err := util.GetProjectFromLocalProjectList(projectsData.ProjectList, projectName)
 	if err != nil {
-		return []WorkgroupData{}, internal.MyError{
+		return libJenkins.Project{}, internal.MyError{
 			Err:        errors.New("cannot get workgroups associated to project \"" + projectName + "\": " + err.Error()),
 			StatusCode: http.StatusBadRequest,
 		}
+	}
+	return askedProject, internal.MyError{}
+}
+
+func ProjectJobsService(projectName string, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) (
+	[]WorkgroupData, internal.MyError,
+) {
+	askedProject, myError := getLocalProjectData(projectName, userLogs, appData)
+	if myError.Err != nil {
+		return []WorkgroupData{}, myError
 	}
 
 	workgroups, err := libJenkins.GetWorkgroupsByProject(askedProject.Job, userLogs)
@@ -36,7 +47,7 @@ func ProjectJobsService(projectName string, userLogs libJenkins.JenkinsCredentia
 		return []WorkgroupData{}, internal.MyError{Err: nil, StatusCode: http.StatusOK}
 	}
 
-	workgroupsData, err := getWorkgroupsData(workgroups, projectName, appData.ProjectsCollection)
+	workgroupsData, err := getWorkgroupsData(workgroups, askedProject, appData.ProjectsCollection)
 	if err != nil {
 		return []WorkgroupData{}, internal.MyError{
 			Err:        errors.New("cannot get workgroups associated to project \"" + projectName + "\": " + err.Error()),

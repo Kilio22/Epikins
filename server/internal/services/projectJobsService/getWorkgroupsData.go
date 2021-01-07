@@ -5,41 +5,42 @@ import (
 
 	"epikins-api/internal"
 	"epikins-api/internal/services/util"
-	"epikins-api/internal/services/util/mongoUtil"
 	"epikins-api/pkg/libJenkins"
 
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type WorkgroupData struct {
-	GroupJob       libJenkins.Workgroup        `json:"groupJob"`
-	MongoGroupData internal.MongoWorkgroupData `json:"mongoGroupData"`
+	JobInfos           libJenkins.JobInfos         `json:"jobInfos"`
+	MongoWorkgroupData internal.MongoWorkgroupData `json:"mongoWorkgroupData"`
 }
 
-// TODO: remove useless workgroups from db
-func getWorkgroupsData(workgroups []libJenkins.Workgroup, project string, collection *mongo.Collection) ([]WorkgroupData, error) {
-	projectData, err := util.FetchProjectData(project, getJobsFromWorkgroups(workgroups), collection)
-	if err != nil {
-		return []WorkgroupData{}, errors.New("cannot get workgroups remaining builds: " + err.Error())
-	}
-
+func getWorkgroupsDataFromMongoProjectData(mongoProjectData internal.MongoProjectData, workgroups []libJenkins.Workgroup) (
+	[]WorkgroupData, error,
+) {
 	var workgroupsData []WorkgroupData
 	for _, workgroup := range workgroups {
-		if mongoGroupData, ok := util.HasMongoWorkgroupData(workgroup.Job.Name, projectData.MongoWorkgroupsData); ok {
+		if mongoGroupData, ok := util.HasMongoWorkgroupData(workgroup.Job.Name, mongoProjectData.MongoWorkgroupsData); ok {
 			workgroupsData = append(workgroupsData, WorkgroupData{
-				GroupJob:       workgroup,
-				MongoGroupData: mongoGroupData,
-			})
-		} else {
-			newMongoWorkgroupData, err := mongoUtil.AddMongoWorkgroupDataToProject(workgroup.Job, project, projectData.BuildLimit, collection)
-			if err != nil {
-				return []WorkgroupData{}, err
-			}
-			workgroupsData = append(workgroupsData, WorkgroupData{
-				GroupJob:       workgroup,
-				MongoGroupData: newMongoWorkgroupData,
+				JobInfos:           workgroup.JobInfos,
+				MongoWorkgroupData: mongoGroupData,
 			})
 		}
 	}
 	return workgroupsData, nil
+}
+
+func getWorkgroupsData(workgroups []libJenkins.Workgroup, project libJenkins.Project, collection *mongo.Collection) (
+	[]WorkgroupData, error,
+) {
+	jobs := getJobsFromWorkgroups(workgroups)
+	mongoProjectData, err := util.GetMongoProjectData(project, jobs, collection)
+	if err != nil {
+		return []WorkgroupData{}, errors.New("cannot get workgroups data: " + err.Error())
+	}
+	err = util.UpdateMongoProjectData(&mongoProjectData, jobs, collection)
+	if err != nil {
+		return []WorkgroupData{}, errors.New("cannot get workgroups data: " + err.Error())
+	}
+	return getWorkgroupsDataFromMongoProjectData(mongoProjectData, workgroups)
 }

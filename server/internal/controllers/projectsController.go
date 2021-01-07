@@ -19,7 +19,7 @@ func ProjectsController(appData *internal.AppData, c *fiber.Ctx) error {
 
 	userLogs, err := util.GetUserJenkinsCredentials(userEmail, appData.UsersCollection, appData.JenkinsCredentialsCollection)
 	if err != nil {
-		return SendMessage(c, "cannot start builds: "+err.Error(), http.StatusInternalServerError)
+		return SendMessage(c, "cannot get projects: "+err.Error(), http.StatusInternalServerError)
 	}
 	projectList, myError := projectsService.ProjectsService(shouldUpdateProjectList, userLogs, appData)
 	if myError.Err != nil {

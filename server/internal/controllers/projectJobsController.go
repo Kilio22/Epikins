@@ -15,9 +15,9 @@ func ProjectJobsController(appData *internal.AppData, c *fiber.Ctx) error {
 	if err != nil {
 		return SendMessage(c, "cannot start builds: "+err.Error(), http.StatusInternalServerError)
 	}
-	groupsData, myError := projectJobsService.ProjectJobsService(projectName, userLogs, appData)
+	workgroupsData, myError := projectJobsService.ProjectJobsService(projectName, userLogs, appData)
 	if myError.Err != nil {
 		return SendMessage(c, myError.Err.Error(), myError.StatusCode)
 	}
-	return c.JSON(groupsData)
+	return c.JSON(workgroupsData)
 }

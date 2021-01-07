@@ -7,7 +7,7 @@ import (
 	"epikins-api/pkg/libJenkins"
 )
 
-func UpdateProjectList(userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) error {
+func UpdateLocalProjectList(userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) error {
 	projectList, err := libJenkins.GetProjects(userLogs)
 
 	if err != nil {

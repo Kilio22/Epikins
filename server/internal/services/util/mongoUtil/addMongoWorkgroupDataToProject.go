@@ -12,12 +12,16 @@ import (
 
 func getNewMongoWorkgroupData(job libJenkins.Job, buildLimit int) internal.MongoWorkgroupData {
 	return internal.MongoWorkgroupData{
+		Url:             job.Url,
 		Name:            job.Name,
 		RemainingBuilds: buildLimit,
+		LastBuildReset:  GetLastMondayDate(),
 	}
 }
 
-func AddMongoWorkgroupDataToProject(job libJenkins.Job, project string, buildLimit int, collection *mongo.Collection) (internal.MongoWorkgroupData, error) {
+func AddMongoWorkgroupDataToProject(
+	job libJenkins.Job, project string, buildLimit int, collection *mongo.Collection,
+) (internal.MongoWorkgroupData, error) {
 	newMongoWorkgroupData := getNewMongoWorkgroupData(job, buildLimit)
 	err := UpdateProject(project, bson.M{"$push": bson.M{"mongoworkgroupsdata": newMongoWorkgroupData}}, collection)
 	if err != nil {

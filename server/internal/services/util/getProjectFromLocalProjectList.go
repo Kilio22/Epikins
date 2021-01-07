@@ -6,7 +6,7 @@ import (
 	"epikins-api/pkg/libJenkins"
 )
 
-func GetAskedProject(projectList []libJenkins.Project, projectName string) (libJenkins.Project, error) {
+func GetProjectFromLocalProjectList(projectList []libJenkins.Project, projectName string) (libJenkins.Project, error) {
 	for idx, project := range projectList {
 		if project.Job.Name == projectName {
 			return projectList[idx], nil

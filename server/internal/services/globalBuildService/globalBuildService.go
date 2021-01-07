@@ -15,12 +15,12 @@ type GlobalBuildParams struct {
 }
 
 func GlobalBuildService(globalBuildParams GlobalBuildParams, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) internal.MyError {
-	if err := util.CheckProjectsData(userLogs, appData); err != nil {
+	if err := util.CheckLocalProjectsData(userLogs, appData); err != nil {
 		return internal.MyError{Err: errors.New("cannot build: " + err.Error()), StatusCode: http.StatusInternalServerError}
 	}
 
 	projectsData := appData.ProjectsData[userLogs.Login]
-	askedProject, err := util.GetAskedProject(projectsData.ProjectList, globalBuildParams.Project)
+	askedProject, err := util.GetProjectFromLocalProjectList(projectsData.ProjectList, globalBuildParams.Project)
 	if err != nil {
 		return internal.MyError{Err: errors.New("cannot build: " + err.Error()), StatusCode: http.StatusBadRequest}
 	}

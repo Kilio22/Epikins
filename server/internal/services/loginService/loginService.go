@@ -8,6 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"log"
+	"strings"
 
 	"github.com/dgrijalva/jwt-go"
 )
@@ -29,6 +30,10 @@ func isAuthorized(email string, collection *mongo.Collection) (bool, error) {
 		return false, res.Err()
 	}
 	return true, nil
+}
+
+func isEpitechMember(email string) bool {
+	return strings.HasSuffix(email, "@epitech.eu")
 }
 
 func LoginService(appData *internal.AppData, accessToken string) (string, error) {
@@ -54,7 +59,7 @@ func LoginService(appData *internal.AppData, accessToken string) (string, error)
 	if err != nil {
 		return "", errors.New("something went wrong: " + err.Error())
 	}
-	if !ok {
+	if !ok && !isEpitechMember(claims.Email) {
 		return "", errors.New("you're not authorized to access to this API")
 	}
 	return claims.Email, nil

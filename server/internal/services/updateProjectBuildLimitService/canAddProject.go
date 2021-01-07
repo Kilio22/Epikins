@@ -23,7 +23,7 @@ func canAddProject(projectName string, jenkinsCredentials libJenkins.JenkinsCred
 	if ok && time.Since(projectsData.LastUpdate).Hours() < 1 {
 		return hasProjectInList(projectName, projectsData.ProjectList), internal.MyError{}
 	}
-	if err := util.UpdateProjectList(jenkinsCredentials, appData); err != nil {
+	if err := util.UpdateLocalProjectList(jenkinsCredentials, appData); err != nil {
 		return false, internal.MyError{
 			Err:        errors.New("cannot get projects: " + err.Error()),
 			StatusCode: http.StatusInternalServerError,
