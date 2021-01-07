@@ -1,4 +1,4 @@
-import {IGroupData} from "../IGroupData";
+import { IWorkgroupsData } from '../IWorkgroupsData';
 
 export interface IProjectJobsMatchParams {
     project: string
@@ -7,13 +7,13 @@ export interface IProjectJobsMatchParams {
 export interface IProjectJobsState {
     isBuilding: boolean
     isLoading: boolean,
-    groupsData: IGroupData[],
+    workgroupsData: IWorkgroupsData[],
     selectedJobs: string[]
 }
 
 export const projectJobsInitialState: IProjectJobsState = {
     isBuilding: false,
     isLoading: false,
-    groupsData: [],
+    workgroupsData: [],
     selectedJobs: []
-}
+};

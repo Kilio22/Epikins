@@ -1,11 +1,11 @@
-import { IGroupData } from './IGroupData';
+import { IWorkgroupsData } from './IWorkgroupsData';
 import { IAppState } from './IApp';
 import { BaseSyntheticEvent } from 'react';
 import { IUsersState } from './users/IUsers';
 import { IProject } from './projects/IProject';
 
 export type OnSignOutClick = () => void;
-export type OnCheckboxChange = (checked: boolean, job: IGroupData) => void;
+export type OnCheckboxChange = (checked: boolean, job: IWorkgroupsData) => void;
 export type OnBuildClick = (visibility: string) => void;
 export type ChangeAppStateByProperty = (propertyName: keyof IAppState, value: any, shouldCallback: boolean) => void;
 export type OnJobClick = (event: BaseSyntheticEvent, url: string) => void;

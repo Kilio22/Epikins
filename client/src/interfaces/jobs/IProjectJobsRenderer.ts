@@ -1,10 +1,10 @@
-import {IProjectJobsMatchParams} from "./IProjectJobs";
-import {RouteComponentProps} from "react-router-dom";
-import {IGroupData} from "../IGroupData";
-import {OnBuildClick, OnCheckboxChange} from "../Functions";
+import { IProjectJobsMatchParams } from './IProjectJobs';
+import { RouteComponentProps } from 'react-router-dom';
+import { IWorkgroupsData } from '../IWorkgroupsData';
+import { OnBuildClick, OnCheckboxChange } from '../Functions';
 
 export interface IProjectJobsRendererProps {
-    groupsData: IGroupData[],
+    workgroupsData: IWorkgroupsData[],
     isBuilding: boolean,
     selectedJobs: string[],
     onCheckboxChange: OnCheckboxChange,
@@ -18,5 +18,5 @@ export interface IProjectJobsRendererState {
 }
 
 export const jobsRendererInitialState: IProjectJobsRendererState = {
-    queryString: ""
-}
+    queryString: ''
+};

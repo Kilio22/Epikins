@@ -6,14 +6,14 @@ import {
 } from '../../interfaces/jobs/IProjectJobsRenderer';
 import Fuse from 'fuse.js';
 import { TextField } from '@material-ui/core';
-import { IGroupData } from '../../interfaces/IGroupData';
+import { IWorkgroupsData } from '../../interfaces/IWorkgroupsData';
 import Legend from './Legend';
 import BuildToolbox from './BuildToolbox';
 import { Form } from 'react-bootstrap';
 import { appInitialContext } from '../../interfaces/IAppContext';
-import GroupsData from './GroupsData';
+import WorkgroupsData from './WorkgroupsData';
 
-const jobsFuseOptions: Fuse.IFuseOptions<IGroupData> = {
+const jobsFuseOptions: Fuse.IFuseOptions<IWorkgroupsData> = {
     shouldSort: true,
     threshold: 0.4,
     keys: [ 'groupJob.job.name' ]
@@ -32,13 +32,13 @@ class ProjectJobsRenderer extends React.Component<IProjectJobsRendererProps, IPr
     }
 
     render() {
-        let groupsData: IGroupData[] = this.props.groupsData;
-        const fuse = new Fuse(this.props.groupsData, jobsFuseOptions);
+        let workgroupsData: IWorkgroupsData[] = this.props.workgroupsData;
+        const fuse = new Fuse(this.props.workgroupsData, jobsFuseOptions);
 
         if (this.state.queryString !== '') {
             const fuseResult = fuse.search(this.state.queryString);
 
-            groupsData = fuseResult.map(fuseRes => {
+            workgroupsData = fuseResult.map(fuseRes => {
                 return fuseRes.item;
             });
         }
@@ -62,8 +62,8 @@ class ProjectJobsRenderer extends React.Component<IProjectJobsRendererProps, IPr
                             this.context.changeAppStateByProperty('fuMode', !this.context.fuMode, false)}
                     />
                 </Form>
-                <GroupsData groupsData={groupsData} selectedJobs={this.props.selectedJobs}
-                            onCheckboxChange={this.props.onCheckboxChange} onJobClick={this.onJobClick}/>
+                <WorkgroupsData workgroupsData={workgroupsData} selectedJobs={this.props.selectedJobs}
+                                onCheckboxChange={this.props.onCheckboxChange} onJobClick={this.onJobClick}/>
                 <Legend/>
             </div>
         );

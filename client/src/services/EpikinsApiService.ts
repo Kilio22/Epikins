@@ -1,6 +1,6 @@
 import Axios, { AxiosResponse } from 'axios';
 import { apiBaseURI } from '../Config';
-import { IGroupData } from '../interfaces/IGroupData';
+import { IWorkgroupsData } from '../interfaces/IWorkgroupsData';
 import { IJob } from '../interfaces/IJob';
 import { IApiUser } from '../interfaces/users/IApiUser';
 import { IApiJenkinsCredentials } from '../interfaces/jenkinsCredentials/IApiJenkinsCredentials';
@@ -21,9 +21,9 @@ class EpikinsApiService {
         return null;
     }
 
-    static async getGroupsData(url: string, apiAccessToken: string): Promise<IGroupData[] | null> {
+    static async getWorkgroupsData(url: string, apiAccessToken: string): Promise<IWorkgroupsData[] | null> {
         try {
-            const res: AxiosResponse<IGroupData[]> = await Axios.get<IGroupData[]>(url, {headers: {'Authorization': apiAccessToken}});
+            const res: AxiosResponse<IWorkgroupsData[]> = await Axios.get<IWorkgroupsData[]>(url, {headers: {'Authorization': apiAccessToken}});
             return res.data;
         } catch (e) {
             console.log(e);

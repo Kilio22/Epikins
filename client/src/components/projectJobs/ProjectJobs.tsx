@@ -7,7 +7,7 @@ import {
     projectJobsInitialState
 } from '../../interfaces/jobs/IProjectJobs';
 import ProjectJobsRenderer from './ProjectJobsRenderer';
-import { IGroupData } from '../../interfaces/IGroupData';
+import { IWorkgroupsData } from '../../interfaces/IWorkgroupsData';
 import { IRouteProps } from '../../interfaces/IRoute';
 import { appInitialContext } from '../../interfaces/IAppContext';
 import { authServiceObj } from '../../services/AuthService';
@@ -46,7 +46,7 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams>, 
             this.state.isLoading ?
                 <Loading/>
                 :
-                <ProjectJobsRenderer groupsData={this.state.groupsData}
+                <ProjectJobsRenderer workgroupsData={this.state.workgroupsData}
                                      isBuilding={this.state.isBuilding}
                                      selectedJobs={this.state.selectedJobs}
                                      onCheckboxChange={this.onCheckboxChange}
@@ -65,16 +65,20 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams>, 
             return;
         }
 
-        const res: IGroupData[] | null = await EpikinsApiService.getGroupsData(
+        const res: IWorkgroupsData[] | null = await EpikinsApiService.getWorkgroupsData(
             apiBaseURI + 'projects/' + this.props.routeProps.match.params.project, accessToken);
+
+        if (!this.mounted) {
+            return;
+        }
         if (res) {
-            const newGroupsOfJobs: IGroupData[] = res.sort((a, b) => {
-                return a.groupJob.job.name.localeCompare(b.groupJob.job.name);
+            const sortedWorkgroupsData: IWorkgroupsData[] = res.sort((a, b) => {
+                return a.mongoWorkgroupData.name.localeCompare(b.mongoWorkgroupData.name);
             });
             if (shouldCallback) {
                 this.setState({
                     ...this.state,
-                    groupsData: newGroupsOfJobs
+                    workgroupsData: sortedWorkgroupsData
                 }, () => setTimeout(() => {
                     if (this.mounted) {
                         this.getJobsByProject(true);
@@ -83,13 +87,13 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams>, 
             } else {
                 this.setState({
                     ...this.state,
-                    groupsData: newGroupsOfJobs
+                    workgroupsData: sortedWorkgroupsData
                 });
             }
         } else {
             this.setState({
                 ...this.state,
-                groupsData: []
+                workgroupsData: []
             });
             if (this.context.changeAppStateByProperty) {
                 this.context.changeAppStateByProperty('errorMessage',
@@ -98,18 +102,18 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams>, 
         }
     }
 
-    onCheckboxChange(checked: boolean, groupJob: IGroupData) {
-        if (this.state.selectedJobs.includes(groupJob.groupJob.job.name)) {
+    onCheckboxChange(checked: boolean, groupJob: IWorkgroupsData) {
+        if (this.state.selectedJobs.includes(groupJob.mongoWorkgroupData.name)) {
             this.setState({
                 ...this.state,
                 selectedJobs: this.state.selectedJobs.filter((value) => {
-                    return value !== groupJob.groupJob.job.name;
+                    return value !== groupJob.mongoWorkgroupData.name;
                 })
             });
         } else {
             this.setState({
                 ...this.state,
-                selectedJobs: this.state.selectedJobs.concat(groupJob.groupJob.job.name)
+                selectedJobs: this.state.selectedJobs.concat(groupJob.mongoWorkgroupData.name)
             });
         }
     }
