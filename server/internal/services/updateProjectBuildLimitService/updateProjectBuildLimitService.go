@@ -1,19 +1,22 @@
 package updateProjectBuildLimitService
 
 import (
+	"errors"
+	"net/http"
+
 	"epikins-api/internal"
 	"epikins-api/internal/services/util/mongoUtil"
 	"epikins-api/pkg/libJenkins"
-	"errors"
 	"go.mongodb.org/mongo-driver/mongo"
-	"net/http"
 )
 
 type NewLimit struct {
 	BuildLimit int `json:"buildLimit" validate:"gte=0"`
 }
 
-func checkError(err error, shouldAddProject bool, projectName string, jenkinsCredentials libJenkins.JenkinsCredentials, appData *internal.AppData) (bool, internal.MyError) {
+func checkError(
+	err error, shouldAddProject bool, projectName string, jenkinsCredentials libJenkins.JenkinsCredentials,
+	appData *internal.AppData) (bool, internal.MyError) {
 	if err == nil {
 		return false, internal.MyError{}
 	}
@@ -24,22 +27,23 @@ func checkError(err error, shouldAddProject bool, projectName string, jenkinsCre
 		}
 		if !ok && myError.Err == nil {
 			return false, internal.MyError{
-				Err:        errors.New("cannot update projectName build limit: no project with name \"" + projectName + "\" were found"),
+				Err:        errors.New("cannot update " + projectName + " build limit: no project with name \"" + projectName + "\" were found"),
 				StatusCode: http.StatusBadRequest,
 			}
 		}
 		return false, internal.MyError{
-			Err:        errors.New("cannot update projectName build limit: " + myError.Err.Error()),
+			Err:        errors.New("cannot update " + projectName + " build limit: " + myError.Err.Error()),
 			StatusCode: myError.StatusCode,
 		}
 	}
 	return false, internal.MyError{
-		Err:        errors.New("cannot update projectName build limit: " + err.Error()),
+		Err:        errors.New("cannot update " + projectName + " build limit: " + err.Error()),
 		StatusCode: http.StatusInternalServerError,
 	}
 }
 
-func UpdateProjectBuildLimitService(newLimit NewLimit, projectName string, jenkinsCredentials libJenkins.JenkinsCredentials, appData *internal.AppData) internal.MyError {
+func UpdateProjectBuildLimitService(
+	newLimit NewLimit, projectName string, jenkinsCredentials libJenkins.JenkinsCredentials, appData *internal.AppData) internal.MyError {
 	err := updateProjectData(newLimit, projectName, appData.ProjectsCollection)
 	shouldRetry, myError := checkError(err, true, projectName, jenkinsCredentials, appData)
 
