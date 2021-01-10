@@ -80,8 +80,11 @@ func setupApp(appData *internal.AppData) *fiber.App {
 	})
 
 	studentGroup := app.Group("/student")
-	studentGroup.Get("/", func(ctx *fiber.Ctx) error {
+	studentGroup.Get("/jobs", func(ctx *fiber.Ctx) error {
 		return controllers.StudentJobsController(appData, ctx)
+	})
+	studentGroup.Post("/build", func(ctx *fiber.Ctx) error {
+		return controllers.StudentBuildController(appData, ctx)
 	})
 
 	app.Use(func(c *fiber.Ctx) error {

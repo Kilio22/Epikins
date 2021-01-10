@@ -33,10 +33,6 @@ func getStudentWorkgroup(studentName string, mongoWorkgroupsData internal.MongoP
 	return internal.MongoWorkgroupData{}, false
 }
 
-func getStudentNameFromEmail(studentEmail string) string {
-	return strings.Split(studentEmail, "@")[0]
-}
-
 func getStudentJobsFromMongoProjectsData(studentName string, mongoProjectsData []internal.MongoProjectData) []StudentJob {
 	var studentJobs []StudentJob
 
@@ -76,5 +72,5 @@ func StudentJobsService(studentEmail string, userLogs libJenkins.JenkinsCredenti
 	if myError.Message != "" {
 		return nil, myError
 	}
-	return getStudentJobsFromMongoProjectsData(getStudentNameFromEmail(studentEmail), mongoProjectsData), internal.MyError{}
+	return getStudentJobsFromMongoProjectsData(util.GetUsernameFromEmail(studentEmail), mongoProjectsData), internal.MyError{}
 }
