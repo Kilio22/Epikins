@@ -79,6 +79,11 @@ func setupApp(appData *internal.AppData) *fiber.App {
 		return controllers.UpdateProjectBuildLimitController(appData, ctx)
 	})
 
+	studentGroup := app.Group("/student")
+	studentGroup.Get("/", func(ctx *fiber.Ctx) error {
+		return controllers.StudentJobsController(appData, ctx)
+	})
+
 	app.Use(func(c *fiber.Ctx) error {
 		return c.SendStatus(404)
 	})

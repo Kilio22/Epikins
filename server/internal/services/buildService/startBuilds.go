@@ -13,6 +13,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+const StartBuildsError = "cannot start builds"
+
 func buildLoop(buildParams BuildParams, groupsBuildData []internal.MongoWorkgroupData, userLogs libJenkins.JenkinsCredentials) error {
 	for _, jobName := range buildParams.JobsToBuild {
 		for idx := range groupsBuildData {
@@ -32,16 +34,16 @@ func buildLoop(buildParams BuildParams, groupsBuildData []internal.MongoWorkgrou
 }
 
 func startBuilds(
-	buildParams BuildParams, project libJenkins.Project, jobs []libJenkins.Job, projectCollection *mongo.Collection,
+	buildParams BuildParams, localProjectData libJenkins.Project, projectCollection *mongo.Collection,
 	userLogs libJenkins.JenkinsCredentials,
 ) error {
-	mongoProjectData, err := util.GetMongoProjectData(project, jobs, projectCollection)
+	mongoProjectData, err := util.GetMongoProjectData(localProjectData, userLogs, projectCollection)
 	if err != nil {
-		return errors.New("cannot start builds: " + err.Error())
+		return errors.New(StartBuildsError + err.Error())
 	}
-	err = util.UpdateMongoProjectData(&mongoProjectData, jobs, projectCollection)
+	err = util.UpdateMongoProjectData(&mongoProjectData, localProjectData, userLogs, projectCollection)
 	if err != nil {
-		return errors.New("cannot get workgroups data: " + err.Error())
+		return errors.New(StartBuildsError + ": cannot get workgroups data: " + err.Error())
 	}
 
 	err = buildLoop(buildParams, mongoProjectData.MongoWorkgroupsData, userLogs)

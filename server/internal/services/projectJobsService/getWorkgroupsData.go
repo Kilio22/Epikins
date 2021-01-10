@@ -30,15 +30,16 @@ func getWorkgroupsDataFromMongoProjectData(mongoProjectData internal.MongoProjec
 	return workgroupsData, nil
 }
 
-func getWorkgroupsData(workgroups []libJenkins.Workgroup, project libJenkins.Project, collection *mongo.Collection) (
+func getWorkgroupsData(
+	workgroups []libJenkins.Workgroup, localProjectData libJenkins.Project, userLogs libJenkins.JenkinsCredentials,
+	projectCollection *mongo.Collection) (
 	[]WorkgroupData, error,
 ) {
-	jobs := getJobsFromWorkgroups(workgroups)
-	mongoProjectData, err := util.GetMongoProjectData(project, jobs, collection)
+	mongoProjectData, err := util.GetMongoProjectData(localProjectData, userLogs, projectCollection)
 	if err != nil {
 		return []WorkgroupData{}, errors.New("cannot get workgroups data: " + err.Error())
 	}
-	err = util.UpdateMongoProjectData(&mongoProjectData, jobs, collection)
+	err = util.UpdateMongoProjectData(&mongoProjectData, localProjectData, userLogs, projectCollection)
 	if err != nil {
 		return []WorkgroupData{}, errors.New("cannot get workgroups data: " + err.Error())
 	}

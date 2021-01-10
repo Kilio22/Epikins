@@ -2,24 +2,24 @@ package getCredentialsService
 
 import (
 	"context"
-	"epikins-api/internal"
-	"epikins-api/pkg/libJenkins"
-	"errors"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 	"log"
 	"net/http"
+
+	"epikins-api/internal"
+	"epikins-api/internal/services/util"
+	"epikins-api/pkg/libJenkins"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
+
+const GetCredentialsError = "cannot get credentials"
 
 func getPublicData(cursor *mongo.Cursor) ([]string, internal.MyError) {
 	var credentialsList []libJenkins.JenkinsCredentials
 	err := cursor.All(context.TODO(), &credentialsList)
 	if err != nil {
 		log.Println(err)
-		return nil, internal.MyError{
-			Err:        errors.New("cannot get credentials: " + err.Error()),
-			StatusCode: http.StatusInternalServerError,
-		}
+		return nil, util.GetMyError(GetCredentialsError, err, http.StatusInternalServerError)
 	}
 
 	var publicData []string
@@ -33,10 +33,7 @@ func GetCredentialsService(appData *internal.AppData) ([]string, internal.MyErro
 	cursor, err := appData.JenkinsCredentialsCollection.Find(context.TODO(), bson.M{})
 	if err != nil {
 		log.Println(err)
-		return nil, internal.MyError{
-			Err:        errors.New("cannot get credentials: " + err.Error()),
-			StatusCode: http.StatusInternalServerError,
-		}
+		return nil, util.GetMyError(GetCredentialsError, err, http.StatusInternalServerError)
 	}
 	return getPublicData(cursor)
 }

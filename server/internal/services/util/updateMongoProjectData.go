@@ -11,14 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func getNewMongoWorkgroupData(job libJenkins.Job, buildLimit int) internal.MongoWorkgroupData {
-	return internal.MongoWorkgroupData{
-		Url:             job.Url,
-		Name:            job.Name,
-		RemainingBuilds: buildLimit,
-		LastBuildReset:  mongoUtil.GetLastMondayDate(),
-	}
-}
+const UpdateMongoProjectDataError = "cannot update project data: "
 
 func addMongoWorkgroupData(
 	job libJenkins.Job, newWorkgroupsData []internal.MongoWorkgroupData, mongoProjectData internal.MongoProjectData,
@@ -29,7 +22,7 @@ func addMongoWorkgroupData(
 		}
 		newWorkgroupsData = append(newWorkgroupsData, mongoWorkgroupData)
 	} else {
-		newWorkgroupsData = append(newWorkgroupsData, getNewMongoWorkgroupData(job, mongoProjectData.BuildLimit))
+		newWorkgroupsData = append(newWorkgroupsData, GetNewMongoWorkgroupData(job, mongoProjectData.BuildLimit))
 	}
 	return newWorkgroupsData
 }
@@ -54,16 +47,25 @@ func updateMongoWorkgroupsData(
 	)
 }
 
-// TODO: faire une requête à jenkins que si le temps est dépassé
 func UpdateMongoProjectData(
-	mongoProjectData *internal.MongoProjectData, jobs []libJenkins.Job, projectCollection *mongo.Collection,
+	mongoProjectData *internal.MongoProjectData, localProjectData libJenkins.Project, userLogs libJenkins.JenkinsCredentials,
+	projectCollection *mongo.Collection,
 ) error {
-	if time.Since(time.Unix(mongoProjectData.LastUpdate, 0)).Hours() < float64(24) && len(jobs) == len(mongoProjectData.MongoWorkgroupsData) {
+	if time.Since(time.Unix(mongoProjectData.LastUpdate, 0)).Hours() < float64(12) {
 		err := resetWorkgroupsRemainingBuilds(mongoProjectData, projectCollection)
 		if err != nil {
-			return errors.New("cannot update jobs remaining builds: " + err.Error())
+			return errors.New(UpdateMongoProjectDataError + err.Error())
 		}
 		return nil
 	}
-	return updateMongoWorkgroupsData(mongoProjectData, jobs, projectCollection)
+
+	jobs, err := libJenkins.GetJobsByProject(localProjectData.Job, "REN", userLogs)
+	if err != nil {
+		return errors.New(UpdateMongoProjectDataError + err.Error())
+	}
+	err = updateMongoWorkgroupsData(mongoProjectData, jobs, projectCollection)
+	if err != nil {
+		return errors.New(UpdateMongoProjectDataError + err.Error())
+	}
+	return nil
 }

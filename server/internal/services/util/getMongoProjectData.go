@@ -10,15 +10,23 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+const GetMongoProjectDataError = "cannot get mongo project data"
+
 func GetMongoProjectData(
-	project libJenkins.Project, jobs []libJenkins.Job, projectCollection *mongo.Collection) (internal.MongoProjectData, error) {
+	project libJenkins.Project, userLogs libJenkins.JenkinsCredentials, projectCollection *mongo.Collection) (
+	internal.MongoProjectData, error,
+) {
 	mongoProjectData, err := mongoUtil.FetchMongoProjectData(project.Job.Name, projectCollection)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			return mongoUtil.AddMongoProjectData(project, jobs, projectCollection)
+			jobs, err := libJenkins.GetJobsByProject(project.Job, "REN", userLogs)
+			if err != nil {
+				return internal.MongoProjectData{}, errors.New(GetMongoProjectDataError + err.Error())
+			}
+			return mongoUtil.AddMongoProjectData(GetNewMongoProjectData(project, GetMongoWorkgroupsDataFromJobs(jobs)), projectCollection)
 		}
 		log.Println(err)
-		return internal.MongoProjectData{}, errors.New("cannot fetch data in DB: " + err.Error())
+		return internal.MongoProjectData{}, errors.New(GetMongoProjectDataError + err.Error())
 	}
 	return mongoProjectData, nil
 }

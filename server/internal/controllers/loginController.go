@@ -2,9 +2,12 @@ package controllers
 
 import (
 	"context"
-	"epikins-api/internal"
-	"go.mongodb.org/mongo-driver/bson"
 	"net/http"
+
+	"epikins-api/internal"
+	"epikins-api/internal/controllers/controllerUtil"
+	"epikins-api/internal/services/util"
+	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -15,7 +18,7 @@ func LoginController(appData *internal.AppData, c *fiber.Ctx) error {
 
 	err := appData.UsersCollection.FindOne(context.TODO(), bson.M{"email": userEmail}).Decode(&user)
 	if err != nil {
-		return SendMessage(c, "something went wrong: "+err.Error(), http.StatusInternalServerError)
+		return controllerUtil.SendMyError(util.GetMyError("cannot log user in", err, http.StatusInternalServerError), c)
 	}
 	return c.JSON(user)
 }

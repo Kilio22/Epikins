@@ -2,28 +2,24 @@ package updateUserService
 
 import (
 	"context"
-	"epikins-api/internal"
 	"errors"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 	"log"
 	"net/http"
+
+	"epikins-api/internal"
+	"epikins-api/internal/services/util"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func updateUser(user internal.User, usersCollection *mongo.Collection) internal.MyError {
 	_, err := usersCollection.ReplaceOne(context.TODO(), bson.M{"email": user.Email}, user)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			return internal.MyError{
-				Err:        errors.New("cannot update given user: no resource with given email exists"),
-				StatusCode: http.StatusBadRequest,
-			}
+			return util.GetMyError(UpdateUserError, errors.New("cannot find any user with given email"), http.StatusBadRequest)
 		}
 		log.Println(err)
-		return internal.MyError{
-			Err:        errors.New("cannot update given user: " + err.Error()),
-			StatusCode: http.StatusInternalServerError,
-		}
+		return util.GetMyError(UpdateUserError, err, http.StatusInternalServerError)
 	}
 	return internal.MyError{}
 }

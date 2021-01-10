@@ -1,87 +1,80 @@
 package studentJobsService
 
 import (
-	"context"
-	"encoding/json"
-	"errors"
-	"log"
 	"net/http"
-	"strconv"
+	"strings"
 
-	"epikins-api/config"
 	"epikins-api/internal"
+	"epikins-api/internal/services/util"
 	"epikins-api/pkg/libJenkins"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Module struct {
-	ScholarYear string `json:"scolaryear"`
-	CodeModule  string `json:"codemodule"`
+	CodeModule string `json:"codemodule"`
 }
 
 type UserInformationIntraResponse struct {
 	Modules []Module `json:"modules"`
 }
 
-func getMyHttpError(err error, code int) internal.MyError {
-	return internal.MyError{
-		Err:        errors.New("cannot get student info on Epitech intranet: " + err.Error()),
-		StatusCode: code,
-	}
+type StudentJob struct {
+	MongoWorkgroupData internal.MongoWorkgroupData `json:"mongoWorkgroupData"`
+	Project            string                      `json:"project"`
 }
 
-func getModulesFromIntraResponse(res *http.Response) ([]Module, internal.MyError) {
-	var intraResponse UserInformationIntraResponse
-	err := json.NewDecoder(res.Body).Decode(&intraResponse)
-	_ = res.Body.Close()
-	if err != nil {
-		log.Println(err)
-		return []Module{}, getMyHttpError(err, http.StatusInternalServerError)
+const StudentJobsError = "cannot get student jobs"
+
+func getStudentWorkgroup(studentName string, mongoWorkgroupsData internal.MongoProjectData) (internal.MongoWorkgroupData, bool) {
+	for _, mongoWorkgroupData := range mongoWorkgroupsData.MongoWorkgroupsData {
+		if strings.Contains(mongoWorkgroupData.Name, studentName) {
+			return mongoWorkgroupData, true
+		}
 	}
-	return intraResponse.Modules, internal.MyError{}
+	return internal.MongoWorkgroupData{}, false
 }
 
-func getStudentRegisteredModules(studentEmail string) ([]Module, internal.MyError) {
-	req, err := http.NewRequest(http.MethodGet, config.IntraAutologinLink+"/user/"+studentEmail+"/notes?format=json", nil)
-	if err != nil {
-		log.Println(err)
-		return []Module{}, getMyHttpError(err, http.StatusInternalServerError)
-	}
-
-	res, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return []Module{}, getMyHttpError(err, http.StatusInternalServerError)
-	}
-	if res.StatusCode < http.StatusOK || res.StatusCode > http.StatusIMUsed {
-		return []Module{}, getMyHttpError(errors.New("bad response code when making request to Epitech intranet, got: "+strconv.Itoa(res.StatusCode)), http.StatusInternalServerError)
-	}
-	return getModulesFromIntraResponse(res)
+func getStudentNameFromEmail(studentEmail string) string {
+	return strings.Split(studentEmail, "@")[0]
 }
 
-func getModulesNameFromModules(modules []Module) []string {
-	var moduleNameList []string
+func getStudentJobsFromMongoProjectsData(studentName string, mongoProjectsData []internal.MongoProjectData) []StudentJob {
+	var studentJobs []StudentJob
 
-	for _, module := range modules {
-		moduleNameList = append(moduleNameList, module.CodeModule)
+	for _, mongoProjectData := range mongoProjectsData {
+		studentWorkgroup, ok := getStudentWorkgroup(studentName, mongoProjectData)
+		if !ok {
+			continue
+		}
+		studentJobs = append(studentJobs, StudentJob{
+			MongoWorkgroupData: studentWorkgroup,
+			Project:            mongoProjectData.Name,
+		})
 	}
-	return moduleNameList
+	return studentJobs
 }
 
-func getMongoProjectsDataFromStudentModules(modules []Module, projectCollection *mongo.Collection) ([]internal.MongoProjectData, error) {
-	cursor, err := projectCollection.Find(context.TODO(), bson.M{"module": bson.M{"$in": getModulesNameFromModules(modules)}})
-	if err != nil {
-		return []internal.MongoProjectData{}, err
-	}
-	var mongoProjectsData []internal.MongoProjectData
-	err = cursor.All(context.TODO(), &mongoProjectsData)
-	return mongoProjectsData, err
-}
-
-func StudentJobsService(studentEmail string, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) internal.MyError {
+func StudentJobsService(studentEmail string, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) (
+	[]StudentJob, internal.MyError,
+) {
 	modules, myError := getStudentRegisteredModules(studentEmail)
-	if myError.Err != nil {
-		return myError
+	if myError.Message != "" {
+		return nil, myError
 	}
-	mongoProjectsData, err := getMongoProjectsDataFromStudentModules(modules, appData.ProjectsCollection)
+	if len(modules) == 0 {
+		return []StudentJob{}, internal.MyError{}
+	}
+
+	mongoProjectsData, err := getMongoProjectsDataFromStudentModules(modules, userLogs, appData)
+	if err != nil {
+		return nil, util.GetMyError(StudentJobsError, err, http.StatusInternalServerError)
+	}
+	if len(mongoProjectsData) == 0 {
+		return []StudentJob{}, internal.MyError{}
+	}
+
+	mongoProjectsData, myError = updateMongoProjectsData(mongoProjectsData, userLogs, appData)
+	if myError.Message != "" {
+		return nil, myError
+	}
+	return getStudentJobsFromMongoProjectsData(getStudentNameFromEmail(studentEmail), mongoProjectsData), internal.MyError{}
 }

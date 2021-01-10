@@ -1,12 +1,13 @@
-package util
+package controllerUtil
 
 import (
+	"errors"
+	"strings"
+
 	"epikins-api/config"
 	"epikins-api/internal"
-	"errors"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
-	"strings"
 )
 
 func trimValues(user *internal.User) {

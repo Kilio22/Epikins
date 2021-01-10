@@ -1,12 +1,12 @@
 package controllers
 
 import (
-	"errors"
 	"net/http"
 
 	"epikins-api/internal"
-	"epikins-api/internal/controllers/util"
+	"epikins-api/internal/controllers/controllerUtil"
 	"epikins-api/internal/services/buildService"
+	"epikins-api/internal/services/util"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -20,50 +20,47 @@ func getJobsToBuild(c *fiber.Ctx) ([]string, error) {
 }
 
 func getBuildParams(c *fiber.Ctx) (buildService.BuildParams, internal.MyError) {
-	visibility, err := util.GetVisibilityQueryParam(c)
+	visibility, err := controllerUtil.GetVisibilityQueryParam(c)
 	if err != nil {
-		return buildService.BuildParams{}, internal.MyError{Err: err, StatusCode: http.StatusBadRequest}
+		return buildService.BuildParams{}, util.GetMyError(buildService.BuildError, err, http.StatusBadRequest)
 	}
 
-	fuMode, err := util.GetQueryBoolValue("fu", false, c)
+	fuMode, err := controllerUtil.GetQueryBoolValue("fu", false, c)
 	if err != nil {
-		return buildService.BuildParams{}, internal.MyError{Err: err, StatusCode: http.StatusBadRequest}
+		return buildService.BuildParams{}, util.GetMyError(buildService.BuildError, err, http.StatusBadRequest)
 	}
 
 	project := c.Query("project")
 	if project == "" {
-		return buildService.BuildParams{}, internal.MyError{Err: errors.New("you must specify a project"), StatusCode: http.StatusBadRequest}
+		return buildService.BuildParams{}, util.GetMyError(buildService.BuildError+": you must specify a project", nil, http.StatusBadRequest)
 	}
 
 	jobsToBuild, err := getJobsToBuild(c)
 	if err != nil {
-		return buildService.BuildParams{}, internal.MyError{
-			Err:        errors.New("cannot parse given jobs to build: " + err.Error()),
-			StatusCode: http.StatusBadRequest,
-		}
+		return buildService.BuildParams{}, util.GetMyError(buildService.BuildError+": cannot parse given jobs to build", err, http.StatusBadRequest)
 	}
 	return buildService.BuildParams{
 		JobsToBuild: jobsToBuild,
 		FuMode:      fuMode,
 		Project:     project,
 		Visibility:  visibility,
-	}, internal.MyError{Err: nil, StatusCode: http.StatusOK}
+	}, internal.MyError{}
 }
 
 func BuildController(appData *internal.AppData, c *fiber.Ctx) error {
 	userEmail := c.Get("email")
-	buildParams, myErr := getBuildParams(c)
-	if myErr.Err != nil {
-		return SendMessage(c, myErr.Err.Error(), myErr.StatusCode)
+	buildParams, myError := getBuildParams(c)
+	if myError.Message != "" {
+		return controllerUtil.SendMyError(myError, c)
 	}
 
-	userLogs, err := util.GetUserJenkinsCredentials(userEmail, appData.UsersCollection, appData.JenkinsCredentialsCollection)
+	userLogs, err := controllerUtil.GetUserJenkinsCredentials(userEmail, appData.UsersCollection, appData.JenkinsCredentialsCollection)
 	if err != nil {
-		return SendMessage(c, "cannot start builds: "+err.Error(), http.StatusInternalServerError)
+		return controllerUtil.SendMyError(util.GetMyError(buildService.BuildError, err, http.StatusInternalServerError), c)
 	}
-	myError := buildService.BuildService(buildParams, appData, userLogs)
-	if myError.Err != nil {
-		return SendMessage(c, myError.Err.Error(), myError.StatusCode)
+	myError = buildService.BuildService(buildParams, userLogs, appData)
+	if myError.Message != "" {
+		return controllerUtil.SendMyError(myError, c)
 	}
 	return c.SendStatus(http.StatusCreated)
 }

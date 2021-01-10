@@ -9,6 +9,8 @@ import (
 	"epikins-api/pkg/libJenkins"
 )
 
+const BuildError = "cannot build"
+
 type BuildParams struct {
 	JobsToBuild []string
 	FuMode      bool
@@ -16,30 +18,16 @@ type BuildParams struct {
 	Visibility  libJenkins.Visibility
 }
 
-func BuildService(buildParams BuildParams, appData *internal.AppData, userLogs libJenkins.JenkinsCredentials) internal.MyError {
-	if err := util.CheckLocalProjectsData(userLogs, appData); err != nil {
-		return internal.MyError{Err: errors.New("cannot build: " + err.Error()), StatusCode: http.StatusInternalServerError}
+func BuildService(buildParams BuildParams, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) internal.MyError {
+	askedProjectData, myError := util.GetLocalProjectData(buildParams.Project, userLogs, appData)
+	if myError.Message != "" {
+		myError = util.CheckLocalProjectDataError(myError, buildParams.Project, appData.ProjectsCollection)
+		return util.GetMyError(BuildError, errors.New(myError.Message), myError.Status)
 	}
 
-	projectsData := appData.ProjectsData[userLogs.Login]
-	askedProjectData, err := util.GetProjectFromLocalProjectList(projectsData.ProjectList, buildParams.Project)
+	err := startBuilds(buildParams, askedProjectData, appData.ProjectsCollection, userLogs)
 	if err != nil {
-		return internal.MyError{
-			Err:        errors.New("cannot build: " + err.Error()),
-			StatusCode: http.StatusBadRequest,
-		}
-	}
-
-	jobs, err := libJenkins.GetJobsByProject(askedProjectData.Job, userLogs)
-	if err != nil {
-		return internal.MyError{Err: errors.New("cannot build: " + err.Error()), StatusCode: http.StatusInternalServerError}
-	} else if len(jobs) == 0 {
-		return internal.MyError{Err: errors.New("cannot build: no jobs to build for this project"), StatusCode: http.StatusBadRequest}
-	}
-
-	err = startBuilds(buildParams, askedProjectData, jobs, appData.ProjectsCollection, userLogs)
-	if err != nil {
-		return internal.MyError{Err: errors.New("cannot build: " + err.Error()), StatusCode: http.StatusInternalServerError}
+		return util.GetMyError(BuildError, err, http.StatusInternalServerError)
 	}
 	return internal.MyError{}
 }

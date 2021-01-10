@@ -1,23 +1,25 @@
 package controllers
 
 import (
-	"epikins-api/internal"
-	"epikins-api/internal/controllers/util"
-	"epikins-api/internal/services/projectJobsService"
-	"github.com/gofiber/fiber/v2"
 	"net/http"
+
+	"epikins-api/internal"
+	"epikins-api/internal/controllers/controllerUtil"
+	"epikins-api/internal/services/projectJobsService"
+	"epikins-api/internal/services/util"
+	"github.com/gofiber/fiber/v2"
 )
 
 func ProjectJobsController(appData *internal.AppData, c *fiber.Ctx) error {
 	userEmail := c.Get("email")
 	projectName := c.Params("project")
-	userLogs, err := util.GetUserJenkinsCredentials(userEmail, appData.UsersCollection, appData.JenkinsCredentialsCollection)
+	userLogs, err := controllerUtil.GetUserJenkinsCredentials(userEmail, appData.UsersCollection, appData.JenkinsCredentialsCollection)
 	if err != nil {
-		return SendMessage(c, "cannot start builds: "+err.Error(), http.StatusInternalServerError)
+		return controllerUtil.SendMyError(util.GetMyError(projectJobsService.ProjectJobsError, err, http.StatusInternalServerError), c)
 	}
 	workgroupsData, myError := projectJobsService.ProjectJobsService(projectName, userLogs, appData)
-	if myError.Err != nil {
-		return SendMessage(c, myError.Err.Error(), myError.StatusCode)
+	if myError.Message != "" {
+		return controllerUtil.SendMyError(myError, c)
 	}
 	return c.JSON(workgroupsData)
 }

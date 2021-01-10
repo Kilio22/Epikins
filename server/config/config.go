@@ -2,7 +2,6 @@ package config
 
 import (
 	"epikins-api/internal"
-	"epikins-api/internal/services/util"
 )
 
 const (
@@ -21,5 +20,3 @@ var Roles = []internal.Role{
 
 const DefaultBuildNb int = 3
 const HighestPrivilegeJenkinsLogin = "assist3_ren"
-
-var IntraAutologinLink = util.GetEnvVariable("INTRA_AUTOLOGIN_LINK")

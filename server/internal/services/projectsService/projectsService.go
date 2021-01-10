@@ -1,14 +1,14 @@
 package projectsService
 
 import (
-	"errors"
 	"net/http"
-	"time"
 
 	"epikins-api/internal"
 	"epikins-api/internal/services/util"
 	"epikins-api/pkg/libJenkins"
 )
+
+const ProjectsError = "cannot get projects"
 
 type ProjectResponse struct {
 	BuildLimit int            `json:"buildLimit"`
@@ -16,17 +16,13 @@ type ProjectResponse struct {
 	Module     string         `json:"module"`
 }
 
-func ProjectsService(shouldUpdateProjectList bool, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) ([]ProjectResponse, internal.MyError) {
-	projectsData, ok := appData.ProjectsData[userLogs.Login]
-	if ok && !shouldUpdateProjectList && time.Since(projectsData.LastUpdate).Hours() < 1 {
-		return getResponseFromProjectList(projectsData.ProjectList, appData.ProjectsCollection)
+func ProjectsService(shouldUpdateProjectList bool, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) (
+	[]ProjectResponse, internal.MyError,
+) {
+	if err := util.CheckLocalProjectsData(userLogs, shouldUpdateProjectList, appData); err != nil {
+		return []ProjectResponse{}, util.GetMyError(ProjectsError, err, http.StatusInternalServerError)
 	}
 
-	if err := util.UpdateLocalProjectList(userLogs, appData); err != nil {
-		return []ProjectResponse{}, internal.MyError{
-			Err:        errors.New("cannot get projects: " + err.Error()),
-			StatusCode: http.StatusInternalServerError,
-		}
-	}
-	return getResponseFromProjectList(appData.ProjectsData[userLogs.Login].ProjectList, appData.ProjectsCollection)
+	projectsData := appData.ProjectsData[userLogs.Login]
+	return getResponseFromProjectList(projectsData.ProjectList, userLogs, appData.ProjectsCollection)
 }

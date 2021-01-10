@@ -1,12 +1,14 @@
 package controllers
 
 import (
+	"net/http"
+
 	"epikins-api/internal"
-	"epikins-api/internal/controllers/util"
+	"epikins-api/internal/controllers/controllerUtil"
 	"epikins-api/internal/services/updateProjectBuildLimitService"
+	"epikins-api/internal/services/util"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
-	"net/http"
 )
 
 func getNewLimit(c *fiber.Ctx) (updateProjectBuildLimitService.NewLimit, error) {
@@ -27,13 +29,17 @@ func UpdateProjectBuildLimitController(appData *internal.AppData, c *fiber.Ctx) 
 	projectName := c.Params("project")
 	newLimit, err := getNewLimit(c)
 	if err != nil {
-		return SendMessage(c, "cannot update project limit: "+err.Error(), http.StatusBadRequest)
+		return controllerUtil.SendMyError(util.GetMyError(updateProjectBuildLimitService.UpdateProjectBuildLimitError, err, http.StatusBadRequest), c)
 	}
 
-	jenkinsCredentials, err := util.GetUserJenkinsCredentials(userEmail, appData.UsersCollection, appData.JenkinsCredentialsCollection)
+	jenkinsCredentials, err := controllerUtil.GetUserJenkinsCredentials(userEmail, appData.UsersCollection, appData.JenkinsCredentialsCollection)
+	if err != nil {
+		return controllerUtil.SendMyError(util.GetMyError(updateProjectBuildLimitService.UpdateProjectBuildLimitError, err, http.StatusInternalServerError), c)
+	}
+
 	myError := updateProjectBuildLimitService.UpdateProjectBuildLimitService(newLimit, projectName, jenkinsCredentials, appData)
-	if myError.Err != nil {
-		return SendMessage(c, myError.Err.Error(), myError.StatusCode)
+	if myError.Message != "" {
+		return controllerUtil.SendMyError(myError, c)
 	}
 	return c.SendStatus(http.StatusCreated)
 }

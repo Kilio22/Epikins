@@ -1,59 +1,63 @@
 package updateProjectBuildLimitService
 
 import (
+	"errors"
+	"net/http"
+
 	"epikins-api/internal"
+	"epikins-api/internal/services/util"
 	"epikins-api/internal/services/util/mongoUtil"
 	"epikins-api/pkg/libJenkins"
-	"errors"
 	"go.mongodb.org/mongo-driver/mongo"
-	"net/http"
 )
 
 type NewLimit struct {
 	BuildLimit int `json:"buildLimit" validate:"gte=0"`
 }
 
-func checkError(err error, shouldAddProject bool, projectName string, jenkinsCredentials libJenkins.JenkinsCredentials, appData *internal.AppData) (bool, internal.MyError) {
+const UpdateProjectBuildLimitError = "cannot update project build limit"
+
+func checkError(
+	err error, shouldAddProject bool, projectName string, userLogs libJenkins.JenkinsCredentials,
+	appData *internal.AppData) (bool, internal.MyError) {
 	if err == nil {
 		return false, internal.MyError{}
 	}
 	if err == mongo.ErrNoDocuments && shouldAddProject {
-		ok, myError := canAddProject(projectName, jenkinsCredentials, appData)
+		ok, myError := canAddProject(projectName, userLogs, appData)
 		if ok {
 			return true, internal.MyError{}
 		}
-		if !ok && myError.Err == nil {
-			return false, internal.MyError{
-				Err:        errors.New("cannot update projectName build limit: no project with name \"" + projectName + "\" were found"),
-				StatusCode: http.StatusBadRequest,
-			}
+		if !ok && myError.Message == "" {
+			return false, util.GetMyError(UpdateProjectBuildLimitError+": no project with name \""+projectName+"\" were found", nil, http.StatusBadRequest)
 		}
-		return false, internal.MyError{
-			Err:        errors.New("cannot update projectName build limit: " + myError.Err.Error()),
-			StatusCode: myError.StatusCode,
-		}
+		return false, util.GetMyError(UpdateProjectBuildLimitError, errors.New(myError.Message), myError.Status)
 	}
-	return false, internal.MyError{
-		Err:        errors.New("cannot update projectName build limit: " + err.Error()),
-		StatusCode: http.StatusInternalServerError,
-	}
+	return false, util.GetMyError(UpdateProjectBuildLimitError, err, http.StatusInternalServerError)
 }
 
-func UpdateProjectBuildLimitService(newLimit NewLimit, projectName string, jenkinsCredentials libJenkins.JenkinsCredentials, appData *internal.AppData) internal.MyError {
+func UpdateProjectBuildLimitService(
+	newLimit NewLimit, projectName string, userLogs libJenkins.JenkinsCredentials,
+	appData *internal.AppData) internal.MyError {
 	err := updateProjectData(newLimit, projectName, appData.ProjectsCollection)
-	shouldRetry, myError := checkError(err, true, projectName, jenkinsCredentials, appData)
-
-	if shouldRetry && myError.Err == nil {
-		_, err := mongoUtil.AddMongoProjectData(projectName, []libJenkins.Job{}, appData.ProjectsCollection)
-		if err != nil {
-			return internal.MyError{
-				Err:        errors.New("cannot update build limit: something went wrong when trying to add projectName in DB: " + err.Error()),
-				StatusCode: http.StatusInternalServerError,
-			}
-		}
-		err = updateProjectData(newLimit, projectName, appData.ProjectsCollection)
-		_, myError = checkError(err, false, projectName, jenkinsCredentials, appData)
+	if shouldRetry, myError := checkError(err, true, projectName, userLogs, appData); !shouldRetry || myError.Message != "" {
 		return myError
 	}
+
+	localProjectData, myError := util.GetLocalProjectData(projectName, userLogs, appData)
+	if myError.Message != "" {
+		return util.CheckLocalProjectDataError(myError, projectName, appData.ProjectsCollection)
+	}
+
+	jobs, err := libJenkins.GetJobsByProject(localProjectData.Job, "REN", userLogs)
+	if err != nil {
+		return util.GetMyError(UpdateProjectBuildLimitError, err, http.StatusInternalServerError)
+	}
+
+	if _, err = mongoUtil.AddMongoProjectData(util.GetNewMongoProjectData(localProjectData, util.GetMongoWorkgroupsDataFromJobs(jobs)), appData.ProjectsCollection); err != nil {
+		return util.GetMyError(UpdateProjectBuildLimitError, err, http.StatusInternalServerError)
+	}
+	err = updateProjectData(newLimit, projectName, appData.ProjectsCollection)
+	_, myError = checkError(err, false, projectName, userLogs, appData)
 	return myError
 }

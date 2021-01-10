@@ -1,11 +1,12 @@
-package util
+package controllerUtil
 
 import (
-	"epikins-api/pkg/libJenkins"
 	"errors"
+	"strings"
+
+	"epikins-api/pkg/libJenkins"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
-	"strings"
 )
 
 func GetJenkinsCredentialsFromRequest(c *fiber.Ctx) (libJenkins.JenkinsCredentials, error) {

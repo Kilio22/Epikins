@@ -21,7 +21,7 @@ func getWorkgroups(jobsList []Job, userLogs JenkinsCredentials) ([]Workgroup, er
 	return groupsOfJobs, nil
 }
 
-func GetWorkgroupsByProject(project Job, userLogs JenkinsCredentials) ([]Workgroup, error) {
+func GetWorkgroupsByProject(project Job, city string, userLogs JenkinsCredentials) ([]Workgroup, error) {
 	yearList, err := getYearList(project, userLogs)
 	if err != nil || len(yearList) == 0 {
 		return []Workgroup{}, err
@@ -33,9 +33,9 @@ func GetWorkgroupsByProject(project Job, userLogs JenkinsCredentials) ([]Workgro
 		return []Workgroup{}, err
 	}
 
-	jobsUrl := getDesiredCityJobsUrl(citiesList, "REN")
+	jobsUrl := getDesiredCityJobsUrl(citiesList, city)
 	if jobsUrl == "" {
-		return []Workgroup{}, errors.New("cannot get groups of jobs for given project: no city containing string \"REN\" in its name found")
+		return []Workgroup{}, errors.New("cannot get groups of jobs for given project: no city containing string \"" + city + "\" in its name found")
 	}
 
 	jobsList, err := GetJobsByURL(jobsUrl, userLogs)

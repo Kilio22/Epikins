@@ -4,7 +4,7 @@ import (
 	"errors"
 )
 
-func GetJobsByProject(project Job, userLogs JenkinsCredentials) ([]Job, error) {
+func GetJobsByProject(project Job, city string, userLogs JenkinsCredentials) ([]Job, error) {
 	yearList, err := getYearList(project, userLogs)
 	if err != nil || len(yearList) == 0 {
 		return []Job{}, err
@@ -16,9 +16,9 @@ func GetJobsByProject(project Job, userLogs JenkinsCredentials) ([]Job, error) {
 		return []Job{}, err
 	}
 
-	jobsUrl := getDesiredCityJobsUrl(citiesList, "REN")
+	jobsUrl := getDesiredCityJobsUrl(citiesList, city)
 	if jobsUrl == "" {
-		return []Job{}, errors.New("cannot get jobs for given project: no city containing string \"REN\" in its name found")
+		return []Job{}, errors.New("cannot get jobs for given project: no city containing string \"" + city + "\" in its name found")
 	}
 	return GetJobsByURL(jobsUrl, userLogs)
 }

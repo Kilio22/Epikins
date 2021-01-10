@@ -3,27 +3,28 @@ package controllers
 import (
 	"net/http"
 
+	"epikins-api/internal/services/util"
 	"github.com/gofiber/fiber/v2"
 
 	"epikins-api/internal"
-	"epikins-api/internal/controllers/util"
+	"epikins-api/internal/controllers/controllerUtil"
 	"epikins-api/internal/services/projectsService"
 )
 
 func ProjectsController(appData *internal.AppData, c *fiber.Ctx) error {
 	userEmail := c.Get("email")
-	shouldUpdateProjectList, err := util.GetQueryBoolValue("update", false, c)
+	shouldUpdateProjectList, err := controllerUtil.GetQueryBoolValue("update", false, c)
 	if err != nil {
-		return SendMessage(c, "invalid query parameter", http.StatusBadRequest)
+		return controllerUtil.SendMyError(util.GetMyError(projectsService.ProjectsError+": invalid query parameter", nil, http.StatusBadRequest), c)
 	}
 
-	userLogs, err := util.GetUserJenkinsCredentials(userEmail, appData.UsersCollection, appData.JenkinsCredentialsCollection)
+	userLogs, err := controllerUtil.GetUserJenkinsCredentials(userEmail, appData.UsersCollection, appData.JenkinsCredentialsCollection)
 	if err != nil {
-		return SendMessage(c, "cannot get projects: "+err.Error(), http.StatusInternalServerError)
+		return controllerUtil.SendMyError(util.GetMyError(projectsService.ProjectsError, err, http.StatusInternalServerError), c)
 	}
 	projectList, myError := projectsService.ProjectsService(shouldUpdateProjectList, userLogs, appData)
-	if myError.Err != nil {
-		return SendMessage(c, myError.Err.Error(), myError.StatusCode)
+	if myError.Message != "" {
+		return controllerUtil.SendMyError(myError, c)
 	}
 	return c.JSON(projectList)
 }

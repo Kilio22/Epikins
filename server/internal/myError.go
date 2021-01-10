@@ -1,6 +1,6 @@
 package internal
 
 type MyError struct {
-	Err        error
-	StatusCode int
+	Message string `json:"message"`
+	Status  int    `json:"status"`
 }

@@ -1,7 +1,6 @@
 package projectsService
 
 import (
-	"errors"
 	"net/http"
 
 	"epikins-api/internal"
@@ -10,16 +9,16 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func getResponseFromProjectList(projectList []libJenkins.Project, collection *mongo.Collection) ([]ProjectResponse, internal.MyError) {
+func getResponseFromProjectList(
+	projectList []libJenkins.Project, userLogs libJenkins.JenkinsCredentials, collection *mongo.Collection) (
+	[]ProjectResponse, internal.MyError,
+) {
 	var response []ProjectResponse
 
 	for _, project := range projectList {
-		projectData, err := util.GetMongoProjectData(project, []libJenkins.Job{}, collection)
+		projectData, err := util.GetMongoProjectData(project, userLogs, collection)
 		if err != nil {
-			return nil, internal.MyError{
-				Err:        errors.New("cannot get projects data: " + err.Error()),
-				StatusCode: http.StatusInternalServerError,
-			}
+			return nil, util.GetMyError(ProjectsError, err, http.StatusInternalServerError)
 		}
 		response = append(response, ProjectResponse{
 			Job:        project.Job,

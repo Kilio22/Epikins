@@ -1,7 +1,6 @@
 package projectJobsService
 
 import (
-	"errors"
 	"net/http"
 
 	"epikins-api/internal"
@@ -9,50 +8,26 @@ import (
 	"epikins-api/pkg/libJenkins"
 )
 
-func getLocalProjectData(projectName string, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) (
-	libJenkins.Project, internal.MyError,
-) {
-	if err := util.CheckLocalProjectsData(userLogs, appData); err != nil {
-		return libJenkins.Project{}, internal.MyError{
-			Err:        errors.New("cannot get workgroups associated to project \"" + projectName + "\": " + err.Error()),
-			StatusCode: http.StatusInternalServerError,
-		}
-	}
-	projectsData := appData.ProjectsData[userLogs.Login]
-	askedProject, err := util.GetProjectFromLocalProjectList(projectsData.ProjectList, projectName)
-	if err != nil {
-		return libJenkins.Project{}, internal.MyError{
-			Err:        errors.New("cannot get workgroups associated to project \"" + projectName + "\": " + err.Error()),
-			StatusCode: http.StatusBadRequest,
-		}
-	}
-	return askedProject, internal.MyError{}
-}
+const ProjectJobsError = "cannot get workgroups associated to given project"
 
 func ProjectJobsService(projectName string, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) (
 	[]WorkgroupData, internal.MyError,
 ) {
-	askedProject, myError := getLocalProjectData(projectName, userLogs, appData)
-	if myError.Err != nil {
-		return []WorkgroupData{}, myError
+	localProjectData, myError := util.GetLocalProjectData(projectName, userLogs, appData)
+	if myError.Message != "" {
+		return []WorkgroupData{}, util.CheckLocalProjectDataError(myError, projectName, appData.ProjectsCollection)
 	}
 
-	workgroups, err := libJenkins.GetWorkgroupsByProject(askedProject.Job, userLogs)
+	workgroups, err := libJenkins.GetWorkgroupsByProject(localProjectData.Job, "REN", userLogs)
 	if err != nil {
-		return []WorkgroupData{}, internal.MyError{
-			Err:        errors.New("cannot get workgroups associated to project \"" + projectName + "\": " + err.Error()),
-			StatusCode: http.StatusInternalServerError,
-		}
+		return []WorkgroupData{}, util.GetMyError(ProjectJobsError, err, http.StatusInternalServerError)
 	} else if len(workgroups) == 0 {
-		return []WorkgroupData{}, internal.MyError{Err: nil, StatusCode: http.StatusOK}
+		return []WorkgroupData{}, internal.MyError{}
 	}
 
-	workgroupsData, err := getWorkgroupsData(workgroups, askedProject, appData.ProjectsCollection)
+	workgroupsData, err := getWorkgroupsData(workgroups, localProjectData, userLogs, appData.ProjectsCollection)
 	if err != nil {
-		return []WorkgroupData{}, internal.MyError{
-			Err:        errors.New("cannot get workgroups associated to project \"" + projectName + "\": " + err.Error()),
-			StatusCode: http.StatusInternalServerError,
-		}
+		return []WorkgroupData{}, util.GetMyError(ProjectJobsError, err, http.StatusInternalServerError)
 	}
 	return workgroupsData, internal.MyError{}
 }

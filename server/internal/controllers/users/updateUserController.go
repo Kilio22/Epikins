@@ -1,23 +1,24 @@
 package users
 
 import (
-	"epikins-api/internal"
-	"epikins-api/internal/controllers"
-	"epikins-api/internal/controllers/util"
-	"epikins-api/internal/services/users/updateUserService"
-	"github.com/gofiber/fiber/v2"
 	"net/http"
+
+	"epikins-api/internal"
+	"epikins-api/internal/controllers/controllerUtil"
+	"epikins-api/internal/services/users/updateUserService"
+	"epikins-api/internal/services/util"
+	"github.com/gofiber/fiber/v2"
 )
 
 func UpdateUserController(appData *internal.AppData, c *fiber.Ctx) error {
-	user, err := util.GetUserFromRequest(c)
+	user, err := controllerUtil.GetUserFromRequest(c)
 	if err != nil {
-		return controllers.SendMessage(c, err.Error(), http.StatusBadRequest)
+		return controllerUtil.SendMyError(util.GetMyError(updateUserService.UpdateUserError, err, http.StatusBadRequest), c)
 	}
 
 	myError := updateUserService.UpdateUserService(user, appData)
-	if myError.Err != nil {
-		return controllers.SendMessage(c, myError.Err.Error(), myError.StatusCode)
+	if myError.Message != "" {
+		return controllerUtil.SendMyError(myError, c)
 	}
 	return c.SendStatus(http.StatusCreated)
 }

@@ -1,8 +1,9 @@
-package util
+package controllerUtil
 
 import (
-	"epikins-api/pkg/libJenkins"
 	"errors"
+
+	"epikins-api/pkg/libJenkins"
 
 	"github.com/gofiber/fiber/v2"
 )

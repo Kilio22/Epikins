@@ -1,7 +1,6 @@
 package globalBuildService
 
 import (
-	"errors"
 	"net/http"
 
 	"epikins-api/internal"
@@ -9,30 +8,28 @@ import (
 	"epikins-api/pkg/libJenkins"
 )
 
+const GlobalBuildError = "cannot build"
+
 type GlobalBuildParams struct {
 	Project    string
 	Visibility libJenkins.Visibility
 }
 
-func GlobalBuildService(globalBuildParams GlobalBuildParams, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) internal.MyError {
-	if err := util.CheckLocalProjectsData(userLogs, appData); err != nil {
-		return internal.MyError{Err: errors.New("cannot build: " + err.Error()), StatusCode: http.StatusInternalServerError}
+func GlobalBuildService(
+	globalBuildParams GlobalBuildParams, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) internal.MyError {
+	askedProjectData, myError := util.GetLocalProjectData(globalBuildParams.Project, userLogs, appData)
+	if myError.Message != "" {
+		return util.CheckLocalProjectDataError(myError, globalBuildParams.Project, appData.ProjectsCollection)
 	}
 
-	projectsData := appData.ProjectsData[userLogs.Login]
-	askedProject, err := util.GetProjectFromLocalProjectList(projectsData.ProjectList, globalBuildParams.Project)
+	globalJobUrl, err := libJenkins.GetGlobalJobUrlByProject(askedProjectData.Job, "REN", userLogs)
 	if err != nil {
-		return internal.MyError{Err: errors.New("cannot build: " + err.Error()), StatusCode: http.StatusBadRequest}
-	}
-
-	globalJobUrl, err := libJenkins.GetGlobalJobUrlByProject(askedProject.Job, userLogs)
-	if err != nil {
-		return internal.MyError{Err: errors.New("cannot build: " + err.Error()), StatusCode: http.StatusInternalServerError}
+		return util.GetMyError(GlobalBuildError, err, http.StatusInternalServerError)
 	}
 
 	err = libJenkins.BuildJob(globalJobUrl, globalBuildParams.Visibility, userLogs)
 	if err != nil {
-		return internal.MyError{Err: errors.New("cannot build: " + err.Error()), StatusCode: http.StatusInternalServerError}
+		return util.GetMyError(GlobalBuildError, err, http.StatusInternalServerError)
 	}
 	return internal.MyError{}
 }

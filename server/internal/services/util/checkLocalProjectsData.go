@@ -7,9 +7,9 @@ import (
 	"epikins-api/pkg/libJenkins"
 )
 
-func CheckLocalProjectsData(userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) error {
+func CheckLocalProjectsData(userLogs libJenkins.JenkinsCredentials, forceUpdate bool, appData *internal.AppData) error {
 	projectsData, ok := appData.ProjectsData[userLogs.Login]
-	if !ok || time.Since(projectsData.LastUpdate).Hours() > 4 {
+	if !ok || time.Since(projectsData.LastUpdate).Hours() > 4 || forceUpdate {
 		if err := UpdateLocalProjectList(userLogs, appData); err != nil {
 			return err
 		}
