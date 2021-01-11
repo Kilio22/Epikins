@@ -39,7 +39,7 @@ func startBuilds(
 ) error {
 	mongoProjectData, err := util.GetMongoProjectData(localProjectData, city, userLogs, projectCollection)
 	if err != nil {
-		return errors.New(StartBuildsError + err.Error())
+		return errors.New(StartBuildsError + ": " + err.Error())
 	}
 	err = util.UpdateMongoProjectData(&mongoProjectData, localProjectData, city, userLogs, projectCollection)
 	if err != nil {

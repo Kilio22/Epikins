@@ -26,7 +26,7 @@ func GetMongoProjectData(
 			return mongoUtil.AddMongoProjectData(GetNewMongoProjectData(project, GetMongoWorkgroupsDataFromJobs(jobs, city)), projectCollection)
 		}
 		log.Println(err)
-		return internal.MongoProjectData{}, errors.New(GetMongoProjectDataError + err.Error())
+		return internal.MongoProjectData{}, errors.New(GetMongoProjectDataError + ": " + err.Error())
 	}
 	return mongoProjectData, nil
 }

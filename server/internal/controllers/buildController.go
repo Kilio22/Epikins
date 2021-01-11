@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"errors"
-	"log"
 	"net/http"
 
 	"epikins-api/internal"
@@ -20,7 +19,6 @@ func getBuildParams(c *fiber.Ctx) (buildService.BuildParams, internal.MyError) {
 	if err != nil {
 		return buildService.BuildParams{}, util.GetMyError(buildService.BuildError, errors.New("wrong body"), http.StatusBadRequest)
 	}
-	log.Println(buildParams)
 	err = validator.New().Struct(buildParams)
 	if err != nil {
 		return buildService.BuildParams{}, util.GetMyError(buildService.BuildError, err, http.StatusBadRequest)
