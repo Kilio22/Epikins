@@ -8,7 +8,8 @@ import (
 	"epikins-api/pkg/libJenkins"
 )
 
-func GetNewMongoProjectData(project libJenkins.Project, mongoWorkgroupsData []internal.MongoWorkgroupData) internal.MongoProjectData {
+func GetNewMongoProjectData(
+	project libJenkins.Project, mongoWorkgroupsData map[string][]internal.MongoWorkgroupData) internal.MongoProjectData {
 	return internal.MongoProjectData{
 		BuildLimit:          config.DefaultBuildNb,
 		LastUpdate:          time.Now().Unix(),

@@ -10,13 +10,13 @@ import (
 )
 
 func getResponseFromProjectList(
-	projectList []libJenkins.Project, userLogs libJenkins.JenkinsCredentials, collection *mongo.Collection) (
+	projectList []libJenkins.Project, city string, userLogs libJenkins.JenkinsCredentials, collection *mongo.Collection) (
 	[]ProjectResponse, internal.MyError,
 ) {
 	var response []ProjectResponse
 
 	for _, project := range projectList {
-		projectData, err := util.GetMongoProjectData(project, userLogs, collection)
+		projectData, err := util.GetMongoProjectData(project, city, userLogs, collection)
 		if err != nil {
 			return nil, util.GetMyError(ProjectsError, err, http.StatusInternalServerError)
 		}

@@ -9,7 +9,7 @@ import (
 )
 
 func updateMongoProjectsData(
-	mongoProjectsData []internal.MongoProjectData, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) (
+	mongoProjectsData []internal.MongoProjectData, city string, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) (
 	[]internal.MongoProjectData, internal.MyError,
 ) {
 	var definitiveMongoProjectsData []internal.MongoProjectData
@@ -23,7 +23,7 @@ func updateMongoProjectsData(
 			}
 			return nil, util.CheckLocalProjectDataError(myError, mongoProjectData.Name, appData.ProjectsCollection)
 		}
-		err := util.UpdateMongoProjectData(&mongoProjectsData[idx], localProjectData, userLogs, appData.ProjectsCollection)
+		err := util.UpdateMongoProjectData(&mongoProjectsData[idx], localProjectData, city, userLogs, appData.ProjectsCollection)
 		if err != nil {
 			return nil, util.GetMyError(err.Error(), nil, http.StatusInternalServerError)
 		}

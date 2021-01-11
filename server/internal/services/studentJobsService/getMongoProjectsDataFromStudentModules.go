@@ -16,12 +16,14 @@ func getModulesNameFromModules(modules []Module) []string {
 }
 
 func getMongoProjectsDataByModule(
-	moduleName string, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) ([]internal.MongoProjectData, error) {
+	moduleName string, city string, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) (
+	[]internal.MongoProjectData, error,
+) {
 	var moduleMongoProjectsData []internal.MongoProjectData
 
 	for _, projectData := range appData.ProjectsData[userLogs.Login].ProjectList {
 		if projectData.Module == moduleName {
-			mongoProjectData, err := util.GetMongoProjectData(projectData, userLogs, appData.ProjectsCollection)
+			mongoProjectData, err := util.GetMongoProjectData(projectData, city, userLogs, appData.ProjectsCollection)
 			if err != nil {
 				return []internal.MongoProjectData{}, err
 			}
@@ -32,7 +34,7 @@ func getMongoProjectsDataByModule(
 }
 
 func getMongoProjectsDataFromStudentModules(
-	modules []Module, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) ([]internal.MongoProjectData, error) {
+	modules []Module, city string, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) ([]internal.MongoProjectData, error) {
 	if err := util.CheckLocalProjectsData(userLogs, false, appData); err != nil {
 		return []internal.MongoProjectData{}, err
 	}
@@ -40,7 +42,7 @@ func getMongoProjectsDataFromStudentModules(
 	modulesName := getModulesNameFromModules(modules)
 	var mongoProjectsData []internal.MongoProjectData
 	for _, moduleName := range modulesName {
-		moduleMongoProjectData, err := getMongoProjectsDataByModule(moduleName, userLogs, appData)
+		moduleMongoProjectData, err := getMongoProjectsDataByModule(moduleName, city, userLogs, appData)
 		if err != nil {
 			return []internal.MongoProjectData{}, err
 		}

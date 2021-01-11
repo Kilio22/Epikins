@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"errors"
 	"net/http"
 
 	"epikins-api/internal/services/util"
@@ -13,16 +14,17 @@ import (
 
 func ProjectsController(appData *internal.AppData, c *fiber.Ctx) error {
 	userEmail := c.Get("email")
+	city := c.Params("city")
 	shouldUpdateProjectList, err := controllerUtil.GetQueryBoolValue("update", false, c)
 	if err != nil {
-		return controllerUtil.SendMyError(util.GetMyError(projectsService.ProjectsError+": invalid query parameter", nil, http.StatusBadRequest), c)
+		return controllerUtil.SendMyError(util.GetMyError(projectsService.ProjectsError, errors.New("invalid query parameter"), http.StatusBadRequest), c)
 	}
 
 	userLogs, err := controllerUtil.GetUserJenkinsCredentials(userEmail, appData.UsersCollection, appData.JenkinsCredentialsCollection)
 	if err != nil {
 		return controllerUtil.SendMyError(util.GetMyError(projectsService.ProjectsError, err, http.StatusInternalServerError), c)
 	}
-	projectList, myError := projectsService.ProjectsService(shouldUpdateProjectList, userLogs, appData)
+	projectList, myError := projectsService.ProjectsService(shouldUpdateProjectList, city, userLogs, appData)
 	if myError.Message != "" {
 		return controllerUtil.SendMyError(myError, c)
 	}

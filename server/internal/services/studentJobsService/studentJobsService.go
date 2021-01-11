@@ -13,10 +13,6 @@ type Module struct {
 	CodeModule string `json:"codemodule"`
 }
 
-type UserInformationIntraResponse struct {
-	Modules []Module `json:"modules"`
-}
-
 type StudentJob struct {
 	MongoWorkgroupData internal.MongoWorkgroupData `json:"mongoWorkgroupData"`
 	Project            string                      `json:"project"`
@@ -24,8 +20,10 @@ type StudentJob struct {
 
 const StudentJobsError = "cannot get student jobs"
 
-func getStudentWorkgroup(studentName string, mongoWorkgroupsData internal.MongoProjectData) (internal.MongoWorkgroupData, bool) {
-	for _, mongoWorkgroupData := range mongoWorkgroupsData.MongoWorkgroupsData {
+func getStudentWorkgroup(studentName string, city string, mongoWorkgroupsData internal.MongoProjectData) (
+	internal.MongoWorkgroupData, bool,
+) {
+	for _, mongoWorkgroupData := range mongoWorkgroupsData.MongoWorkgroupsData[city] {
 		if strings.Contains(mongoWorkgroupData.Name, studentName) {
 			return mongoWorkgroupData, true
 		}
@@ -33,11 +31,11 @@ func getStudentWorkgroup(studentName string, mongoWorkgroupsData internal.MongoP
 	return internal.MongoWorkgroupData{}, false
 }
 
-func getStudentJobsFromMongoProjectsData(studentName string, mongoProjectsData []internal.MongoProjectData) []StudentJob {
+func getStudentJobsFromMongoProjectsData(studentName string, city string, mongoProjectsData []internal.MongoProjectData) []StudentJob {
 	var studentJobs []StudentJob
 
 	for _, mongoProjectData := range mongoProjectsData {
-		studentWorkgroup, ok := getStudentWorkgroup(studentName, mongoProjectData)
+		studentWorkgroup, ok := getStudentWorkgroup(studentName, city, mongoProjectData)
 		if !ok {
 			continue
 		}
@@ -60,7 +58,12 @@ func StudentJobsService(studentEmail string, userLogs libJenkins.JenkinsCredenti
 		return []StudentJob{}, internal.MyError{}
 	}
 
-	mongoProjectsData, err := getMongoProjectsDataFromStudentModules(modules, userLogs, appData)
+	city, myError := getStudentCity(studentEmail)
+	if myError.Message != "" {
+		return nil, myError
+	}
+
+	mongoProjectsData, err := getMongoProjectsDataFromStudentModules(modules, city, userLogs, appData)
 	if err != nil {
 		return nil, util.GetMyError(StudentJobsError, err, http.StatusInternalServerError)
 	}
@@ -68,9 +71,9 @@ func StudentJobsService(studentEmail string, userLogs libJenkins.JenkinsCredenti
 		return []StudentJob{}, internal.MyError{}
 	}
 
-	mongoProjectsData, myError = updateMongoProjectsData(mongoProjectsData, userLogs, appData)
+	mongoProjectsData, myError = updateMongoProjectsData(mongoProjectsData, city, userLogs, appData)
 	if myError.Message != "" {
 		return nil, myError
 	}
-	return getStudentJobsFromMongoProjectsData(util.GetUsernameFromEmail(studentEmail), mongoProjectsData), internal.MyError{}
+	return getStudentJobsFromMongoProjectsData(util.GetUsernameFromEmail(studentEmail), city, mongoProjectsData), internal.MyError{}
 }

@@ -8,14 +8,17 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func updateValues(newLimit NewLimit, projectData *internal.MongoProjectData) {
-	oldLimit := projectData.BuildLimit
-	projectData.BuildLimit = newLimit.BuildLimit
-	for idx, workgroupData := range projectData.MongoWorkgroupsData {
-		if newLimit.BuildLimit-(oldLimit-workgroupData.RemainingBuilds) >= 0 {
-			projectData.MongoWorkgroupsData[idx].RemainingBuilds = newLimit.BuildLimit - (oldLimit - workgroupData.RemainingBuilds)
-		} else {
-			projectData.MongoWorkgroupsData[idx].RemainingBuilds = 0
+func updateValues(newLimit NewLimit, mongoProjectData *internal.MongoProjectData) {
+	oldLimit := mongoProjectData.BuildLimit
+	mongoProjectData.BuildLimit = newLimit.BuildLimit
+
+	for key, mongoWorkgroupsData := range mongoProjectData.MongoWorkgroupsData {
+		for idx, workgroupData := range mongoWorkgroupsData {
+			if newLimit.BuildLimit-(oldLimit-workgroupData.RemainingBuilds) >= 0 {
+				mongoProjectData.MongoWorkgroupsData[key][idx].RemainingBuilds = newLimit.BuildLimit - (oldLimit - workgroupData.RemainingBuilds)
+			} else {
+				mongoProjectData.MongoWorkgroupsData[key][idx].RemainingBuilds = 0
+			}
 		}
 	}
 }

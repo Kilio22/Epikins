@@ -14,9 +14,9 @@ import (
 const UpdateMongoProjectDataError = "cannot update project data: "
 
 func addMongoWorkgroupData(
-	job libJenkins.Job, newWorkgroupsData []internal.MongoWorkgroupData, mongoProjectData internal.MongoProjectData,
+	job libJenkins.Job, city string, newWorkgroupsData []internal.MongoWorkgroupData, mongoProjectData internal.MongoProjectData,
 ) []internal.MongoWorkgroupData {
-	if mongoWorkgroupData, ok := HasMongoWorkgroupData(job.Name, mongoProjectData.MongoWorkgroupsData); ok {
+	if mongoWorkgroupData, ok := HasMongoWorkgroupData(job.Name, mongoProjectData.MongoWorkgroupsData[city]); ok {
 		if shouldResetWorkgroupRemainingBuilds(mongoWorkgroupData) {
 			mongoWorkgroupData.RemainingBuilds = mongoProjectData.BuildLimit
 		}
@@ -28,14 +28,14 @@ func addMongoWorkgroupData(
 }
 
 func updateMongoWorkgroupsData(
-	mongoProjectData *internal.MongoProjectData, jobs []libJenkins.Job, projectCollection *mongo.Collection,
+	mongoProjectData *internal.MongoProjectData, jobs []libJenkins.Job, city string, projectCollection *mongo.Collection,
 ) error {
 	var newMongoWorkgroupsData []internal.MongoWorkgroupData
 
 	for _, job := range jobs {
-		newMongoWorkgroupsData = addMongoWorkgroupData(job, newMongoWorkgroupsData, *mongoProjectData)
+		newMongoWorkgroupsData = addMongoWorkgroupData(job, city, newMongoWorkgroupsData, *mongoProjectData)
 	}
-	mongoProjectData.MongoWorkgroupsData = newMongoWorkgroupsData
+	mongoProjectData.MongoWorkgroupsData[city] = newMongoWorkgroupsData
 	mongoProjectData.LastUpdate = time.Now().Unix()
 	return mongoUtil.UpdateProject(mongoProjectData.Name,
 		bson.M{
@@ -48,22 +48,22 @@ func updateMongoWorkgroupsData(
 }
 
 func UpdateMongoProjectData(
-	mongoProjectData *internal.MongoProjectData, localProjectData libJenkins.Project, userLogs libJenkins.JenkinsCredentials,
+	mongoProjectData *internal.MongoProjectData, localProjectData libJenkins.Project, city string, userLogs libJenkins.JenkinsCredentials,
 	projectCollection *mongo.Collection,
 ) error {
 	if time.Since(time.Unix(mongoProjectData.LastUpdate, 0)).Hours() < float64(12) {
-		err := resetWorkgroupsRemainingBuilds(mongoProjectData, projectCollection)
+		err := resetWorkgroupsRemainingBuilds(mongoProjectData, city, projectCollection)
 		if err != nil {
 			return errors.New(UpdateMongoProjectDataError + err.Error())
 		}
 		return nil
 	}
 
-	jobs, err := libJenkins.GetJobsByProject(localProjectData.Job, "REN", userLogs)
+	jobs, err := libJenkins.GetJobsByProject(localProjectData.Job, city, userLogs)
 	if err != nil {
 		return errors.New(UpdateMongoProjectDataError + err.Error())
 	}
-	err = updateMongoWorkgroupsData(mongoProjectData, jobs, projectCollection)
+	err = updateMongoWorkgroupsData(mongoProjectData, jobs, city, projectCollection)
 	if err != nil {
 		return errors.New(UpdateMongoProjectDataError + err.Error())
 	}

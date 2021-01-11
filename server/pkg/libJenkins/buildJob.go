@@ -31,12 +31,9 @@ func getForm(visibility Visibility) (form url.Values) {
 
 func BuildJob(postUrl string, visibility Visibility, credentials JenkinsCredentials) error {
 	form := getForm(visibility)
-	res, err := makeHttpRequest(http.MethodPost, postUrl, JenkinsBuildURLPart, credentials, form.Encode())
+	_, err := makeHttpRequest(http.MethodPost, postUrl, JenkinsBuildURLPart, credentials, form.Encode())
 	if err != nil {
 		return errors.New("cannot build job: " + err.Error())
-	}
-	if res.StatusCode < http.StatusOK || res.StatusCode > http.StatusIMUsed {
-		return errors.New("cannot build job: bad response code")
 	}
 	return nil
 }

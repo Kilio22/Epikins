@@ -21,11 +21,11 @@ type MongoWorkgroupData struct {
 }
 
 type MongoProjectData struct {
-	BuildLimit          int                  `json:"buildLimit"`
-	LastUpdate          int64                `json:"lastUpdate"`
-	Module              string               `json:"module"`
-	MongoWorkgroupsData []MongoWorkgroupData `bson:"mongoworkgroupsdata,omitempty" json:"mongoWorkgroupsData"`
-	Name                string               `json:"name"`
+	BuildLimit          int                             `json:"buildLimit"`
+	LastUpdate          int64                           `json:"lastUpdate"`
+	Module              string                          `json:"module"`
+	MongoWorkgroupsData map[string][]MongoWorkgroupData `bson:"mongoworkgroupsdata,omitempty" json:"mongoWorkgroupsData"`
+	Name                string                          `json:"name"`
 }
 
 type Role string

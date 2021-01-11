@@ -49,12 +49,7 @@ func UpdateProjectBuildLimitService(
 		return util.CheckLocalProjectDataError(myError, projectName, appData.ProjectsCollection)
 	}
 
-	jobs, err := libJenkins.GetJobsByProject(localProjectData.Job, "REN", userLogs)
-	if err != nil {
-		return util.GetMyError(UpdateProjectBuildLimitError, err, http.StatusInternalServerError)
-	}
-
-	if _, err = mongoUtil.AddMongoProjectData(util.GetNewMongoProjectData(localProjectData, util.GetMongoWorkgroupsDataFromJobs(jobs)), appData.ProjectsCollection); err != nil {
+	if _, err = mongoUtil.AddMongoProjectData(util.GetNewMongoProjectData(localProjectData, map[string][]internal.MongoWorkgroupData{}), appData.ProjectsCollection); err != nil {
 		return util.GetMyError(UpdateProjectBuildLimitError, err, http.StatusInternalServerError)
 	}
 	err = updateProjectData(newLimit, projectName, appData.ProjectsCollection)

@@ -16,7 +16,7 @@ func canBuild(mongoWorkgroupData internal.MongoWorkgroupData) bool {
 func startBuild(mongoWorkgroupData *internal.MongoWorkgroupData, buildParams BuildParams, userLogs libJenkins.JenkinsCredentials) (
 	bool, error,
 ) {
-	if !buildParams.FuMode {
+	if !buildParams.Fu {
 		ok := canBuild(*mongoWorkgroupData)
 		if !ok {
 			return true, nil
@@ -27,7 +27,7 @@ func startBuild(mongoWorkgroupData *internal.MongoWorkgroupData, buildParams Bui
 	if err != nil {
 		return false, errors.New(StartBuildError + err.Error())
 	}
-	if !buildParams.FuMode {
+	if !buildParams.Fu {
 		mongoWorkgroupData.RemainingBuilds--
 	}
 	return true, nil

@@ -12,10 +12,11 @@ import (
 const BuildError = "cannot build"
 
 type BuildParams struct {
-	JobsToBuild []string
-	FuMode      bool
-	Project     string
-	Visibility  libJenkins.Visibility
+	City       string                `json:"city" validate:"required"`
+	Jobs       []string              `json:"jobs" validate:"required"`
+	Fu         bool                  `json:"fu"`
+	Project    string                `json:"project" validate:"required"`
+	Visibility libJenkins.Visibility `json:"visibility" validate:"required"`
 }
 
 func BuildService(buildParams BuildParams, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) internal.MyError {
@@ -25,7 +26,7 @@ func BuildService(buildParams BuildParams, userLogs libJenkins.JenkinsCredential
 		return util.GetMyError(BuildError, errors.New(myError.Message), myError.Status)
 	}
 
-	err := startBuilds(buildParams, askedProjectData, appData.ProjectsCollection, userLogs)
+	err := startBuilds(buildParams, askedProjectData, buildParams.City, appData.ProjectsCollection, userLogs)
 	if err != nil {
 		return util.GetMyError(BuildError, err, http.StatusInternalServerError)
 	}

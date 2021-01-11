@@ -10,7 +10,7 @@ import (
 
 const ProjectJobsError = "cannot get workgroups associated to given project"
 
-func ProjectJobsService(projectName string, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) (
+func ProjectJobsService(projectName string, city string, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) (
 	[]WorkgroupData, internal.MyError,
 ) {
 	localProjectData, myError := util.GetLocalProjectData(projectName, userLogs, appData)
@@ -18,14 +18,14 @@ func ProjectJobsService(projectName string, userLogs libJenkins.JenkinsCredentia
 		return []WorkgroupData{}, util.CheckLocalProjectDataError(myError, projectName, appData.ProjectsCollection)
 	}
 
-	workgroups, err := libJenkins.GetWorkgroupsByProject(localProjectData.Job, "REN", userLogs)
+	workgroups, err := libJenkins.GetWorkgroupsByProject(localProjectData.Job, city, userLogs)
 	if err != nil {
 		return []WorkgroupData{}, util.GetMyError(ProjectJobsError, err, http.StatusInternalServerError)
 	} else if len(workgroups) == 0 {
 		return []WorkgroupData{}, internal.MyError{}
 	}
 
-	workgroupsData, err := getWorkgroupsData(workgroups, localProjectData, userLogs, appData.ProjectsCollection)
+	workgroupsData, err := getWorkgroupsData(workgroups, localProjectData, city, userLogs, appData.ProjectsCollection)
 	if err != nil {
 		return []WorkgroupData{}, util.GetMyError(ProjectJobsError, err, http.StatusInternalServerError)
 	}
