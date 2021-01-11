@@ -1,7 +1,6 @@
 import Axios, { AxiosResponse } from 'axios';
 import { apiBaseURI } from '../Config';
 import { IWorkgroupsData } from '../interfaces/IWorkgroupsData';
-import { IJob } from '../interfaces/IJob';
 import { IApiUser } from '../interfaces/users/IApiUser';
 import { IApiJenkinsCredentials } from '../interfaces/jenkinsCredentials/IApiJenkinsCredentials';
 import { IProject } from '../interfaces/projects/IProject';
@@ -31,19 +30,9 @@ class EpikinsApiService {
         }
     }
 
-    static async getJobs(url: string, apiAccessToken: string): Promise<IJob[] | null> {
-        try {
-            const res: AxiosResponse<IJob[]> = await Axios.get<IJob[]>(url, {headers: {'Authorization': apiAccessToken}});
-            return res.data;
-        } catch (e) {
-            console.log(e);
-            return null;
-        }
-    }
-
     static async getProjects(apiAccessToken: string): Promise<IProject[] | null> {
         try {
-            const res = await Axios.get<IProject[]>(apiBaseURI + 'projects', {headers: {'Authorization': apiAccessToken}});
+            const res = await Axios.get<IProject[]>(apiBaseURI + 'projects/REN', {headers: {'Authorization': apiAccessToken}});
             return res.data;
         } catch (e) {
             console.log(e);
@@ -68,9 +57,14 @@ class EpikinsApiService {
     static async buildJobs(requestedBuilds: string[], project: string, visibility: string, fuMode: boolean, apiAccessToken: string): Promise<boolean> {
         try {
             await Axios.post(apiBaseURI + 'build',
-                requestedBuilds,
                 {
-                    params: {'visibility': visibility, 'project': project, 'fu': fuMode},
+                    city: 'REN',
+                    jobs: requestedBuilds,
+                    project: project,
+                    fu: fuMode,
+                    visibility: visibility
+                },
+                {
                     headers: {'Authorization': apiAccessToken}
                 }
             );

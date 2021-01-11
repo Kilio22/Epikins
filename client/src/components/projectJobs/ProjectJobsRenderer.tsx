@@ -16,7 +16,7 @@ import WorkgroupsData from './WorkgroupsData';
 const jobsFuseOptions: Fuse.IFuseOptions<IWorkgroupsData> = {
     shouldSort: true,
     threshold: 0.4,
-    keys: [ 'groupJob.job.name' ]
+    keys: [ 'mongoWorkgroupData.name' ]
 };
 
 class ProjectJobsRenderer extends React.Component<IProjectJobsRendererProps, IProjectJobsRendererState> {
