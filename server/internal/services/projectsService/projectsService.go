@@ -16,7 +16,7 @@ type ProjectResponse struct {
 	Module     string         `json:"module"`
 }
 
-func ProjectsService(shouldUpdateProjectList bool, city string, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) (
+func ProjectsService(shouldUpdateProjectList bool, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) (
 	[]ProjectResponse, internal.MyError,
 ) {
 	if err := util.CheckLocalProjectsData(userLogs, shouldUpdateProjectList, appData); err != nil {
@@ -24,5 +24,5 @@ func ProjectsService(shouldUpdateProjectList bool, city string, userLogs libJenk
 	}
 
 	projectsData := appData.ProjectsData[userLogs.Login]
-	return getResponseFromProjectList(projectsData.ProjectList, city, userLogs, appData.ProjectsCollection)
+	return getResponseFromProjectList(projectsData.ProjectList, userLogs, appData.ProjectsCollection)
 }

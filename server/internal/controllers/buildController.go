@@ -8,6 +8,7 @@ import (
 	"epikins-api/internal/controllers/controllerUtil"
 	"epikins-api/internal/services/buildService"
 	"epikins-api/internal/services/util"
+	"epikins-api/pkg/libJenkins"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
@@ -22,6 +23,9 @@ func getBuildParams(c *fiber.Ctx) (buildService.BuildParams, internal.MyError) {
 	err = validator.New().Struct(buildParams)
 	if err != nil {
 		return buildService.BuildParams{}, util.GetMyError(buildService.BuildError, err, http.StatusBadRequest)
+	}
+	if buildParams.Visibility != libJenkins.PUBLIC && buildParams.Visibility != libJenkins.PRIVATE {
+		return buildService.BuildParams{}, util.GetMyError(buildService.BuildError, errors.New("wrong body"), http.StatusBadRequest)
 	}
 	return buildParams, internal.MyError{}
 }

@@ -14,7 +14,6 @@ import (
 
 func ProjectsController(appData *internal.AppData, c *fiber.Ctx) error {
 	userEmail := c.Get("email")
-	city := c.Params("city")
 	shouldUpdateProjectList, err := controllerUtil.GetQueryBoolValue("update", false, c)
 	if err != nil {
 		return controllerUtil.SendMyError(util.GetMyError(projectsService.ProjectsError, errors.New("invalid query parameter"), http.StatusBadRequest), c)
@@ -24,7 +23,7 @@ func ProjectsController(appData *internal.AppData, c *fiber.Ctx) error {
 	if err != nil {
 		return controllerUtil.SendMyError(util.GetMyError(projectsService.ProjectsError, err, http.StatusInternalServerError), c)
 	}
-	projectList, myError := projectsService.ProjectsService(shouldUpdateProjectList, city, userLogs, appData)
+	projectList, myError := projectsService.ProjectsService(shouldUpdateProjectList, userLogs, appData)
 	if myError.Message != "" {
 		return controllerUtil.SendMyError(myError, c)
 	}

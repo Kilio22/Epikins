@@ -1,27 +1,34 @@
 package controllers
 
 import (
+	"errors"
 	"net/http"
 
 	"epikins-api/internal"
 	"epikins-api/internal/controllers/controllerUtil"
 	"epikins-api/internal/services/globalBuildService"
 	"epikins-api/internal/services/util"
+	"epikins-api/pkg/libJenkins"
+	"github.com/go-playground/validator/v10"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 func getGlobalBuildParams(c *fiber.Ctx) (globalBuildService.GlobalBuildParams, internal.MyError) {
-	visibility, err := controllerUtil.GetVisibilityQueryParam(c)
+	var globalBuildParams globalBuildService.GlobalBuildParams
+
+	err := c.BodyParser(&globalBuildParams)
+	if err != nil {
+		return globalBuildService.GlobalBuildParams{}, util.GetMyError(globalBuildService.GlobalBuildError, errors.New("wrong body"), http.StatusBadRequest)
+	}
+	err = validator.New().Struct(globalBuildParams)
 	if err != nil {
 		return globalBuildService.GlobalBuildParams{}, util.GetMyError(globalBuildService.GlobalBuildError, err, http.StatusBadRequest)
 	}
-
-	project := c.Query("project")
-	if project == "" {
-		return globalBuildService.GlobalBuildParams{}, util.GetMyError(globalBuildService.GlobalBuildError+": you must specify a project", nil, http.StatusBadRequest)
+	if globalBuildParams.Visibility != libJenkins.PUBLIC && globalBuildParams.Visibility != libJenkins.PRIVATE {
+		return globalBuildService.GlobalBuildParams{}, util.GetMyError(globalBuildService.GlobalBuildError, errors.New("wrong body"), http.StatusBadRequest)
 	}
-	return globalBuildService.GlobalBuildParams{Project: project, Visibility: visibility}, internal.MyError{}
+	return globalBuildParams, internal.MyError{}
 }
 
 func GlobalBuildController(appData *internal.AppData, c *fiber.Ctx) error {

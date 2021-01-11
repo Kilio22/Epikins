@@ -11,8 +11,9 @@ import (
 const GlobalBuildError = "cannot build"
 
 type GlobalBuildParams struct {
-	Project    string
-	Visibility libJenkins.Visibility
+	City       string                `json:"city" validate:"required"`
+	Project    string                `json:"project" validate:"required"`
+	Visibility libJenkins.Visibility `json:"visibility" validate:"required"`
 }
 
 func GlobalBuildService(
@@ -22,7 +23,7 @@ func GlobalBuildService(
 		return util.CheckLocalProjectDataError(myError, globalBuildParams.Project, appData.ProjectsCollection)
 	}
 
-	globalJobUrl, err := libJenkins.GetGlobalJobUrlByProject(askedProjectData.Job, "REN", userLogs)
+	globalJobUrl, err := libJenkins.GetGlobalJobUrlByProject(askedProjectData.Job, globalBuildParams.City, userLogs)
 	if err != nil {
 		return util.GetMyError(GlobalBuildError, err, http.StatusInternalServerError)
 	}

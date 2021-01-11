@@ -35,6 +35,9 @@ func updateMongoWorkgroupsData(
 	for _, job := range jobs {
 		newMongoWorkgroupsData = addMongoWorkgroupData(job, city, newMongoWorkgroupsData, *mongoProjectData)
 	}
+	if mongoProjectData.MongoWorkgroupsData == nil {
+		mongoProjectData.MongoWorkgroupsData = map[string][]internal.MongoWorkgroupData{}
+	}
 	mongoProjectData.MongoWorkgroupsData[city] = newMongoWorkgroupsData
 	mongoProjectData.LastUpdate = time.Now().Unix()
 	return mongoUtil.UpdateProject(mongoProjectData.Name,
@@ -51,7 +54,7 @@ func UpdateMongoProjectData(
 	mongoProjectData *internal.MongoProjectData, localProjectData libJenkins.Project, city string, userLogs libJenkins.JenkinsCredentials,
 	projectCollection *mongo.Collection,
 ) error {
-	if time.Since(time.Unix(mongoProjectData.LastUpdate, 0)).Hours() < float64(12) {
+	if time.Since(time.Unix(mongoProjectData.LastUpdate, 0)).Hours() < float64(12) && len(mongoProjectData.MongoWorkgroupsData[city]) != 0 {
 		err := resetWorkgroupsRemainingBuilds(mongoProjectData, city, projectCollection)
 		if err != nil {
 			return errors.New(UpdateMongoProjectDataError + err.Error())
