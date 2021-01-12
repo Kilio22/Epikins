@@ -12,18 +12,31 @@ import (
 
 const GetMongoProjectDataError = "cannot get mongo project data"
 
+func handleErrorNoDocument(
+	project libJenkins.Project, city string, userLogs libJenkins.JenkinsCredentials, projectCollection *mongo.Collection) (
+	internal.MongoProjectData, error,
+) {
+	var jobs []libJenkins.Job
+	var err error
+
+	if city != "" {
+		jobs, err = libJenkins.GetJobsByProject(project.Job, city, userLogs)
+		if err != nil {
+			return internal.MongoProjectData{}, errors.New(GetMongoProjectDataError + err.Error())
+		}
+	}
+	return mongoUtil.AddMongoProjectData(GetNewMongoProjectData(project, GetMongoWorkgroupsDataFromJobs(jobs, city)), projectCollection)
+}
+
 func GetMongoProjectData(
 	project libJenkins.Project, city string, userLogs libJenkins.JenkinsCredentials, projectCollection *mongo.Collection) (
 	internal.MongoProjectData, error,
 ) {
 	mongoProjectData, err := mongoUtil.FetchMongoProjectData(project.Job.Name, projectCollection)
+
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			jobs, err := libJenkins.GetJobsByProject(project.Job, city, userLogs)
-			if err != nil {
-				return internal.MongoProjectData{}, errors.New(GetMongoProjectDataError + err.Error())
-			}
-			return mongoUtil.AddMongoProjectData(GetNewMongoProjectData(project, GetMongoWorkgroupsDataFromJobs(jobs, city)), projectCollection)
+			return handleErrorNoDocument(project, city, userLogs, projectCollection)
 		}
 		log.Println(err)
 		return internal.MongoProjectData{}, errors.New(GetMongoProjectDataError + ": " + err.Error())

@@ -29,6 +29,9 @@ func setupApp(appData *internal.AppData) *fiber.App {
 	projectsGroup.Get("/", func(ctx *fiber.Ctx) error {
 		return controllers.ProjectsController(appData, ctx)
 	})
+	projectsGroup.Get("/:project", func(ctx *fiber.Ctx) error {
+		return controllers.ProjectInformationController(appData, ctx)
+	})
 	projectsGroup.Get("/:project/:city", func(ctx *fiber.Ctx) error {
 		return controllers.ProjectJobsController(appData, ctx)
 	})
