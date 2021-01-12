@@ -12,6 +12,7 @@ const ProjectsError = "cannot get projects"
 
 type ProjectResponse struct {
 	BuildLimit int            `json:"buildLimit"`
+	Cities     []string       `json:"cities"`
 	Job        libJenkins.Job `json:"job"`
 	Module     string         `json:"module"`
 }

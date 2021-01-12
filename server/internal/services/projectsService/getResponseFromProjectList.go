@@ -21,6 +21,7 @@ func getResponseFromProjectList(
 			return nil, util.GetMyError(ProjectsError, err, http.StatusInternalServerError)
 		}
 		response = append(response, ProjectResponse{
+			Cities:     project.Cities,
 			Job:        project.Job,
 			Module:     project.Module,
 			BuildLimit: projectData.BuildLimit,

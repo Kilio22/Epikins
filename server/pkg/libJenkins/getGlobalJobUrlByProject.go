@@ -21,7 +21,7 @@ func GetGlobalJobUrlByProject(project Job, city string, userLogs JenkinsCredenti
 	}
 
 	sortYearList(yearList)
-	citiesList, err := getCitiesList(yearList[0].Url, userLogs)
+	citiesList, err := getCities(yearList[0].Url, userLogs)
 	if err != nil || len(citiesList) == 0 {
 		return "", err
 	}
