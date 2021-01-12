@@ -12,11 +12,11 @@ import UsersForm from './UsersForm';
 import Loading from '../Loading';
 import UsersDeletePopup from './UsersDeletePopup';
 
-class Users extends Component<IRouteProps<{}>, IUsersState> {
+class Users extends Component<IRouteProps, IUsersState> {
     static contextType = appInitialContext;
     context!: React.ContextType<typeof appInitialContext>;
 
-    constructor(props: IRouteProps<{}>) {
+    constructor(props: IRouteProps) {
         super(props);
 
         this.onSaveClick = this.onSaveClick.bind(this);
@@ -50,7 +50,7 @@ class Users extends Component<IRouteProps<{}>, IUsersState> {
                     this.state.isLoading ?
                         <Loading/>
                         :
-                        <div>
+                        <div className={'h-100'}>
                             {
                                 this.state.isAdding &&
                                 <UsersForm changeUsersStateByProperty={this.changeUsersStateByProperty}

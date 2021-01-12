@@ -14,11 +14,11 @@ import {
     projectsManagementInitialState
 } from '../../interfaces/projectsManagement/IProjectsManagement';
 
-class ProjectsManagement extends Component<IRouteProps<{}>, IProjectsManagementState> {
+class ProjectsManagement extends Component<IRouteProps, IProjectsManagementState> {
     static contextType = appInitialContext;
     context!: React.ContextType<typeof appInitialContext>;
 
-    constructor(props: IRouteProps<{}>) {
+    constructor(props: IRouteProps) {
         super(props);
 
         this.getProjects = this.getProjects.bind(this);

@@ -32,40 +32,39 @@ class ProjectJobsRenderer extends React.Component<IProjectJobsRendererProps, IPr
     }
 
     render() {
-        let workgroupsData: IWorkgroupsData[] = this.props.workgroupsData;
-        const fuse = new Fuse(this.props.workgroupsData, jobsFuseOptions);
+        const workgroupsData: IWorkgroupsData[] = this.fuseProjects([ ...this.props.workgroupsData ], this.props.workgroupsData, this.state.queryString);
 
-        if (this.state.queryString !== '') {
-            const fuseResult = fuse.search(this.state.queryString);
-
-            workgroupsData = fuseResult.map(fuseRes => {
-                return fuseRes.item;
-            });
-        }
         return (
-            <div>
-                <TextField placeholder={'Group name'} variant={'standard'}
-                           color={'primary'}
-                           onChange={(event => this.onSearchFieldChange(event.target.value.trim()))}
-                           className={'ml-1'}
-                           autoFocus={true}/>
-                <BuildToolbox selectedJobs={this.props.selectedJobs} isBuilding={this.props.isBuilding}
-                              onBuildClick={this.props.onBuildClick}
-                              onGlobalBuildClick={this.props.onGlobalBuildClick}/>
-                <Form className={'fu-switch mt-0'}>
-                    <Form.Check
-                        type={'switch'}
-                        id={'custom-switch'}
-                        label={'Follow-up'}
-                        checked={this.context.fuMode}
-                        onChange={() => this.context.changeAppStateByProperty &&
-                            this.context.changeAppStateByProperty('fuMode', !this.context.fuMode, false)}
-                    />
-                </Form>
-                <WorkgroupsData workgroupsData={workgroupsData} selectedJobs={this.props.selectedJobs}
-                                onCheckboxChange={this.props.onCheckboxChange} onJobClick={this.onJobClick}/>
-                <Legend/>
-            </div>
+            this.props.availableCities && workgroupsData.length !== 0 ?
+                <div>
+                    <TextField placeholder={'Group name'} variant={'standard'}
+                               color={'primary'}
+                               onChange={(event => this.onSearchFieldChange(event.target.value.trim()))}
+                               className={'ml-1'}
+                               autoFocus={true}/>
+                    <BuildToolbox availableCities={this.props.availableCities}
+                                  onCitySelected={this.props.onCitySelected}
+                                  selectedCity={this.props.selectedCity}
+                                  selectedJobs={this.props.selectedJobs}
+                                  isBuilding={this.props.isBuilding}
+                                  onBuildClick={this.props.onBuildClick}
+                                  onGlobalBuildClick={this.props.onGlobalBuildClick}/>
+                    <Form className={'fu-switch mt-0'}>
+                        <Form.Check
+                            type={'switch'}
+                            id={'custom-switch'}
+                            label={'Follow-up'}
+                            checked={this.context.fuMode}
+                            onChange={() => this.context.changeAppStateByProperty &&
+                                this.context.changeAppStateByProperty('fuMode', !this.context.fuMode, false)}
+                        />
+                    </Form>
+                    <WorkgroupsData workgroupsData={workgroupsData} selectedJobs={this.props.selectedJobs}
+                                    onCheckboxChange={this.props.onCheckboxChange} onJobClick={this.onJobClick}/>
+                    <Legend/>
+                </div>
+                :
+                <h2 className={'text-center'}>No jobs to display</h2>
         );
     }
 
@@ -80,6 +79,18 @@ class ProjectJobsRenderer extends React.Component<IProjectJobsRendererProps, IPr
         if (target.type !== 'checkbox') {
             window.open(url);
         }
+    }
+
+    fuseProjects(filteredWorkgroups: IWorkgroupsData[], originalWorkgroupList: IWorkgroupsData[], queryString: string) {
+        if (queryString !== '') {
+            const fuse = new Fuse(originalWorkgroupList, jobsFuseOptions);
+            const fuseResult = fuse.search(queryString);
+
+            filteredWorkgroups = fuseResult.map(fuseRes => {
+                return fuseRes.item;
+            });
+        }
+        return filteredWorkgroups;
     }
 }
 

@@ -4,6 +4,7 @@ import { apiBaseURI } from '../../Config';
 import {
     IProjectJobsMatchParams,
     IProjectJobsState,
+    IProjectLocationState,
     projectJobsInitialState
 } from '../../interfaces/jobs/IProjectJobs';
 import ProjectJobsRenderer from './ProjectJobsRenderer';
@@ -13,18 +14,29 @@ import { appInitialContext } from '../../interfaces/IAppContext';
 import { authServiceObj } from '../../services/AuthService';
 import Loading from '../Loading';
 import { userInitialState } from '../../interfaces/IUser';
+import { IProject } from '../../interfaces/projects/IProject';
 
-class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams>, IProjectJobsState> {
+class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams, IProjectLocationState>, IProjectJobsState> {
     static contextType = appInitialContext;
     context!: React.ContextType<typeof appInitialContext>;
     private mounted = false;
 
-    constructor(props: IRouteProps<IProjectJobsMatchParams>) {
+    constructor(props: IRouteProps<IProjectJobsMatchParams, IProjectLocationState>) {
         super(props);
 
-        this.state = projectJobsInitialState;
+        if (props.routeProps.location?.state?.project) {
+            this.state = {
+                ...projectJobsInitialState,
+                project: props.routeProps.location.state.project,
+                selectedCity: props.routeProps.location.state.project.cities[0]
+            };
+        } else {
+            this.state = projectJobsInitialState;
+        }
 
+        this.getProjectInformation = this.getProjectInformation.bind(this);
         this.getJobsByProject = this.getJobsByProject.bind(this);
+        this.onCitySelected = this.onCitySelected.bind(this);
         this.onCheckboxChange = this.onCheckboxChange.bind(this);
         this.onBuildClick = this.onBuildClick.bind(this);
         this.onGlobalBuildClick = this.onGlobalBuildClick.bind(this);
@@ -33,6 +45,9 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams>, 
     async componentDidMount() {
         this.mounted = true;
         this.setState({...this.state, isLoading: true});
+        if (!this.state.project) {
+            await this.getProjectInformation();
+        }
         await this.getJobsByProject(true);
         this.setState({...this.state, isLoading: false});
     }
@@ -46,7 +61,9 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams>, 
             this.state.isLoading ?
                 <Loading/>
                 :
-                <ProjectJobsRenderer workgroupsData={this.state.workgroupsData}
+                <ProjectJobsRenderer selectedCity={this.state.selectedCity} onCitySelected={this.onCitySelected}
+                                     availableCities={this.state.project?.cities}
+                                     workgroupsData={this.state.workgroupsData}
                                      isBuilding={this.state.isBuilding}
                                      selectedJobs={this.state.selectedJobs}
                                      onCheckboxChange={this.onCheckboxChange}
@@ -56,7 +73,47 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams>, 
         );
     }
 
+    async onCitySelected(city: string) {
+        this.setState({
+            ...this.state,
+            selectedCity: city,
+            isLoading: true
+        });
+        await this.getJobsByProject(true);
+        this.setState({...this.state, isLoading: false});
+    }
+
+    async getProjectInformation() {
+        const accessToken: string = await authServiceObj.getToken();
+        if (accessToken === '') {
+            if (this.context.changeAppStateByProperty != null) {
+                this.context.changeAppStateByProperty('user', userInitialState, false);
+            }
+            return;
+        }
+
+        const res: IProject | null = await EpikinsApiService.getProjectInformation(this.props.routeProps.match.params.project, accessToken);
+        if (!this.mounted) {
+            return;
+        }
+        if (res) {
+            this.setState({
+                ...this.state,
+                project: res,
+                selectedCity: res.cities[0]
+            });
+        } else {
+            if (this.context.changeAppStateByProperty) {
+                this.context.changeAppStateByProperty('errorMessage',
+                    'Cannot fetch data, please try to reload the page.', true);
+            }
+        }
+    }
+
     async getJobsByProject(shouldCallback: boolean) {
+        if (!this.state.project) {
+            return;
+        }
         const accessToken: string = await authServiceObj.getToken();
         if (accessToken === '') {
             if (this.context.changeAppStateByProperty != null) {
@@ -66,7 +123,7 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams>, 
         }
 
         const res: IWorkgroupsData[] | null = await EpikinsApiService.getWorkgroupsData(
-            apiBaseURI + 'projects/' + this.props.routeProps.match.params.project + '/REN', accessToken);
+            apiBaseURI + 'projects/' + this.state.project.job.name + '/' + this.state.selectedCity, accessToken);
 
         if (!this.mounted) {
             return;
@@ -134,6 +191,9 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams>, 
     }
 
     async onBuildClick(visibility: string) {
+        if (!this.state.project) {
+            return;
+        }
         const selectedJobs: string[] = this.state.selectedJobs;
         this.setState({
             ...this.state,
@@ -150,11 +210,14 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams>, 
         }
 
         await this.handleBuildResponse(await EpikinsApiService.buildJobs(
-            selectedJobs, this.props.routeProps.match.params.project, visibility, this.context.fuMode, accessToken
+            selectedJobs, this.state.project.job.name, visibility, this.context.fuMode, this.state.selectedCity, accessToken
         ));
     }
 
     async onGlobalBuildClick(visibility: string) {
+        if (!this.state.project) {
+            return;
+        }
         this.setState({
             ...this.state,
             isBuilding: true,
@@ -169,7 +232,7 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams>, 
             return;
         }
 
-        await this.handleBuildResponse(await EpikinsApiService.globalBuild(this.props.routeProps.match.params.project, visibility, accessToken));
+        await this.handleBuildResponse(await EpikinsApiService.globalBuild(this.state.project.job.name, visibility, this.state.selectedCity, accessToken));
     }
 }
 

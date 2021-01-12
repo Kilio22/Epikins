@@ -32,7 +32,17 @@ class EpikinsApiService {
 
     static async getProjects(apiAccessToken: string): Promise<IProject[] | null> {
         try {
-            const res = await Axios.get<IProject[]>(apiBaseURI + 'projects/REN', {headers: {'Authorization': apiAccessToken}});
+            const res = await Axios.get<IProject[]>(apiBaseURI + 'projects', {headers: {'Authorization': apiAccessToken}});
+            return res.data;
+        } catch (e) {
+            console.log(e);
+            return null;
+        }
+    }
+
+    static async getProjectInformation(project: string, apiAccessToken: string): Promise<IProject | null> {
+        try {
+            const res = await Axios.get<IProject>(apiBaseURI + 'projects/' + project, {headers: {'Authorization': apiAccessToken}});
             return res.data;
         } catch (e) {
             console.log(e);
@@ -54,11 +64,11 @@ class EpikinsApiService {
         }
     }
 
-    static async buildJobs(requestedBuilds: string[], project: string, visibility: string, fuMode: boolean, apiAccessToken: string): Promise<boolean> {
+    static async buildJobs(requestedBuilds: string[], project: string, visibility: string, fuMode: boolean, city: string, apiAccessToken: string): Promise<boolean> {
         try {
             await Axios.post(apiBaseURI + 'build',
                 {
-                    city: 'REN',
+                    city,
                     jobs: requestedBuilds,
                     project: project,
                     fu: fuMode,
@@ -75,11 +85,14 @@ class EpikinsApiService {
         return false;
     }
 
-    static async globalBuild(project: string, visibility: string, apiAccessToken: string): Promise<boolean> {
+    static async globalBuild(project: string, visibility: string, city: string, apiAccessToken: string): Promise<boolean> {
         try {
-            await Axios.post(apiBaseURI + 'build/global', {},
+            await Axios.post(apiBaseURI + 'build/global', {
+                    city,
+                    project,
+                    visibility
+                },
                 {
-                    params: {'visibility': visibility, 'project': project},
                     headers: {'Authorization': apiAccessToken}
                 }
             );

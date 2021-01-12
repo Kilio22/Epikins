@@ -4,13 +4,16 @@ import { IWorkgroupsData } from '../IWorkgroupsData';
 import { OnBuildClick, OnCheckboxChange } from '../Functions';
 
 export interface IProjectJobsRendererProps {
+    availableCities: string[] | undefined,
     workgroupsData: IWorkgroupsData[],
     isBuilding: boolean,
     selectedJobs: string[],
+    selectedCity: string,
     onCheckboxChange: OnCheckboxChange,
     onBuildClick: OnBuildClick,
     onGlobalBuildClick: OnBuildClick,
-    routeProps: RouteComponentProps<IProjectJobsMatchParams>
+    routeProps: RouteComponentProps<IProjectJobsMatchParams>,
+    onCitySelected: OnBuildClick
 }
 
 export interface IProjectJobsRendererState {

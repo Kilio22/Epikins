@@ -13,9 +13,11 @@ export interface IProjectsRendererProps {
 }
 
 export interface IProjectsRendererState {
-    queryString: string
+    queryString: string,
+    selectedModule: string
 }
 
 export const projectsRendererInitialState: IProjectsRendererState = {
-    queryString: ''
+    queryString: '',
+    selectedModule: 'All'
 };

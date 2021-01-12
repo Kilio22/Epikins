@@ -15,15 +15,20 @@ class UsersTable extends Component<IUsersTableProps> {
 
     render() {
         return (
-            <Table bordered responsive={'md'} striped className={'mt-3'}>
-                <UsersTableHeader/>
-                <UsersTableBody connectedUser={this.props.connectedUser}
-                                users={this.props.users}
-                                jenkinsCredentials={this.props.jenkinsCredentials}
-                                isEditing={this.props.isEditing}
-                                onCheckboxClick={this.onCheckboxClick}
-                                onFirstDeleteClick={this.props.onFirstDeleteClick}/>
-            </Table>
+            this.props.users.length - 1 === 0 ?
+                <div className={'h-100 d-flex justify-content-center align-items-center'}>
+                    <h2 className={'text-center'}>No user except you is authorized to access to this app</h2>
+                </div>
+                :
+                <Table bordered responsive={'md'} striped className={'mt-3'}>
+                    <UsersTableHeader/>
+                    <UsersTableBody connectedUser={this.props.connectedUser}
+                                    users={this.props.users}
+                                    jenkinsCredentials={this.props.jenkinsCredentials}
+                                    isEditing={this.props.isEditing}
+                                    onCheckboxClick={this.onCheckboxClick}
+                                    onFirstDeleteClick={this.props.onFirstDeleteClick}/>
+                </Table>
         );
     }
 

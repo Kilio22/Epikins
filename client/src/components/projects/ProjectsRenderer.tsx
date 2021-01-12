@@ -1,7 +1,7 @@
 import React from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
 import Fuse from 'fuse.js';
-import { TextField } from '@material-ui/core';
+import { NativeSelect, TextField } from '@material-ui/core';
 import {
     IProjectsRendererProps,
     IProjectsRendererState,
@@ -25,19 +25,19 @@ class ProjectsRenderer extends React.Component<IProjectsRendererProps, IProjects
 
         this.state = projectsRendererInitialState;
         this.onSearchFieldChange = this.onSearchFieldChange.bind(this);
+        this.onModuleSelected = this.onModuleSelected.bind(this);
+        this.getAvailableModules = this.getAvailableModules.bind(this);
+        this.fuseProjects = this.fuseProjects.bind(this);
     }
 
     render() {
         let projects: IProject[] = this.props.projects;
-        const fuse = new Fuse(this.props.projects, projectsFuseOptions);
+        const availableModules = this.getAvailableModules(projects);
 
-        if (this.state.queryString !== '') {
-            const fuseResult = fuse.search(this.state.queryString);
-
-            projects = fuseResult.map(fuseRes => {
-                return fuseRes.item;
-            });
-        }
+        projects = this.fuseProjects(projects, this.props.projects, this.state.queryString);
+        projects = projects.filter((project) => {
+            return this.state.selectedModule === 'All' || project.module === this.state.selectedModule;
+        });
         return (
             <div>
                 <TextField placeholder={'Project name'} variant={'standard'}
@@ -45,6 +45,22 @@ class ProjectsRenderer extends React.Component<IProjectsRendererProps, IProjects
                            onChange={(event => this.onSearchFieldChange(event.target.value.trim()))}
                            className={'ml-1'}
                            autoFocus={true}/>
+                <NativeSelect className={'ml-2'} variant={'standard'}
+                              onChange={(event => {
+                                  this.onModuleSelected(event.target.value);
+                              })}
+                              defaultValue={this.state.selectedModule}>
+                    {
+                        projects.length !== 0 &&
+                        availableModules.map((value, index) => {
+                            return (
+                                <option key={index}>
+                                    {value}
+                                </option>
+                            );
+                        })
+                    }
+                </NativeSelect>
                 {
                     this.props.showSwitch &&
                     <Form className={'fu-switch p-1'}>
@@ -81,12 +97,43 @@ class ProjectsRenderer extends React.Component<IProjectsRendererProps, IProjects
         );
     }
 
+    getAvailableModules(projects: IProject[]) {
+        let availableModules = projects.map((project) => {
+            return project.module;
+        });
+
+        availableModules.push('All');
+        availableModules = Array.from(new Set<string>(availableModules));
+        availableModules = availableModules.sort((a, b) => {
+            return a.localeCompare(b);
+        });
+        return availableModules;
+    }
+
     onSearchFieldChange(value: string) {
         this.setState({
             queryString: value
         });
     }
 
+    onModuleSelected(module: string) {
+        this.setState({
+            ...this.state,
+            selectedModule: module
+        });
+    }
+
+    fuseProjects(filteredProjects: IProject[], originalProjectList: IProject[], queryString: string) {
+        if (queryString !== '') {
+            const fuse = new Fuse(originalProjectList, projectsFuseOptions);
+            const fuseResult = fuse.search(queryString);
+
+            filteredProjects = fuseResult.map(fuseRes => {
+                return fuseRes.item;
+            });
+        }
+        return filteredProjects;
+    }
 }
 
 export default ProjectsRenderer;

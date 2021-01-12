@@ -6,6 +6,8 @@ import ProjectJobs from '../components/projectJobs/ProjectJobs';
 import Users from '../components/users/Users';
 import JenkinsCredentials from '../components/jenkinsCredentials/JenkinsCredentials';
 import ProjectsManagement from '../components/projectsManagement/ProjectsManagement';
+import { StaticContext } from 'react-router';
+import * as H from 'history';
 
 interface IRoute {
     path: string,
@@ -15,8 +17,8 @@ interface IRoute {
     inNavbar: boolean
 }
 
-export interface IRouteProps<PARAMS> {
-    routeProps: RouteComponentProps<PARAMS>
+export interface IRouteProps<PARAMS = {}, S = H.LocationState> {
+    routeProps: RouteComponentProps<PARAMS, StaticContext, S>
 }
 
 export const routePrefix: string = '/';

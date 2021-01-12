@@ -98,22 +98,19 @@ const WorkgroupsData: React.FunctionComponent<IGroupsDataProps> = ({
     return (
         <div className={'mt-3'}>
             {
-                workgroupsData.length === 0 ?
-                    <h2 className={'text-center'}>No jobs to display</h2>
-                    :
-                    <Row>
-                        {
-                            workgroupsData.map((workgroupData, id) => {
-                                return (
-                                    <Col md={4} key={id}>
-                                        <WorkgroupData workgroupData={workgroupData} selectedJobs={selectedJobs}
-                                                       onCheckboxChange={onCheckboxChange}
-                                                       onJobClick={onJobClick}/>
-                                    </Col>
-                                );
-                            })
-                        }
-                    </Row>
+                <Row>
+                    {
+                        workgroupsData.map((workgroupData, id) => {
+                            return (
+                                <Col md={4} key={id}>
+                                    <WorkgroupData workgroupData={workgroupData} selectedJobs={selectedJobs}
+                                                   onCheckboxChange={onCheckboxChange}
+                                                   onJobClick={onJobClick}/>
+                                </Col>
+                            );
+                        })
+                    }
+                </Row>
             }
         </div>
     );

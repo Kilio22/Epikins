@@ -91,6 +91,7 @@ class Login extends Component<ILoginProps, ILoginState> {
             return;
         }
 
+        console.log(accessToken);
         try {
             const decodedJWT: any = await authServiceObj.verifyAccessToken(accessToken);
             if (decodedJWT === null) {

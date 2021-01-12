@@ -14,11 +14,11 @@ import {
     jenkinsCredentialsInitialState
 } from '../../interfaces/jenkinsCredentials/IJenkinsCredentials';
 
-class JenkinsCredentials extends Component<IRouteProps<{}>, IJenkinsCredentialsState> {
+class JenkinsCredentials extends Component<IRouteProps, IJenkinsCredentialsState> {
     static contextType = appInitialContext;
     context!: React.ContextType<typeof appInitialContext>;
 
-    constructor(props: IRouteProps<{}>) {
+    constructor(props: IRouteProps) {
         super(props);
 
         this.onAddClick = this.onAddClick.bind(this);

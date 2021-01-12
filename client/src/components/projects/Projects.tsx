@@ -11,11 +11,11 @@ import { userInitialState } from '../../interfaces/IUser';
 import { IProject } from '../../interfaces/projects/IProject';
 import ProjectRenderer from './ProjectRenderer';
 
-class Projects extends Component<IRouteProps<{}>, IProjectsState> {
+class Projects extends Component<IRouteProps, IProjectsState> {
     static contextType = appInitialContext;
     context!: React.ContextType<typeof appInitialContext>;
 
-    constructor(props: IRouteProps<{}>) {
+    constructor(props: IRouteProps) {
         super(props);
 
         this.getProjects = this.getProjects.bind(this);
@@ -54,8 +54,11 @@ class Projects extends Component<IRouteProps<{}>, IProjectsState> {
 
         const res: IProject[] | null = await EpikinsApiService.getProjects(accessToken);
         if (res) {
-            const sortedProjects: IProject[] = res.sort((a, b) => {
+            let sortedProjects: IProject[] = res.sort((a, b) => {
                 return a.job.name.localeCompare(b.job.name);
+            });
+            sortedProjects = sortedProjects.filter((project) => {
+                return project.cities.length !== 0;
             });
             sortedProjects.forEach((project) => {
                 project.epikinsProjectURL = routePrefix + 'projects/' + project.job.name;
@@ -76,7 +79,9 @@ class Projects extends Component<IRouteProps<{}>, IProjectsState> {
     }
 
     onProjectClick(project: IProject) {
-        this.props.routeProps.history.push(project.epikinsProjectURL);
+        this.props.routeProps.history.push(project.epikinsProjectURL, {
+            project
+        });
     }
 }
 
