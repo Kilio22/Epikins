@@ -9,6 +9,7 @@ const (
 	USERS       internal.Role = "users"
 	CREDENTIALS internal.Role = "credentials"
 	MODULE      internal.Role = "module"
+	STUDENT     internal.Role = "student"
 )
 
 var Roles = []internal.Role{

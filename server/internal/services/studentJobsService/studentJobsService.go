@@ -13,9 +13,16 @@ type Module struct {
 	CodeModule string `json:"codemodule"`
 }
 
+type StudentProject struct {
+	Module     string `json:"module"`
+	Name       string `json:"name"`
+	BuildLimit int    `json:"buildLimit"`
+}
+
 type StudentJob struct {
+	City               string                      `json:"city"`
 	MongoWorkgroupData internal.MongoWorkgroupData `json:"mongoWorkgroupData"`
-	Project            string                      `json:"project"`
+	Project            StudentProject              `json:"project"`
 }
 
 const StudentJobsError = "cannot get student jobs"
@@ -40,8 +47,13 @@ func getStudentJobsFromMongoProjectsData(studentName string, city string, mongoP
 			continue
 		}
 		studentJobs = append(studentJobs, StudentJob{
+			City:               city,
 			MongoWorkgroupData: studentWorkgroup,
-			Project:            mongoProjectData.Name,
+			Project: StudentProject{
+				Module:     mongoProjectData.Module,
+				Name:       mongoProjectData.Name,
+				BuildLimit: mongoProjectData.BuildLimit,
+			},
 		})
 	}
 	return studentJobs

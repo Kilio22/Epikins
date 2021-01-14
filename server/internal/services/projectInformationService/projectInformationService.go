@@ -9,7 +9,7 @@ import (
 	"epikins-api/pkg/libJenkins"
 )
 
-const ProjectCitiesError = "cannot retrieve cities linked to the given project"
+const ProjectInformationError = "cannot retrieve cities linked to the given project"
 
 func ProjectInformationService(projectName string, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) (
 	projectsService.ProjectResponse, internal.MyError,
@@ -21,7 +21,7 @@ func ProjectInformationService(projectName string, userLogs libJenkins.JenkinsCr
 
 	mongoProjectData, err := util.GetMongoProjectData(localProjectData, "", userLogs, appData.ProjectsCollection)
 	if err != nil {
-		return projectsService.ProjectResponse{}, util.GetMyError(ProjectCitiesError, err, http.StatusInternalServerError)
+		return projectsService.ProjectResponse{}, util.GetMyError(ProjectInformationError, err, http.StatusInternalServerError)
 	}
 	return projectsService.ProjectResponse{
 		BuildLimit: mongoProjectData.BuildLimit,
