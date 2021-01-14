@@ -4,6 +4,7 @@ import { IWorkgroupsData } from '../interfaces/IWorkgroupsData';
 import { IApiUser } from '../interfaces/users/IApiUser';
 import { IApiJenkinsCredentials } from '../interfaces/jenkinsCredentials/IApiJenkinsCredentials';
 import { IProject } from '../interfaces/projects/IProject';
+import { IStudentJob } from '../interfaces/myProjects/IStudentJob';
 
 class EpikinsApiService {
     static async login(accessToken: string): Promise<IApiUser | null> {
@@ -50,6 +51,16 @@ class EpikinsApiService {
         }
     }
 
+    static async getStudentJobs(apiAccessToken: string): Promise<IStudentJob[] | null> {
+        try {
+            const res = await Axios.get<IStudentJob[]>(apiBaseURI + 'student/jobs', {headers: {'Authorization': apiAccessToken}});
+            return res.data;
+        } catch (e) {
+            console.log(e);
+            return null;
+        }
+    }
+
     static async changeProjectBuildLimit(project: IProject, apiAccessToken: string): Promise<IProject[] | null> {
         try {
             const res = await Axios.put<IProject[]>(apiBaseURI + 'projects/' + project.job.name, {
@@ -62,6 +73,25 @@ class EpikinsApiService {
             console.log(e);
             return null;
         }
+    }
+
+    static async buildStudent(city: string, group: string, project: string, apiAccessToken: string): Promise<boolean> {
+        try {
+            await Axios.post(apiBaseURI + 'student/build',
+                {
+                    city,
+                    group,
+                    project: project
+                },
+                {
+                    headers: {'Authorization': apiAccessToken}
+                }
+            );
+            return true;
+        } catch (e) {
+            console.log(e);
+        }
+        return false;
     }
 
     static async buildJobs(requestedBuilds: string[], project: string, visibility: string, fuMode: boolean, city: string, apiAccessToken: string): Promise<boolean> {

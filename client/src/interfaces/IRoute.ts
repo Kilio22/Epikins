@@ -8,6 +8,7 @@ import JenkinsCredentials from '../components/jenkinsCredentials/JenkinsCredenti
 import ProjectsManagement from '../components/projectsManagement/ProjectsManagement';
 import { StaticContext } from 'react-router';
 import * as H from 'history';
+import MyProjects from '../components/myProjects/MyProjects';
 
 interface IRoute {
     path: string,
@@ -64,6 +65,13 @@ export const routes: IRoute[] = [
         name: 'Projects management',
         component: ProjectsManagement,
         role: 'credentials',
+        inNavbar: true
+    },
+    {
+        path: routePrefix + 'student/projects',
+        name: 'My projects',
+        component: MyProjects,
+        role: 'student',
         inNavbar: true
     }
 ];
