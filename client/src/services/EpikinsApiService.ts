@@ -9,6 +9,7 @@ import { IStudentJob } from '../interfaces/myProjects/IStudentJob';
 class EpikinsApiService {
     static async login(accessToken: string): Promise<IApiUser | null> {
         try {
+            console.log(apiBaseURI)
             const res = await Axios.post<IApiUser>(apiBaseURI + 'login', {}, {
                 headers: {
                     'Authorization': accessToken

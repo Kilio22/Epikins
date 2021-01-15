@@ -23,7 +23,7 @@ interface IGroupsDataProps {
 }
 
 const cssColorArray: string[] = [
-    'red', 'tomato', 'orange', 'green', 'green', 'green'
+    'red', 'tomato', 'orange', 'green'
 ];
 
 const GroupMasterRemainingBuilds: React.FunctionComponent<IStudentRemainingBuildsProps> = ({groupData}) => {
@@ -38,8 +38,13 @@ const GroupMasterRemainingBuilds: React.FunctionComponent<IStudentRemainingBuild
                                 ∞
                             </span>
                             :
-                            <span className={'font-weight-bold remaining-builds-' +
-                            cssColorArray[groupData.mongoWorkgroupData.remainingBuilds % cssColorArray.length]}>
+                            groupData.mongoWorkgroupData.remainingBuilds >= 4 ?
+                                <span className={'font-weight-bold remaining-builds-green'}>
+                                {groupData.mongoWorkgroupData.remainingBuilds}
+                            </span>
+                                :
+                                <span className={'font-weight-bold remaining-builds-' +
+                                cssColorArray[groupData.mongoWorkgroupData.remainingBuilds]}>
                                 {groupData.mongoWorkgroupData.remainingBuilds}
                             </span>
                     }
@@ -77,7 +82,7 @@ const WorkgroupData: React.FunctionComponent<IGroupDataProps> = ({
                         onChange={(event => onCheckboxChange(event.target.checked, workgroupData))}
                         disabled={isCheckboxDisabled(workgroupData, context.fuMode)}/>
                     {' '}
-                    <i className={'fas fa-folder mr-1'}/> {workgroupData.mongoWorkgroupData.name}
+                    <i className={'fas fa-user-friends mr-1'}/> {workgroupData.mongoWorkgroupData.name}
                     <GroupMasterRemainingBuilds groupData={workgroupData}/>
                     {
                         (workgroupData.jobInfos.inQueue || workgroupData.jobInfos.lastBuild.buildInfos.building) &&

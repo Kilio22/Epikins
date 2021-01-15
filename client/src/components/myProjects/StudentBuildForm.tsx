@@ -89,12 +89,12 @@ class StudentBuildForm extends Component<IStudentBuildFormProps, IStudentBuildFo
             isLoading: true
         });
         await this.props.startBuild();
+        await this.props.getStudentProjects();
         this.setState({
             ...this.state,
             isLoading: false
         });
         this.props.changeMyProjectsStateByProperty('showForm', false);
-        await this.props.getStudentProjects();
     }
 }
 

@@ -64,7 +64,7 @@ export const routes: IRoute[] = [
         path: routePrefix + 'manage/projects',
         name: 'Projects management',
         component: ProjectsManagement,
-        role: 'credentials',
+        role: 'module',
         inNavbar: true
     },
     {
