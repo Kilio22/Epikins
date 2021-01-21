@@ -210,7 +210,7 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams, I
         }
 
         await this.handleBuildResponse(await EpikinsApiService.buildJobs(
-            selectedJobs, this.state.project.job.name, visibility, this.context.fuMode, this.state.selectedCity, accessToken
+            selectedJobs, this.state.project.job.name, visibility, this.state.selectedCity, accessToken
         ));
     }
 

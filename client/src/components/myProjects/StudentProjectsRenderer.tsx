@@ -45,29 +45,31 @@ class StudentProjectsRenderer extends React.Component<IStudentProjectsRendererPr
         projects = this.fuseProjects(projects, this.props.projects, this.state.queryString);
         return (
             <div>
-                <TextField placeholder={'Project name'} variant={'standard'}
-                           color={'primary'}
-                           onChange={(event => this.onSearchFieldChange(event.target.value.trim()))}
-                           className={'ml-1'}
-                           autoFocus={true}/>
                 {
                     projects.length === 0 ?
                         <h2 className={'text-center'}>No projects to display</h2>
                         :
-                        <Row className={'mt-3'}>
-                            {
-                                projects.map((project, id) => {
-                                    return (
-                                        <Col md={4} key={id}>
-                                            {
-                                                <StudentProjectRenderer job={project}
-                                                                        onStudentProjectClick={this.props.onStudentProjectClick}/>
-                                            }
-                                        </Col>
-                                    );
-                                })
-                            }
-                        </Row>
+                        <div>
+                            <TextField placeholder={'Project name'} variant={'standard'}
+                                       color={'primary'}
+                                       onChange={(event => this.onSearchFieldChange(event.target.value.trim()))}
+                                       className={'ml-1'}
+                                       autoFocus={true}/>
+                            <Row className={'mt-3'}>
+                                {
+                                    projects.map((project, id) => {
+                                        return (
+                                            <Col md={4} key={id}>
+                                                {
+                                                    <StudentProjectRenderer job={project}
+                                                                            onStudentProjectClick={this.props.onStudentProjectClick}/>
+                                                }
+                                            </Col>
+                                        );
+                                    })
+                                }
+                            </Row>
+                        </div>
                 }
             </div>
         );

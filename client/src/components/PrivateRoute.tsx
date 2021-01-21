@@ -29,7 +29,7 @@ const PrivateRoute: React.FunctionComponent<IPrivateRoute> = ({
                         <NavBar routeProps={routeProps} onSignOutClick={onSignOutClick} user={context.user}/>
                         <div className={'d-flex flex-grow-1'}>
                             {
-                                (routeRole === '') || context.user.roles.includes(routeRole) ?
+                                (routeRole === '' || context.user.roles.includes(routeRole)) ?
                                     <Container className={'mt-3'}>
                                         {
                                             context.errorMessage &&

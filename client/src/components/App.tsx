@@ -22,7 +22,6 @@ class App extends Component<{}, IAppState> {
         return (
             <appInitialContext.Provider value={{
                 changeAppStateByProperty: this.changeAppStateByProperty,
-                fuMode: this.state.fuMode,
                 user: this.state.user,
                 errorMessage: this.state.errorMessage
             }}>

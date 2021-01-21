@@ -9,7 +9,6 @@ import { IStudentJob } from '../interfaces/myProjects/IStudentJob';
 class EpikinsApiService {
     static async login(accessToken: string): Promise<IApiUser | null> {
         try {
-            console.log(apiBaseURI)
             const res = await Axios.post<IApiUser>(apiBaseURI + 'login', {}, {
                 headers: {
                     'Authorization': accessToken
@@ -55,6 +54,9 @@ class EpikinsApiService {
     static async getStudentJobs(apiAccessToken: string): Promise<IStudentJob[] | null> {
         try {
             const res = await Axios.get<IStudentJob[]>(apiBaseURI + 'student/jobs', {headers: {'Authorization': apiAccessToken}});
+            if (res.data === null) {
+                return [];
+            }
             return res.data;
         } catch (e) {
             console.log(e);
@@ -95,14 +97,14 @@ class EpikinsApiService {
         return false;
     }
 
-    static async buildJobs(requestedBuilds: string[], project: string, visibility: string, fuMode: boolean, city: string, apiAccessToken: string): Promise<boolean> {
+    static async buildJobs(requestedBuilds: string[], project: string, visibility: string, city: string, apiAccessToken: string): Promise<boolean> {
         try {
             await Axios.post(apiBaseURI + 'build',
                 {
                     city,
                     jobs: requestedBuilds,
                     project: project,
-                    fu: fuMode,
+                    fu: true,
                     visibility: visibility
                 },
                 {

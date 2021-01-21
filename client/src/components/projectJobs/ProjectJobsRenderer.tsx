@@ -9,7 +9,6 @@ import { TextField } from '@material-ui/core';
 import { IWorkgroupsData } from '../../interfaces/IWorkgroupsData';
 import Legend from './Legend';
 import BuildToolbox from './BuildToolbox';
-import { Form } from 'react-bootstrap';
 import { appInitialContext } from '../../interfaces/IAppContext';
 import WorkgroupsData from './WorkgroupsData';
 
@@ -49,16 +48,6 @@ class ProjectJobsRenderer extends React.Component<IProjectJobsRendererProps, IPr
                                   isBuilding={this.props.isBuilding}
                                   onBuildClick={this.props.onBuildClick}
                                   onGlobalBuildClick={this.props.onGlobalBuildClick}/>
-                    <Form className={'fu-switch mt-0'}>
-                        <Form.Check
-                            type={'switch'}
-                            id={'custom-switch'}
-                            label={'Follow-up'}
-                            checked={this.context.fuMode}
-                            onChange={() => this.context.changeAppStateByProperty &&
-                                this.context.changeAppStateByProperty('fuMode', !this.context.fuMode, false)}
-                        />
-                    </Form>
                     <WorkgroupsData workgroupsData={workgroupsData} selectedJobs={this.props.selectedJobs}
                                     onCheckboxChange={this.props.onCheckboxChange} onJobClick={this.onJobClick}/>
                     <Legend/>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Col, Form, Row } from 'react-bootstrap';
+import { Col, Row } from 'react-bootstrap';
 import Fuse from 'fuse.js';
 import { NativeSelect, TextField } from '@material-ui/core';
 import {
@@ -61,19 +61,6 @@ class ProjectsRenderer extends React.Component<IProjectsRendererProps, IProjects
                         })
                     }
                 </NativeSelect>
-                {
-                    this.props.showSwitch &&
-                    <Form className={'fu-switch p-1'}>
-                        <Form.Check
-                            type={'switch'}
-                            id={'custom-switch'}
-                            label={'Follow-up'}
-                            checked={this.context.fuMode}
-                            onChange={() => this.context.changeAppStateByProperty &&
-                                this.context.changeAppStateByProperty('fuMode', !this.context.fuMode, false)}
-                        />
-                    </Form>
-                }
                 {
                     projects.length === 0 ?
                         <h2 className={'text-center'}>No projects to display</h2>
