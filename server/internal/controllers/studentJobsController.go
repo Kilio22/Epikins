@@ -3,7 +3,6 @@ package controllers
 import (
 	"net/http"
 
-	"epikins-api/config"
 	"epikins-api/internal"
 	"epikins-api/internal/controllers/controllerUtil"
 	"epikins-api/internal/services/studentJobsService"
@@ -13,7 +12,7 @@ import (
 
 func StudentJobsController(appData *internal.AppData, c *fiber.Ctx) error {
 	userEmail := c.Get("email")
-	userLogs, err := controllerUtil.GetJenkinsCredentials(config.HighestPrivilegeJenkinsLogin, appData.JenkinsCredentialsCollection)
+	userLogs, err := controllerUtil.GetJenkinsCredentials(StudentJenkinsLogin, appData.JenkinsCredentialsCollection)
 	if err != nil {
 		return controllerUtil.SendMyError(util.GetMyError(studentJobsService.StudentJobsError, err, http.StatusInternalServerError), c)
 	}

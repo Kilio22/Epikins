@@ -4,7 +4,6 @@ import (
 	"errors"
 	"net/http"
 
-	"epikins-api/config"
 	"epikins-api/internal"
 	"epikins-api/internal/controllers/controllerUtil"
 	"epikins-api/internal/services/studentBuildService"
@@ -12,6 +11,8 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
+
+var StudentJenkinsLogin = util.GetEnvVariable("STUDENT_JENKINS_LOGIN")
 
 func getStudentBuildParams(c *fiber.Ctx) (studentBuildService.StudentBuildParams, error) {
 	var studentBuildParams studentBuildService.StudentBuildParams
@@ -34,7 +35,7 @@ func StudentBuildController(appData *internal.AppData, c *fiber.Ctx) error {
 		return controllerUtil.SendMyError(util.GetMyError(studentBuildService.StudentBuildError, err, http.StatusInternalServerError), c)
 	}
 
-	userLogs, err := controllerUtil.GetJenkinsCredentials(config.HighestPrivilegeJenkinsLogin, appData.JenkinsCredentialsCollection)
+	userLogs, err := controllerUtil.GetJenkinsCredentials(StudentJenkinsLogin, appData.JenkinsCredentialsCollection)
 	if err != nil {
 		return controllerUtil.SendMyError(util.GetMyError(studentBuildService.StudentBuildError, err, http.StatusInternalServerError), c)
 	}

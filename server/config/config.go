@@ -20,4 +20,3 @@ var Roles = []internal.Role{
 }
 
 const DefaultBuildNb int = 3
-const HighestPrivilegeJenkinsLogin = "assist3_ren"
