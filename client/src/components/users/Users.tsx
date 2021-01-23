@@ -220,14 +220,11 @@ class Users extends Component<IRouteProps, IUsersState> {
                 return;
             }
             if (initialUser.roles.length !== toFind.roles.length || initialUser.jenkinsLogin.localeCompare(toFind.jenkinsLogin) !== 0) {
-                const res = await this.updateUser(toFind);
-                if (!res)
-                    return;
+                shouldBeUpdated = true;
             }
             for (let role of toFind.roles) {
                 if (!initialUser.roles.includes(role)) {
                     shouldBeUpdated = true;
-                    return;
                 }
             }
             if (shouldBeUpdated) {
