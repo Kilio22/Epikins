@@ -21,6 +21,7 @@ func resetWorkgroupsRemainingBuilds(projectData *internal.MongoProjectData, city
 	if shouldResetWorkgroupRemainingBuilds(projectData.MongoWorkgroupsData[city][0]) {
 		for idx := range projectData.MongoWorkgroupsData[city] {
 			projectData.MongoWorkgroupsData[city][idx].RemainingBuilds = config.DefaultBuildNb
+			projectData.MongoWorkgroupsData[city][idx].LastBuildReset = mongoUtil.GetLastMondayDate()
 		}
 		return mongoUtil.UpdateProject(projectData.Name, bson.M{"$set": bson.M{"mongoworkgroupsdata": projectData.MongoWorkgroupsData}}, collection)
 	}

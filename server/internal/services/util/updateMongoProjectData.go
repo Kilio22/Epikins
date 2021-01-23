@@ -19,6 +19,7 @@ func addMongoWorkgroupData(
 	if mongoWorkgroupData, ok := HasMongoWorkgroupData(job.Name, mongoProjectData.MongoWorkgroupsData[city]); ok {
 		if shouldResetWorkgroupRemainingBuilds(mongoWorkgroupData) {
 			mongoWorkgroupData.RemainingBuilds = mongoProjectData.BuildLimit
+			mongoWorkgroupData.LastBuildReset = mongoUtil.GetLastMondayDate()
 		}
 		newWorkgroupsData = append(newWorkgroupsData, mongoWorkgroupData)
 	} else {
