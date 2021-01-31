@@ -34,13 +34,14 @@ class ProjectJobsRenderer extends React.Component<IProjectJobsRendererProps, IPr
         const workgroupsData: IWorkgroupsData[] = this.fuseProjects([ ...this.props.workgroupsData ], this.props.workgroupsData, this.state.queryString);
 
         return (
-            this.props.availableCities && workgroupsData.length !== 0 ?
-                <div>
-                    <TextField placeholder={'Group name'} variant={'standard'}
-                               color={'primary'}
-                               onChange={(event => this.onSearchFieldChange(event.target.value.trim()))}
-                               className={'ml-1'}
-                               autoFocus={true}/>
+            <div>
+                <TextField placeholder={'Group name'} variant={'standard'}
+                           color={'primary'}
+                           onChange={(event => this.onSearchFieldChange(event.target.value.trim()))}
+                           className={'ml-1'}
+                           autoFocus={true}/>
+                {
+                    this.props.availableCities &&
                     <BuildToolbox availableCities={this.props.availableCities}
                                   onCitySelected={this.props.onCitySelected}
                                   selectedCity={this.props.selectedCity}
@@ -48,12 +49,17 @@ class ProjectJobsRenderer extends React.Component<IProjectJobsRendererProps, IPr
                                   isBuilding={this.props.isBuilding}
                                   onBuildClick={this.props.onBuildClick}
                                   onGlobalBuildClick={this.props.onGlobalBuildClick}/>
-                    <WorkgroupsData workgroupsData={workgroupsData} selectedJobs={this.props.selectedJobs}
-                                    onCheckboxChange={this.props.onCheckboxChange} onJobClick={this.onJobClick}/>
-                    <Legend/>
-                </div>
-                :
-                <h2 className={'text-center'}>No jobs to display</h2>
+                }
+                {
+                    this.props.availableCities && workgroupsData.length !== 0 ?
+                        <WorkgroupsData workgroupsData={workgroupsData} selectedJobs={this.props.selectedJobs}
+                                        onCheckboxChange={this.props.onCheckboxChange}
+                                        onJobClick={this.onJobClick}/>
+                        :
+                        <h2 className={'text-center'}>No jobs to display</h2>
+                }
+                <Legend/>
+            </div>
         );
     }
 
