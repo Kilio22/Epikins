@@ -19,4 +19,4 @@ var Roles = []internal.Role{
 	MODULE,
 }
 
-const DefaultBuildNb int = 3
+const DefaultBuildNb int = 0
