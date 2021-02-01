@@ -20,3 +20,5 @@ var Roles = []internal.Role{
 }
 
 const DefaultBuildNb int = 0
+const LocalProjectListRefreshTime float64 = 1.0
+const ProjectJobsRefreshTime float64 = 12.0

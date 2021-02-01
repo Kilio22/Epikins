@@ -4,6 +4,7 @@ import (
 	"errors"
 	"time"
 
+	"epikins-api/config"
 	"epikins-api/internal"
 	"epikins-api/internal/services/util/mongoUtil"
 	"epikins-api/pkg/libJenkins"
@@ -55,7 +56,7 @@ func UpdateMongoProjectData(
 	mongoProjectData *internal.MongoProjectData, localProjectData libJenkins.Project, city string, userLogs libJenkins.JenkinsCredentials,
 	projectCollection *mongo.Collection,
 ) error {
-	if time.Since(time.Unix(mongoProjectData.LastUpdate, 0)).Hours() < float64(12) && len(mongoProjectData.MongoWorkgroupsData[city]) != 0 {
+	if time.Since(time.Unix(mongoProjectData.LastUpdate, 0)).Hours() < config.ProjectJobsRefreshTime && len(mongoProjectData.MongoWorkgroupsData[city]) != 0 {
 		err := resetWorkgroupsRemainingBuilds(mongoProjectData, city, projectCollection)
 		if err != nil {
 			return errors.New(UpdateMongoProjectDataError + err.Error())
