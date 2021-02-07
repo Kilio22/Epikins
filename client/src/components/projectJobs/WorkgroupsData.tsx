@@ -60,8 +60,7 @@ const WorkgroupData: React.FunctionComponent<IGroupDataProps> = ({
                 className={'jobs-checkbox mr-2'}
                 type={'checkbox'}
                 checked={selectedJobs.includes(workgroupData.mongoWorkgroupData.name)}
-                onChange={(event => onCheckboxChange(event.target.checked, workgroupData))}
-                disabled={!workgroupData.mongoWorkgroupData.remainingBuilds}/>
+                onChange={(event => onCheckboxChange(event.target.checked, workgroupData))}/>
             {' '}
             <i className={'fas fa-user-friends mr-1'}/> {workgroupData.mongoWorkgroupData.name}
             <GroupMasterRemainingBuilds groupData={workgroupData}/>

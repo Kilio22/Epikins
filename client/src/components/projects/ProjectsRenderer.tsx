@@ -1,7 +1,7 @@
 import React from 'react';
 import { Col, Row } from 'react-bootstrap';
 import Fuse from 'fuse.js';
-import { NativeSelect, TextField } from '@material-ui/core';
+import { TextField } from '@material-ui/core';
 import {
     IProjectsRendererProps,
     IProjectsRendererState,
@@ -9,6 +9,8 @@ import {
 } from '../../interfaces/projects/IProjectsRenderer';
 import { appInitialContext } from '../../interfaces/IAppContext';
 import { IProject } from '../../interfaces/projects/IProject';
+import Select, { InputActionMeta, ValueType } from 'react-select';
+import { ISelectOption } from '../../interfaces/projects/ISelectOption';
 
 const projectsFuseOptions: Fuse.IFuseOptions<IProject> = {
     shouldSort: true,
@@ -25,42 +27,43 @@ class ProjectsRenderer extends React.Component<IProjectsRendererProps, IProjects
 
         this.state = projectsRendererInitialState;
         this.onSearchFieldChange = this.onSearchFieldChange.bind(this);
-        this.onModuleSelected = this.onModuleSelected.bind(this);
+        this.onSelectChange = this.onSelectChange.bind(this);
         this.getAvailableModules = this.getAvailableModules.bind(this);
         this.fuseProjects = this.fuseProjects.bind(this);
+        this.onSelectSearchChange = this.onSelectSearchChange.bind(this);
     }
 
     render() {
-        let projects: IProject[] = this.props.projects;
-        const availableModules = this.getAvailableModules(projects);
+        const availableModules = this.getAvailableModules(this.props.projects);
+        let projects: IProject[] = this.fuseProjects(this.props.projects, this.state.queryString);
+        let selectOptions: ISelectOption[] = [];
 
-        projects = this.fuseProjects(projects, this.props.projects, this.state.queryString);
         projects = projects.filter((project) => {
-            return this.state.selectedModule === 'All' || project.module === this.state.selectedModule;
+            return this.state.selectedModules.length === 0 || this.state.selectedModules.includes(project.module);
         });
+        for (let module of availableModules) {
+            selectOptions.push({value: module, label: module});
+        }
         return (
             <div>
-                <TextField placeholder={'Project name'} variant={'standard'}
-                           color={'primary'}
-                           onChange={(event => this.onSearchFieldChange(event.target.value.trim()))}
-                           className={'ml-1'}
-                           autoFocus={true}/>
-                <NativeSelect className={'ml-2'} variant={'standard'}
-                              onChange={(event => {
-                                  this.onModuleSelected(event.target.value);
-                              })}
-                              defaultValue={this.state.selectedModule}>
-                    {
-                        projects.length !== 0 &&
-                        availableModules.map((value, index) => {
-                            return (
-                                <option key={index}>
-                                    {value}
-                                </option>
-                            );
-                        })
-                    }
-                </NativeSelect>
+                <div className={'d-flex d-flex-row'}>
+                    <TextField placeholder={'Project name'} variant={'standard'}
+                               color={'primary'}
+                               onChange={(event => this.onSearchFieldChange(event.target.value.trim()))}
+                               className={'ml-1 mt-1'}
+                               autoFocus={true}/>
+                    <Select
+                        isMulti
+                        inputValue={this.state.selectSearch}
+                        onInputChange={this.onSelectSearchChange}
+                        name="modules"
+                        options={selectOptions}
+                        onChange={(selectedOption: ValueType<ISelectOption, true>) => this.onSelectChange((selectedOption as ISelectOption[]))}
+                        className="basic-multi-select ml-2 w-50"
+                        classNamePrefix="select"
+                        closeMenuOnSelect={this.state.selectSearch === ''}
+                    />
+                </div>
                 {
                     projects.length === 0 ?
                         <h2 className={'text-center'}>No projects to display</h2>
@@ -89,7 +92,6 @@ class ProjectsRenderer extends React.Component<IProjectsRendererProps, IProjects
             return project.module;
         });
 
-        availableModules.push('All');
         availableModules = Array.from(new Set<string>(availableModules));
         availableModules = availableModules.sort((a, b) => {
             return a.localeCompare(b);
@@ -103,23 +105,31 @@ class ProjectsRenderer extends React.Component<IProjectsRendererProps, IProjects
         });
     }
 
-    onModuleSelected(module: string) {
+    onSelectSearchChange(value: string, actionMeta: InputActionMeta) {
+        if (actionMeta.action === 'set-value')
+            return;
         this.setState({
             ...this.state,
-            selectedModule: module
+            selectSearch: value
         });
     }
 
-    fuseProjects(filteredProjects: IProject[], originalProjectList: IProject[], queryString: string) {
-        if (queryString !== '') {
-            const fuse = new Fuse(originalProjectList, projectsFuseOptions);
-            const fuseResult = fuse.search(queryString);
+    onSelectChange(modules: ISelectOption[]) {
+        this.setState({
+            ...this.state,
+            selectedModules: modules.map(value => value.value)
+        });
+    }
 
-            filteredProjects = fuseResult.map(fuseRes => {
-                return fuseRes.item;
-            });
+    fuseProjects(originalProjectList: IProject[], queryString: string): IProject[] {
+        if (queryString === '') {
+            return originalProjectList;
         }
-        return filteredProjects;
+        const fuse = new Fuse(originalProjectList, projectsFuseOptions);
+        const fuseResult = fuse.search(queryString);
+        return fuseResult.map(fuseRes => {
+            return fuseRes.item;
+        });
     }
 }
 

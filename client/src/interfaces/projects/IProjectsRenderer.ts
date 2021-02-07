@@ -14,10 +14,12 @@ export interface IProjectsRendererProps {
 
 export interface IProjectsRendererState {
     queryString: string,
-    selectedModule: string
+    selectSearch: string,
+    selectedModules: string[]
 }
 
 export const projectsRendererInitialState: IProjectsRendererState = {
     queryString: '',
-    selectedModule: 'All'
+    selectSearch: '',
+    selectedModules: []
 };
