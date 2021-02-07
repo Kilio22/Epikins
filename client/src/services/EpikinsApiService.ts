@@ -9,7 +9,7 @@ import { IStudentJob } from '../interfaces/myProjects/IStudentJob';
 class EpikinsApiService {
     static async login(accessToken: string): Promise<IApiUser | null> {
         try {
-            const res = await Axios.post<IApiUser>(apiBaseURI + 'login', {}, {
+            const res = await Axios.post<IApiUser>(apiBaseURI + '/login', {}, {
                 headers: {
                     'Authorization': accessToken
                 }
@@ -33,7 +33,7 @@ class EpikinsApiService {
 
     static async getProjects(apiAccessToken: string): Promise<IProject[] | null> {
         try {
-            const res = await Axios.get<IProject[]>(apiBaseURI + 'projects', {headers: {'Authorization': apiAccessToken}});
+            const res = await Axios.get<IProject[]>(apiBaseURI + '/projects', {headers: {'Authorization': apiAccessToken}});
             return res.data;
         } catch (e) {
             console.log(e);
@@ -43,7 +43,7 @@ class EpikinsApiService {
 
     static async getProjectInformation(project: string, apiAccessToken: string): Promise<IProject | null> {
         try {
-            const res = await Axios.get<IProject>(apiBaseURI + 'projects/' + project, {headers: {'Authorization': apiAccessToken}});
+            const res = await Axios.get<IProject>(apiBaseURI + '/projects/' + project, {headers: {'Authorization': apiAccessToken}});
             return res.data;
         } catch (e) {
             console.log(e);
@@ -53,7 +53,7 @@ class EpikinsApiService {
 
     static async getStudentJobs(apiAccessToken: string): Promise<IStudentJob[] | null> {
         try {
-            const res = await Axios.get<IStudentJob[]>(apiBaseURI + 'student/jobs', {headers: {'Authorization': apiAccessToken}});
+            const res = await Axios.get<IStudentJob[]>(apiBaseURI + '/student/jobs', {headers: {'Authorization': apiAccessToken}});
             if (res.data === null) {
                 return [];
             }
@@ -66,7 +66,7 @@ class EpikinsApiService {
 
     static async changeProjectBuildLimit(project: IProject, apiAccessToken: string): Promise<IProject[] | null> {
         try {
-            const res = await Axios.put<IProject[]>(apiBaseURI + 'projects/' + project.job.name, {
+            const res = await Axios.put<IProject[]>(apiBaseURI + '/projects/' + project.job.name, {
                 'buildLimit': project.buildLimit
             }, {
                 headers: {'Authorization': apiAccessToken}
@@ -80,7 +80,7 @@ class EpikinsApiService {
 
     static async buildStudent(city: string, group: string, project: string, apiAccessToken: string): Promise<boolean> {
         try {
-            await Axios.post(apiBaseURI + 'student/build',
+            await Axios.post(apiBaseURI + '/student/build',
                 {
                     city,
                     group,
@@ -99,7 +99,7 @@ class EpikinsApiService {
 
     static async buildJobs(requestedBuilds: string[], project: string, visibility: string, city: string, apiAccessToken: string): Promise<boolean> {
         try {
-            await Axios.post(apiBaseURI + 'build',
+            await Axios.post(apiBaseURI + '/build',
                 {
                     city,
                     jobs: requestedBuilds,
@@ -120,7 +120,7 @@ class EpikinsApiService {
 
     static async globalBuild(project: string, visibility: string, city: string, apiAccessToken: string): Promise<boolean> {
         try {
-            await Axios.post(apiBaseURI + 'build/global', {
+            await Axios.post(apiBaseURI + '/build/global', {
                     city,
                     project,
                     visibility
@@ -138,7 +138,7 @@ class EpikinsApiService {
 
     static async getUsers(apiAccessToken: string): Promise<IApiUser[] | null> {
         try {
-            const res = await Axios.get<IApiUser[]>(apiBaseURI + 'users',
+            const res = await Axios.get<IApiUser[]>(apiBaseURI + '/users',
                 {
                     headers: {'Authorization': apiAccessToken}
                 });
@@ -151,7 +151,7 @@ class EpikinsApiService {
 
     static async updateUser(updatedUser: IApiUser, apiAccessToken: string): Promise<boolean> {
         try {
-            await Axios.put(apiBaseURI + 'users', updatedUser,
+            await Axios.put(apiBaseURI + '/users', updatedUser,
                 {
                     headers: {'Authorization': apiAccessToken}
                 });
@@ -164,7 +164,7 @@ class EpikinsApiService {
 
     static async addUser(newUser: IApiUser, apiAccessToken: string): Promise<number> {
         try {
-            await Axios.post(apiBaseURI + 'users', newUser,
+            await Axios.post(apiBaseURI + '/users', newUser,
                 {
                     headers: {'Authorization': apiAccessToken}
                 });
@@ -176,7 +176,7 @@ class EpikinsApiService {
 
     static async deleteUser(email: string, apiAccessToken: string): Promise<boolean> {
         try {
-            await Axios.delete(apiBaseURI + 'users/' + email,
+            await Axios.delete(apiBaseURI + '/users/' + email,
                 {
                     headers: {'Authorization': apiAccessToken}
                 });
@@ -189,7 +189,7 @@ class EpikinsApiService {
 
     static async getJenkinsCredentials(apiAccessToken: string): Promise<string[] | null> {
         try {
-            const res = await Axios.get<string[]>(apiBaseURI + 'credentials',
+            const res = await Axios.get<string[]>(apiBaseURI + '/credentials',
                 {
                     headers: {'Authorization': apiAccessToken}
                 });
@@ -202,7 +202,7 @@ class EpikinsApiService {
 
     static async addJenkinsCredentials(newCredentials: IApiJenkinsCredentials, apiAccessToken: string): Promise<number> {
         try {
-            await Axios.post(apiBaseURI + 'credentials', newCredentials,
+            await Axios.post(apiBaseURI + '/credentials', newCredentials,
                 {
                     headers: {'Authorization': apiAccessToken}
                 });
@@ -214,7 +214,7 @@ class EpikinsApiService {
 
     static async deleteJenkinsCredentials(login: string, apiAccessToken: string): Promise<boolean> {
         try {
-            await Axios.delete(apiBaseURI + 'credentials/' + login,
+            await Axios.delete(apiBaseURI + '/credentials/' + login,
                 {
                     headers: {'Authorization': apiAccessToken}
                 });

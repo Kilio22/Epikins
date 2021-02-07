@@ -123,7 +123,7 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams, I
         }
 
         const res: IWorkgroupsData[] | null = await EpikinsApiService.getWorkgroupsData(
-            apiBaseURI + 'projects/' + this.state.project.job.name + '/' + this.state.selectedCity, accessToken);
+            apiBaseURI + '/projects/' + this.state.project.job.name + '/' + this.state.selectedCity, accessToken);
 
         if (!this.mounted) {
             return;
