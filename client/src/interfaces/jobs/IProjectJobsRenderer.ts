@@ -9,7 +9,7 @@ export interface IProjectJobsRendererProps {
     isBuilding: boolean,
     selectedJobs: string[],
     selectedCity: string,
-    onCheckboxChange: OnCheckboxChange,
+    onCheckboxChange: OnCheckboxChange<IWorkgroupsData>,
     onBuildClick: OnBuildClick,
     onGlobalBuildClick: OnBuildClick,
     routeProps: RouteComponentProps<IProjectJobsMatchParams>,

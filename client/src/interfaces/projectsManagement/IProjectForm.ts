@@ -1,11 +1,13 @@
 import { IProject } from '../projects/IProject';
-import { OnButtonClick } from '../Functions';
+import { OnButtonClick, OnCheckboxChange } from '../Functions';
 import { ChangeProjectsManagementStateByProperty } from './IProjectsManagement';
 
 export interface IProjectFormProps {
-    project: IProject,
+    onSelectAllClick: OnCheckboxChange<IProject[]>
     changeProjectsManagementStateByProperty: ChangeProjectsManagementStateByProperty,
     getProjects: OnButtonClick
+    project: IProject,
+    projects: IProject[],
 }
 
 export interface IProjectFormState {

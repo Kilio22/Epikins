@@ -1,16 +1,16 @@
 import React from 'react';
 import { Col, Row } from 'react-bootstrap';
 import Fuse from 'fuse.js';
-import { TextField } from '@material-ui/core';
 import {
     IProjectsRendererProps,
     IProjectsRendererState,
     projectsRendererInitialState
-} from '../../interfaces/projects/IProjectsRenderer';
-import { appInitialContext } from '../../interfaces/IAppContext';
-import { IProject } from '../../interfaces/projects/IProject';
-import Select, { InputActionMeta, ValueType } from 'react-select';
-import { ISelectOption } from '../../interfaces/projects/ISelectOption';
+} from '../interfaces/IProjectsRenderer';
+import { appInitialContext } from '../interfaces/IAppContext';
+import { IProject } from '../interfaces/projects/IProject';
+import { InputActionMeta } from 'react-select';
+import { ISelectOption } from '../interfaces/projects/ISelectOption';
+import ProjectsToolbox from './ProjectsToolbox';
 
 const projectsFuseOptions: Fuse.IFuseOptions<IProject> = {
     shouldSort: true,
@@ -44,26 +44,23 @@ class ProjectsRenderer extends React.Component<IProjectsRendererProps, IProjects
         for (let module of availableModules) {
             selectOptions.push({value: module, label: module});
         }
+        if (this.props.changeAllSelected != null) {
+            const isAllSelected = projects.every((project) => project.checked);
+            if (isAllSelected !== this.props.allSelected) {
+                this.props.changeAllSelected(isAllSelected);
+            }
+        }
         return (
             <div>
-                <div className={'d-flex d-flex-row'}>
-                    <TextField placeholder={'Project name'} variant={'standard'}
-                               color={'primary'}
-                               onChange={(event => this.onSearchFieldChange(event.target.value.trim()))}
-                               className={'ml-1 mt-1'}
-                               autoFocus={true}/>
-                    <Select
-                        isMulti
-                        inputValue={this.state.selectSearch}
-                        onInputChange={this.onSelectSearchChange}
-                        name="modules"
-                        options={selectOptions}
-                        onChange={(selectedOption: ValueType<ISelectOption, true>) => this.onSelectChange((selectedOption as ISelectOption[]))}
-                        className="basic-multi-select ml-2 w-50"
-                        classNamePrefix="select"
-                        closeMenuOnSelect={this.state.selectSearch === ''}
-                    />
-                </div>
+                <ProjectsToolbox
+                    allSelected={this.props.allSelected}
+                    handleString={this.onSearchFieldChange}
+                    onSelectAllClick={this.props.onSelectAllClick}
+                    onSelectChange={this.onSelectChange}
+                    onSelectSearchChange={this.onSelectSearchChange}
+                    projects={projects}
+                    selectOptions={selectOptions}
+                    selectSearch={this.state.selectSearch}/>
                 {
                     projects.length === 0 ?
                         <h2 className={'text-center'}>No projects to display</h2>
@@ -74,7 +71,8 @@ class ProjectsRenderer extends React.Component<IProjectsRendererProps, IProjects
                                     return (
                                         <Col md={4} key={id}>
                                             {
-                                                <this.props.ProjectRenderer onProjectClick={this.props.onProjectClick}
+                                                <this.props.ProjectRenderer onCheckboxClick={this.props.onCheckboxClick}
+                                                                            onProjectClick={this.props.onProjectClick}
                                                                             project={project}/>
                                             }
                                         </Col>

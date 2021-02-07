@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { IRouteProps, routePrefix } from '../../interfaces/IRoute';
+import { IRouteProps } from '../../interfaces/IRoute';
 import { appInitialContext } from '../../interfaces/IAppContext';
 import { authServiceObj } from '../../services/AuthService';
 import { userInitialState } from '../../interfaces/IUser';
 import { IProject } from '../../interfaces/projects/IProject';
 import EpikinsApiService from '../../services/EpikinsApiService';
 import Loading from '../Loading';
-import ProjectsRenderer from '../projects/ProjectsRenderer';
+import ProjectsRenderer from '../ProjectsRenderer';
 import ProjectBuildLimitRenderer from './ProjectBuildLimitRenderer';
 import ProjectForm from './ProjectForm';
 import {
@@ -21,6 +21,9 @@ class ProjectsManagement extends Component<IRouteProps, IProjectsManagementState
     constructor(props: IRouteProps) {
         super(props);
 
+        this.changeAllSelected = this.changeAllSelected.bind(this);
+        this.onCheckboxClick = this.onCheckboxClick.bind(this);
+        this.onSelectAllClick = this.onSelectAllClick.bind(this);
         this.getProjects = this.getProjects.bind(this);
         this.onProjectClick = this.onProjectClick.bind(this);
         this.changeProjectsManagementStateByProperty = this.changeProjectsManagementStateByProperty.bind(this);
@@ -41,12 +44,18 @@ class ProjectsManagement extends Component<IRouteProps, IProjectsManagementState
                 :
                 <div>
                     {
-                        this.state.selectedProject !== null &&
-                        <ProjectForm project={this.state.selectedProject}
+                        this.state.clickedProject !== null &&
+                        <ProjectForm onSelectAllClick={this.onSelectAllClick}
+                                     project={this.state.clickedProject}
+                                     projects={this.state.projects}
                                      changeProjectsManagementStateByProperty={this.changeProjectsManagementStateByProperty}
                                      getProjects={this.getProjects}/>
                     }
-                    <ProjectsRenderer projects={this.state.projects}
+                    <ProjectsRenderer allSelected={this.state.allSelected}
+                                      changeAllSelected={this.changeAllSelected}
+                                      onSelectAllClick={this.onSelectAllClick}
+                                      onCheckboxClick={this.onCheckboxClick}
+                                      projects={this.state.projects}
                                       routeProps={this.props.routeProps}
                                       onProjectClick={this.onProjectClick}
                                       ProjectRenderer={ProjectBuildLimitRenderer}
@@ -70,7 +79,7 @@ class ProjectsManagement extends Component<IRouteProps, IProjectsManagementState
                 return a.job.name.localeCompare(b.job.name);
             });
             sortedProjects.forEach((project) => {
-                project.epikinsProjectURL = routePrefix + 'projects/' + project.job.name;
+                project.checked = false;
             });
             this.setState({
                 ...this.state,
@@ -87,11 +96,55 @@ class ProjectsManagement extends Component<IRouteProps, IProjectsManagementState
         }
     }
 
-    onProjectClick(project: IProject) {
+    onSelectAllClick(checked: boolean, projects: IProject[]) {
+        let allProjects = this.state.projects;
+
+        allProjects.forEach((project) => {
+            project.checked = false;
+        });
+        projects.forEach((project) => {
+            project.checked = checked;
+        });
         this.setState({
             ...this.state,
-            selectedProject: project
+            allSelected: checked,
+            projects: [ ...this.state.projects ]
         });
+    }
+
+    onCheckboxClick(checkedProject: IProject) {
+        checkedProject.checked = !checkedProject.checked;
+        this.setState({
+            ...this.state,
+            allSelected: this.state.projects.every((project) => project.checked)
+        });
+    }
+
+    changeAllSelected(value: boolean) {
+        this.setState({
+            ...this.state,
+            allSelected: value
+        });
+    }
+
+    onProjectClick(project: IProject) {
+        if (project.checked) {
+            this.setState({
+                ...this.state,
+                clickedProject: project
+            });
+        } else {
+            this.setState({
+                ...this.state,
+                clickedProject: project,
+                projects: this.state.projects.map((project) => {
+                    return {
+                        ...project,
+                        checked: false
+                    };
+                })
+            });
+        }
     }
 
     changeProjectsManagementStateByProperty(property: keyof IProjectsManagementState, value: any) {

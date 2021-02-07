@@ -1,15 +1,17 @@
 import { IProject } from '../projects/IProject';
 
 export interface IProjectsManagementState {
+    allSelected: boolean,
     isLoading: boolean,
     projects: IProject[],
-    selectedProject: IProject | null
+    clickedProject: IProject | null
 }
 
 export const projectsManagementInitialState: IProjectsManagementState = {
+    allSelected: false,
     isLoading: false,
     projects: [],
-    selectedProject: null
+    clickedProject: null
 };
 
 export type ChangeProjectsManagementStateByProperty = (property: keyof IProjectsManagementState, value: any) => void

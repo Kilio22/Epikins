@@ -1,14 +1,18 @@
 import { RouteComponentProps } from 'react-router-dom';
-import { IProject } from './IProject';
-import { OnProjectClick } from '../Functions';
+import { IProject } from './projects/IProject';
+import { HandleType, OnCheckboxChange, OnProjectClick } from './Functions';
 import { FunctionComponent } from 'react';
-import { IProjectRendererProps } from './IProjectRenderer';
+import { IProjectRendererProps } from './projects/IProjectRenderer';
 
 export interface IProjectsRendererProps {
-    projects: IProject[],
-    routeProps: RouteComponentProps<any>,
+    allSelected: boolean,
+    changeAllSelected: HandleType<boolean> | null,
+    onSelectAllClick: OnCheckboxChange<IProject[]> | null,
+    onCheckboxClick: OnProjectClick | null,
     onProjectClick: OnProjectClick,
+    projects: IProject[],
     ProjectRenderer: FunctionComponent<IProjectRendererProps>,
+    routeProps: RouteComponentProps<any>,
     showSwitch: boolean
 }
 

@@ -1,6 +1,6 @@
 import { IUser } from '../IUser';
 import { IApiUser } from './IApiUser';
-import { ChangeUsersStateByProperty, OnFirstDeleteClick } from '../Functions';
+import { ChangeUsersStateByProperty, HandleType } from '../Functions';
 
 export interface IUsersTableProps {
     connectedUser: IUser,
@@ -8,5 +8,5 @@ export interface IUsersTableProps {
     jenkinsCredentials: string[],
     isEditing: boolean,
     changeUsersStateByProperty: ChangeUsersStateByProperty,
-    onFirstDeleteClick: OnFirstDeleteClick
+    onFirstDeleteClick: HandleType<string>
 }

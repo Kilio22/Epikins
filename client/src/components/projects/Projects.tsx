@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import { IProjectsState, projectsInitialState } from '../../interfaces/projects/IProjects';
-import EpikinsApiService from '../../services/EpikinsApiService';
-import ProjectsRenderer from './ProjectsRenderer';
+import ProjectsRenderer from '../ProjectsRenderer';
 import { IRouteProps, routePrefix } from '../../interfaces/IRoute';
 import { appInitialContext } from '../../interfaces/IAppContext';
-import { authServiceObj } from '../../services/AuthService';
 import Loading from '../Loading';
-import { userInitialState } from '../../interfaces/IUser';
-import { IProject } from '../../interfaces/projects/IProject';
 import ProjectRenderer from './ProjectRenderer';
+import { authServiceObj } from '../../services/AuthService';
+import { userInitialState } from '../../interfaces/IUser';
+import EpikinsApiService from '../../services/EpikinsApiService';
+import { IProject } from '../../interfaces/projects/IProject';
 
 class Projects extends Component<IRouteProps, IProjectsState> {
     static contextType = appInitialContext;
@@ -35,11 +35,16 @@ class Projects extends Component<IRouteProps, IProjectsState> {
             this.state.isLoading ?
                 <Loading/>
                 :
-                <ProjectsRenderer projects={this.state.projects}
-                                  routeProps={this.props.routeProps}
-                                  onProjectClick={this.onProjectClick}
-                                  ProjectRenderer={ProjectRenderer}
-                                  showSwitch={true}/>
+                <ProjectsRenderer
+                    allSelected={false}
+                    changeAllSelected={null}
+                    onCheckboxClick={null}
+                    onSelectAllClick={null}
+                    projects={this.state.projects}
+                    routeProps={this.props.routeProps}
+                    onProjectClick={this.onProjectClick}
+                    ProjectRenderer={ProjectRenderer}
+                    showSwitch={true}/>
         );
     }
 
@@ -62,6 +67,7 @@ class Projects extends Component<IRouteProps, IProjectsState> {
             });
             sortedProjects.forEach((project) => {
                 project.epikinsProjectURL = routePrefix + 'projects/' + project.job.name;
+                project.checked = false;
             });
             this.setState({
                 ...this.state,

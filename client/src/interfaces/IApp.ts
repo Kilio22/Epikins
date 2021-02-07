@@ -1,4 +1,4 @@
-import {IUser, userInitialState} from "./IUser";
+import { IUser, userInitialState } from './IUser';
 
 export interface IAppState {
     user: IUser,
@@ -10,4 +10,4 @@ export let appInitialState: IAppState = {
     user: userInitialState,
     fuMode: false,
     errorMessage: null
-}
+};

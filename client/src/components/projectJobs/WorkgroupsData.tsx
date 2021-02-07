@@ -10,14 +10,14 @@ interface IStudentRemainingBuildsProps {
 interface IGroupDataProps {
     workgroupData: IWorkgroupsData,
     selectedJobs: string[],
-    onCheckboxChange: OnCheckboxChange,
+    onCheckboxChange: OnCheckboxChange<IWorkgroupsData>,
     onJobClick: OnJobClick
 }
 
 interface IGroupsDataProps {
     workgroupsData: IWorkgroupsData[],
     selectedJobs: string[],
-    onCheckboxChange: OnCheckboxChange,
+    onCheckboxChange: OnCheckboxChange<IWorkgroupsData>,
     onJobClick: OnJobClick
 }
 

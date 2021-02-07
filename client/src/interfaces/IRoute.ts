@@ -48,14 +48,14 @@ export const routes: IRoute[] = [
     },
     {
         path: routePrefix + 'manage/users',
-        name: 'Users management',
+        name: 'Users',
         component: Users,
         role: 'users',
         inNavbar: true
     },
     {
         path: routePrefix + 'manage/credentials',
-        name: 'Jenkins credentials management',
+        name: 'Jenkins credentials',
         component: JenkinsCredentials,
         role: 'credentials',
         inNavbar: true

@@ -1,6 +1,6 @@
-import { OnFirstDeleteClick } from '../Functions';
+import { HandleType } from '../Functions';
 
 export interface IJenkinsCredentialsTableBodyProps {
     jenkinsCredentials: string[],
-    onFirstDeleteClick: OnFirstDeleteClick
+    onFirstDeleteClick: HandleType<string>
 }
