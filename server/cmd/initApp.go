@@ -46,9 +46,13 @@ func setupApp(appData *internal.AppData) *fiber.App {
 		return controllers.GlobalBuildController(appData, ctx)
 	})
 
-	app.Get("/credentials", func(ctx *fiber.Ctx) error {
+	getCredentialsGroup := app.Group("/credentials", func(ctx *fiber.Ctx) error {
+		return checkUserRole(appData, ctx, config.USERS, config.CREDENTIALS)
+	})
+	getCredentialsGroup.Get("/", func(ctx *fiber.Ctx) error {
 		return jenkinsCredentials.GetJenkinsCredentialsController(appData, ctx)
 	})
+
 	protectedCredentialsGroup := app.Group("/credentials", func(ctx *fiber.Ctx) error {
 		return checkUserRole(appData, ctx, config.CREDENTIALS)
 	})
