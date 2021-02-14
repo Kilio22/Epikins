@@ -168,13 +168,16 @@ class Users extends Component<IRouteProps, IUsersState> {
 
         const data: IApiUser[] | null = await EpikinsApiService.getUsers(accessToken);
         if (data) {
-            this.changeUsersStateByProperty('initialUsers', [ ...data ]);
-            this.changeUsersStateByProperty('modifiedUsers', data.map(value => {
-                return {
-                    ...value,
-                    roles: [ ...value.roles ]
-                };
-            }));
+            this.setState({
+                ...this.state,
+                initialUsers: [ ...data ],
+                modifiedUsers: data.map(value => {
+                    return {
+                        ...value,
+                        roles: [ ...value.roles ]
+                    };
+                })
+            });
         } else {
             this.setErrorMessage('Cannot fetch data, please try to reload the page.');
         }
