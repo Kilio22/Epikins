@@ -53,7 +53,7 @@ class Login extends Component<ILoginProps, ILoginState> {
                         this.props.routeProps.location.state?.from ?
                             <Redirect to={{pathname: this.props.routeProps.location.state.from.pathname}}/>
                             :
-                            <Redirect to={{pathname: routePrefix + 'projects'}}/>
+                            <Redirect to={{pathname: routePrefix}}/>
                         :
                         this.state.isConnecting ?
                             <Loading/>
