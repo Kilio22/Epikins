@@ -25,6 +25,9 @@ func updateMongoProjectsData(
 		}
 		err := util.UpdateMongoProjectData(&mongoProjectsData[idx], localProjectData, city, userLogs, appData.ProjectsCollection)
 		if err != nil {
+			if mongoProjectData.MongoWorkgroupsData[city] == nil {
+				continue
+			}
 			return nil, util.GetMyError(err.Error(), nil, http.StatusInternalServerError)
 		}
 		definitiveMongoProjectsData = append(definitiveMongoProjectsData, mongoProjectsData[idx])

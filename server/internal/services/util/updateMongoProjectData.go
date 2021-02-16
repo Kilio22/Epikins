@@ -65,9 +65,20 @@ func UpdateMongoProjectData(
 	}
 
 	jobs, err := libJenkins.GetJobsByProject(localProjectData.Job, city, userLogs)
-	err = updateMongoWorkgroupsData(mongoProjectData, jobs, city, projectCollection)
 	if err != nil {
 		return errors.New(UpdateMongoProjectDataError + err.Error())
 	}
-	return nil
+	if len(jobs) != 0 {
+		err = updateMongoWorkgroupsData(mongoProjectData, jobs, city, projectCollection)
+		if err != nil {
+			return errors.New(UpdateMongoProjectDataError + err.Error())
+		}
+		return nil
+	}
+	err = mongoUtil.DeleteMongoProjectData(mongoProjectData.Name, projectCollection)
+	if err != nil {
+		return errors.New(UpdateMongoProjectDataError + err.Error())
+	}
+	mongoProjectData.MongoWorkgroupsData[city] = nil
+	return errors.New(UpdateMongoProjectDataError + "project does not exists on jenkins")
 }
