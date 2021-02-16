@@ -50,6 +50,6 @@ func startBuilds(
 	if err != nil {
 		return err
 	}
-	return mongoUtil.UpdateProject(mongoProjectData.Name,
+	return mongoUtil.UpdateProject(mongoProjectData.Name, mongoProjectData.Module,
 		bson.M{"$set": bson.M{"mongoworkgroupsdata": mongoProjectData.MongoWorkgroupsData}}, projectCollection)
 }

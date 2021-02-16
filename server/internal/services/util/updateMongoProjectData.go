@@ -42,7 +42,7 @@ func updateMongoWorkgroupsData(
 	}
 	mongoProjectData.MongoWorkgroupsData[city] = newMongoWorkgroupsData
 	mongoProjectData.LastUpdate = time.Now().Unix()
-	return mongoUtil.UpdateProject(mongoProjectData.Name,
+	return mongoUtil.UpdateProject(mongoProjectData.Name, mongoProjectData.Module,
 		bson.M{
 			"$set": bson.M{
 				"mongoworkgroupsdata": mongoProjectData.MongoWorkgroupsData, "lastupdate": mongoProjectData.LastUpdate,
@@ -75,7 +75,7 @@ func UpdateMongoProjectData(
 		}
 		return nil
 	}
-	err = mongoUtil.DeleteMongoProjectData(mongoProjectData.Name, projectCollection)
+	err = mongoUtil.DeleteMongoProjectData(mongoProjectData.Name, mongoProjectData.Module, projectCollection)
 	if err != nil {
 		return errors.New(UpdateMongoProjectDataError + err.Error())
 	}

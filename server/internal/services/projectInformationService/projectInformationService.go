@@ -16,7 +16,7 @@ func ProjectInformationService(projectName string, module string, userLogs libJe
 ) {
 	localProjectData, myError := util.GetLocalProjectData(projectName, module, userLogs, appData)
 	if myError.Message != "" {
-		return projectsService.ProjectResponse{}, util.CheckLocalProjectDataError(myError, projectName, appData.ProjectsCollection)
+		return projectsService.ProjectResponse{}, util.CheckLocalProjectDataError(myError, projectName, module, appData.ProjectsCollection)
 	}
 
 	mongoProjectData, err := util.GetMongoProjectData(localProjectData, "", userLogs, appData.ProjectsCollection)

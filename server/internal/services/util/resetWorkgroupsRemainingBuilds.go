@@ -23,7 +23,7 @@ func resetWorkgroupsRemainingBuilds(projectData *internal.MongoProjectData, city
 			projectData.MongoWorkgroupsData[city][idx].RemainingBuilds = config.DefaultBuildNb
 			projectData.MongoWorkgroupsData[city][idx].LastBuildReset = mongoUtil.GetLastMondayDate()
 		}
-		return mongoUtil.UpdateProject(projectData.Name, bson.M{"$set": bson.M{"mongoworkgroupsdata": projectData.MongoWorkgroupsData}}, collection)
+		return mongoUtil.UpdateProject(projectData.Name, projectData.Module, bson.M{"$set": bson.M{"mongoworkgroupsdata": projectData.MongoWorkgroupsData}}, collection)
 	}
 	return nil
 }

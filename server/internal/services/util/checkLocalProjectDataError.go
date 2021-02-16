@@ -9,12 +9,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func CheckLocalProjectDataError(myError internal.MyError, projectName string, projectCollection *mongo.Collection) internal.MyError {
+func CheckLocalProjectDataError(
+	myError internal.MyError, projectName string, module string, projectCollection *mongo.Collection) internal.MyError {
 	if myError.Message == "" {
 		return internal.MyError{}
 	}
 	if myError.Status == http.StatusBadRequest {
-		_ = mongoUtil.DeleteMongoProjectData(projectName, projectCollection)
+		_ = mongoUtil.DeleteMongoProjectData(projectName, module, projectCollection)
 	}
 	return GetMyError("cannot get project information", errors.New(myError.Message), myError.Status)
 }

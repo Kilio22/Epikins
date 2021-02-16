@@ -23,7 +23,7 @@ type BuildParams struct {
 func BuildService(buildParams BuildParams, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) internal.MyError {
 	askedProjectData, myError := util.GetLocalProjectData(buildParams.Project, buildParams.Module, userLogs, appData)
 	if myError.Message != "" {
-		myError = util.CheckLocalProjectDataError(myError, buildParams.Project, appData.ProjectsCollection)
+		myError = util.CheckLocalProjectDataError(myError, buildParams.Project, buildParams.Module, appData.ProjectsCollection)
 		return util.GetMyError(BuildError, errors.New(myError.Message), myError.Status)
 	}
 

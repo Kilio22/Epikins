@@ -15,7 +15,7 @@ func ProjectJobsService(projectName string, module string, city string, userLogs
 ) {
 	localProjectData, myError := util.GetLocalProjectData(projectName, module, userLogs, appData)
 	if myError.Message != "" {
-		return []WorkgroupData{}, util.CheckLocalProjectDataError(myError, projectName, appData.ProjectsCollection)
+		return []WorkgroupData{}, util.CheckLocalProjectDataError(myError, projectName, module, appData.ProjectsCollection)
 	}
 
 	workgroups, err := libJenkins.GetWorkgroupsByProject(localProjectData.Job, city, userLogs)

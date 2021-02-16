@@ -111,8 +111,9 @@ class MyProjects extends React.Component<IRouteProps, IMyProjectsState> {
 
         const selectedProject = this.state.selectedProject;
         const res: boolean = await EpikinsApiService.buildStudent(selectedProject?.city,
-            selectedProject?.mongoWorkgroupData.name,
-            selectedProject?.project.name,
+            selectedProject.mongoWorkgroupData.name,
+            selectedProject.project.name,
+            selectedProject.project.module,
             accessToken);
         if (!res) {
             if (this.context.changeAppStateByProperty) {

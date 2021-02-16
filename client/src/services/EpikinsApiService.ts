@@ -41,9 +41,10 @@ class EpikinsApiService {
         }
     }
 
-    static async getProjectInformation(project: string, apiAccessToken: string): Promise<IProject | null> {
+    static async getProjectInformation(project: string, module: string, apiAccessToken: string): Promise<IProject | null> {
         try {
-            const res = await Axios.get<IProject>(apiBaseURI + '/projects/' + project, {headers: {'Authorization': apiAccessToken}});
+            console.log(apiBaseURI + '/' + module + '/projects/' + project);
+            const res = await Axios.get<IProject>(apiBaseURI + '/' + module + '/projects/' + project, {headers: {'Authorization': apiAccessToken}});
             return res.data;
         } catch (e) {
             console.log(e);
@@ -66,7 +67,7 @@ class EpikinsApiService {
 
     static async changeProjectBuildLimit(project: IProject, apiAccessToken: string): Promise<IProject[] | null> {
         try {
-            const res = await Axios.put<IProject[]>(apiBaseURI + '/projects/' + project.job.name, {
+            const res = await Axios.put<IProject[]>(apiBaseURI + '/projects/' + project.module + '/' + project.job.name, {
                 'buildLimit': project.buildLimit
             }, {
                 headers: {'Authorization': apiAccessToken}
@@ -78,12 +79,13 @@ class EpikinsApiService {
         }
     }
 
-    static async buildStudent(city: string, group: string, project: string, apiAccessToken: string): Promise<boolean> {
+    static async buildStudent(city: string, group: string, project: string, module: string, apiAccessToken: string): Promise<boolean> {
         try {
             await Axios.post(apiBaseURI + '/student/build',
                 {
                     city,
                     group,
+                    module,
                     project: project
                 },
                 {
@@ -97,15 +99,16 @@ class EpikinsApiService {
         return false;
     }
 
-    static async buildJobs(requestedBuilds: string[], project: string, visibility: string, city: string, apiAccessToken: string): Promise<boolean> {
+    static async buildJobs(requestedBuilds: string[], project: string, visibility: string, city: string, module: string, apiAccessToken: string): Promise<boolean> {
         try {
             await Axios.post(apiBaseURI + '/build',
                 {
                     city,
                     jobs: requestedBuilds,
-                    project: project,
+                    project,
                     fu: true,
-                    visibility: visibility
+                    module,
+                    visibility
                 },
                 {
                     headers: {'Authorization': apiAccessToken}
@@ -118,10 +121,11 @@ class EpikinsApiService {
         return false;
     }
 
-    static async globalBuild(project: string, visibility: string, city: string, apiAccessToken: string): Promise<boolean> {
+    static async globalBuild(project: string, visibility: string, city: string, module: string, apiAccessToken: string): Promise<boolean> {
         try {
             await Axios.post(apiBaseURI + '/build/global', {
                     city,
+                    module,
                     project,
                     visibility
                 },

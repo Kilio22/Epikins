@@ -19,10 +19,10 @@ func updateMongoProjectsData(
 		localProjectData, myError := util.GetLocalProjectData(mongoProjectData.Name, mongoProjectData.Module, userLogs, appData)
 		if myError.Message != "" {
 			if myError.Status == http.StatusBadRequest {
-				util.CheckLocalProjectDataError(myError, mongoProjectData.Name, appData.ProjectsCollection)
+				util.CheckLocalProjectDataError(myError, mongoProjectData.Name, mongoProjectData.Module, appData.ProjectsCollection)
 				continue
 			}
-			return nil, util.CheckLocalProjectDataError(myError, mongoProjectData.Name, appData.ProjectsCollection)
+			return nil, util.CheckLocalProjectDataError(myError, mongoProjectData.Name, mongoProjectData.Module, appData.ProjectsCollection)
 		}
 		err := util.UpdateMongoProjectData(&mongoProjectsData[idx], localProjectData, city, userLogs, appData.ProjectsCollection)
 		if err != nil {

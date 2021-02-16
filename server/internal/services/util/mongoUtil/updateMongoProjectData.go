@@ -8,8 +8,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func UpdateProject(projectName string, fieldsToUpdate bson.M, collection *mongo.Collection) error {
-	res := collection.FindOneAndUpdate(context.TODO(), bson.M{"name": projectName}, fieldsToUpdate)
+func UpdateProject(projectName string, module string, fieldsToUpdate bson.M, collection *mongo.Collection) error {
+	res := collection.FindOneAndUpdate(context.TODO(), bson.M{"name": projectName, "module": module}, fieldsToUpdate)
 	if res.Err() != nil {
 		log.Println(res.Err())
 		return res.Err()

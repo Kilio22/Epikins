@@ -39,20 +39,20 @@ func checkError(
 func UpdateProjectBuildLimitService(
 	newLimit NewLimit, projectName string, module string, userLogs libJenkins.JenkinsCredentials,
 	appData *internal.AppData) internal.MyError {
-	err := updateProjectData(newLimit, projectName, appData.ProjectsCollection)
+	err := updateProjectData(newLimit, projectName, module, appData.ProjectsCollection)
 	if shouldRetry, myError := checkError(err, true, projectName, userLogs, appData); !shouldRetry || myError.Message != "" {
 		return myError
 	}
 
 	localProjectData, myError := util.GetLocalProjectData(projectName, module, userLogs, appData)
 	if myError.Message != "" {
-		return util.CheckLocalProjectDataError(myError, projectName, appData.ProjectsCollection)
+		return util.CheckLocalProjectDataError(myError, projectName, module, appData.ProjectsCollection)
 	}
 
 	if _, err = mongoUtil.AddMongoProjectData(util.GetNewMongoProjectData(localProjectData, map[string][]internal.MongoWorkgroupData{}), appData.ProjectsCollection); err != nil {
 		return util.GetMyError(UpdateProjectBuildLimitError, err, http.StatusInternalServerError)
 	}
-	err = updateProjectData(newLimit, projectName, appData.ProjectsCollection)
+	err = updateProjectData(newLimit, projectName, module, appData.ProjectsCollection)
 	_, myError = checkError(err, false, projectName, userLogs, appData)
 	return myError
 }

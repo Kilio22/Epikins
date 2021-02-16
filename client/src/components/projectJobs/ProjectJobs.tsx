@@ -1,12 +1,7 @@
 import React from 'react';
 import EpikinsApiService from '../../services/EpikinsApiService';
 import { apiBaseURI } from '../../Config';
-import {
-    IProjectJobsMatchParams,
-    IProjectJobsState,
-    IProjectLocationState,
-    projectJobsInitialState
-} from '../../interfaces/jobs/IProjectJobs';
+import { IProjectJobsState, IProjectLocationState, projectJobsInitialState } from '../../interfaces/jobs/IProjectJobs';
 import ProjectJobsRenderer from './ProjectJobsRenderer';
 import { IWorkgroupsData } from '../../interfaces/IWorkgroupsData';
 import { IRouteProps } from '../../interfaces/IRoute';
@@ -16,12 +11,12 @@ import Loading from '../Loading';
 import { userInitialState } from '../../interfaces/IUser';
 import { IProject } from '../../interfaces/projects/IProject';
 
-class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams, IProjectLocationState>, IProjectJobsState> {
+class ProjectJobs extends React.Component<IRouteProps<{}, IProjectLocationState>, IProjectJobsState> {
     static contextType = appInitialContext;
     context!: React.ContextType<typeof appInitialContext>;
     private mounted = false;
 
-    constructor(props: IRouteProps<IProjectJobsMatchParams, IProjectLocationState>) {
+    constructor(props: IRouteProps<{}, IProjectLocationState>) {
         super(props);
 
         if (props.routeProps.location?.state?.project) {
@@ -84,6 +79,9 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams, I
     }
 
     async getProjectInformation() {
+        if (this.state.project == null) {
+            return;
+        }
         const accessToken: string = await authServiceObj.getToken();
         if (accessToken === '') {
             if (this.context.changeAppStateByProperty != null) {
@@ -92,7 +90,7 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams, I
             return;
         }
 
-        const res: IProject | null = await EpikinsApiService.getProjectInformation(this.props.routeProps.match.params.project, accessToken);
+        const res: IProject | null = await EpikinsApiService.getProjectInformation(this.state.project.job.name, this.state.project.module, accessToken);
         if (!this.mounted) {
             return;
         }
@@ -123,7 +121,7 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams, I
         }
 
         const res: IWorkgroupsData[] | null = await EpikinsApiService.getWorkgroupsData(
-            apiBaseURI + '/projects/' + this.state.project.job.name + '/' + this.state.selectedCity, accessToken);
+            apiBaseURI + '/projects/' + this.state.project.module + '/' + this.state.project.job.name + '/' + this.state.selectedCity, accessToken);
 
         if (!this.mounted) {
             return;
@@ -210,7 +208,7 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams, I
         }
 
         await this.handleBuildResponse(await EpikinsApiService.buildJobs(
-            selectedJobs, this.state.project.job.name, visibility, this.state.selectedCity, accessToken
+            selectedJobs, this.state.project.job.name, visibility, this.state.selectedCity, this.state.project.module, accessToken
         ));
     }
 
@@ -232,7 +230,7 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams, I
             return;
         }
 
-        await this.handleBuildResponse(await EpikinsApiService.globalBuild(this.state.project.job.name, visibility, this.state.selectedCity, accessToken));
+        await this.handleBuildResponse(await EpikinsApiService.globalBuild(this.state.project.job.name, visibility, this.state.selectedCity, this.state.project.module, accessToken));
     }
 }
 

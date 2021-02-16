@@ -23,9 +23,9 @@ func updateValues(newLimit NewLimit, mongoProjectData *internal.MongoProjectData
 	}
 }
 
-func updateProjectData(newLimit NewLimit, projectName string, collection *mongo.Collection) error {
+func updateProjectData(newLimit NewLimit, projectName string, module string, collection *mongo.Collection) error {
 	var projectData internal.MongoProjectData
-	err := collection.FindOne(context.TODO(), bson.M{"name": projectName}).Decode(&projectData)
+	err := collection.FindOne(context.TODO(), bson.M{"name": projectName, "module": module}).Decode(&projectData)
 	if err != nil {
 		return err
 	}

@@ -1,10 +1,6 @@
 import { IWorkgroupsData } from '../IWorkgroupsData';
 import { IProject } from '../projects/IProject';
 
-export interface IProjectJobsMatchParams {
-    project: string
-}
-
 export interface IProjectLocationState {
     project: IProject | null
 }
