@@ -65,9 +65,6 @@ func UpdateMongoProjectData(
 	}
 
 	jobs, err := libJenkins.GetJobsByProject(localProjectData.Job, city, userLogs)
-	if err != nil {
-		return errors.New(UpdateMongoProjectDataError + err.Error())
-	}
 	err = updateMongoWorkgroupsData(mongoProjectData, jobs, city, projectCollection)
 	if err != nil {
 		return errors.New(UpdateMongoProjectDataError + err.Error())
