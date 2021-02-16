@@ -11,10 +11,10 @@ import (
 
 const ProjectInformationError = "cannot retrieve cities linked to the given project"
 
-func ProjectInformationService(projectName string, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) (
+func ProjectInformationService(projectName string, module string, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) (
 	projectsService.ProjectResponse, internal.MyError,
 ) {
-	localProjectData, myError := util.GetLocalProjectData(projectName, userLogs, appData)
+	localProjectData, myError := util.GetLocalProjectData(projectName, module, userLogs, appData)
 	if myError.Message != "" {
 		return projectsService.ProjectResponse{}, util.CheckLocalProjectDataError(myError, projectName, appData.ProjectsCollection)
 	}

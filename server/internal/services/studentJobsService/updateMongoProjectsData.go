@@ -2,6 +2,7 @@ package studentJobsService
 
 import (
 	"net/http"
+	"strings"
 
 	"epikins-api/internal"
 	"epikins-api/internal/services/util"
@@ -15,7 +16,7 @@ func updateMongoProjectsData(
 	var definitiveMongoProjectsData []internal.MongoProjectData
 
 	for idx, mongoProjectData := range mongoProjectsData {
-		localProjectData, myError := util.GetLocalProjectData(mongoProjectData.Name, userLogs, appData)
+		localProjectData, myError := util.GetLocalProjectData(mongoProjectData.Name, mongoProjectData.Module, userLogs, appData)
 		if myError.Message != "" {
 			if myError.Status == http.StatusBadRequest {
 				util.CheckLocalProjectDataError(myError, mongoProjectData.Name, appData.ProjectsCollection)
@@ -25,7 +26,7 @@ func updateMongoProjectsData(
 		}
 		err := util.UpdateMongoProjectData(&mongoProjectsData[idx], localProjectData, city, userLogs, appData.ProjectsCollection)
 		if err != nil {
-			if mongoProjectData.MongoWorkgroupsData[city] == nil {
+			if strings.Contains(err.Error(), "does not exists on jenkins") {
 				continue
 			}
 			return nil, util.GetMyError(err.Error(), nil, http.StatusInternalServerError)

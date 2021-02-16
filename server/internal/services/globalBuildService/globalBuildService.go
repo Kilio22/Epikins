@@ -12,13 +12,14 @@ const GlobalBuildError = "cannot build"
 
 type GlobalBuildParams struct {
 	City       string                `json:"city" validate:"required"`
+	Module     string                `json:"module" validate:"required"`
 	Project    string                `json:"project" validate:"required"`
 	Visibility libJenkins.Visibility `json:"visibility" validate:"required"`
 }
 
 func GlobalBuildService(
 	globalBuildParams GlobalBuildParams, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) internal.MyError {
-	askedProjectData, myError := util.GetLocalProjectData(globalBuildParams.Project, userLogs, appData)
+	askedProjectData, myError := util.GetLocalProjectData(globalBuildParams.Project, globalBuildParams.Module, userLogs, appData)
 	if myError.Message != "" {
 		return util.CheckLocalProjectDataError(myError, globalBuildParams.Project, appData.ProjectsCollection)
 	}

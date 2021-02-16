@@ -32,7 +32,7 @@ func GetMongoProjectData(
 	project libJenkins.Project, city string, userLogs libJenkins.JenkinsCredentials, projectCollection *mongo.Collection) (
 	internal.MongoProjectData, error,
 ) {
-	mongoProjectData, err := mongoUtil.FetchMongoProjectData(project.Job.Name, projectCollection)
+	mongoProjectData, err := mongoUtil.FetchMongoProjectData(project, projectCollection)
 
 	if err != nil {
 		if err == mongo.ErrNoDocuments {

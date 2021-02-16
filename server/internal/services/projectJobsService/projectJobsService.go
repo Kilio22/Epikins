@@ -10,10 +10,10 @@ import (
 
 const ProjectJobsError = "cannot get workgroups associated to given project"
 
-func ProjectJobsService(projectName string, city string, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) (
+func ProjectJobsService(projectName string, module string, city string, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) (
 	[]WorkgroupData, internal.MyError,
 ) {
-	localProjectData, myError := util.GetLocalProjectData(projectName, userLogs, appData)
+	localProjectData, myError := util.GetLocalProjectData(projectName, module, userLogs, appData)
 	if myError.Message != "" {
 		return []WorkgroupData{}, util.CheckLocalProjectDataError(myError, projectName, appData.ProjectsCollection)
 	}

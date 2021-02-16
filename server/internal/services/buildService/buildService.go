@@ -15,12 +15,13 @@ type BuildParams struct {
 	City       string                `json:"city" validate:"required"`
 	Jobs       []string              `json:"jobs" validate:"required"`
 	Fu         bool                  `json:"fu"`
+	Module     string                `json:"module" validate:"required"`
 	Project    string                `json:"project" validate:"required"`
 	Visibility libJenkins.Visibility `json:"visibility" validate:"required"`
 }
 
 func BuildService(buildParams BuildParams, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) internal.MyError {
-	askedProjectData, myError := util.GetLocalProjectData(buildParams.Project, userLogs, appData)
+	askedProjectData, myError := util.GetLocalProjectData(buildParams.Project, buildParams.Module, userLogs, appData)
 	if myError.Message != "" {
 		myError = util.CheckLocalProjectDataError(myError, buildParams.Project, appData.ProjectsCollection)
 		return util.GetMyError(BuildError, errors.New(myError.Message), myError.Status)

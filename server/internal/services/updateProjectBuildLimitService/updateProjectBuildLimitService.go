@@ -37,14 +37,14 @@ func checkError(
 }
 
 func UpdateProjectBuildLimitService(
-	newLimit NewLimit, projectName string, userLogs libJenkins.JenkinsCredentials,
+	newLimit NewLimit, projectName string, module string, userLogs libJenkins.JenkinsCredentials,
 	appData *internal.AppData) internal.MyError {
 	err := updateProjectData(newLimit, projectName, appData.ProjectsCollection)
 	if shouldRetry, myError := checkError(err, true, projectName, userLogs, appData); !shouldRetry || myError.Message != "" {
 		return myError
 	}
 
-	localProjectData, myError := util.GetLocalProjectData(projectName, userLogs, appData)
+	localProjectData, myError := util.GetLocalProjectData(projectName, module, userLogs, appData)
 	if myError.Message != "" {
 		return util.CheckLocalProjectDataError(myError, projectName, appData.ProjectsCollection)
 	}

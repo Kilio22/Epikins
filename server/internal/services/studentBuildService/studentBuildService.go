@@ -14,6 +14,7 @@ import (
 type StudentBuildParams struct {
 	City    string `json:"city"  validate:"required"`
 	Group   string `json:"group" validate:"required"`
+	Module  string `json:"module" validate:"required"`
 	Project string `json:"project" validate:"required"`
 }
 
@@ -33,6 +34,7 @@ func StudentBuildService(
 			studentBuildParams.Group,
 		},
 		Fu:         false,
+		Module:     studentBuildParams.Module,
 		Project:    studentBuildParams.Project,
 		Visibility: libJenkins.PUBLIC,
 	}

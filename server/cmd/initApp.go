@@ -29,10 +29,10 @@ func setupApp(appData *internal.AppData) *fiber.App {
 	projectsGroup.Get("/", func(ctx *fiber.Ctx) error {
 		return controllers.ProjectsController(appData, ctx)
 	})
-	projectsGroup.Get("/:project", func(ctx *fiber.Ctx) error {
+	projectsGroup.Get("/:module/:project", func(ctx *fiber.Ctx) error {
 		return controllers.ProjectInformationController(appData, ctx)
 	})
-	projectsGroup.Get("/:project/:city", func(ctx *fiber.Ctx) error {
+	projectsGroup.Get("/:module/:project/:city", func(ctx *fiber.Ctx) error {
 		return controllers.ProjectJobsController(appData, ctx)
 	})
 
@@ -82,7 +82,7 @@ func setupApp(appData *internal.AppData) *fiber.App {
 	moduleManagerGroup := app.Group("/projects", func(ctx *fiber.Ctx) error {
 		return checkUserRole(appData, ctx, config.MODULE)
 	})
-	moduleManagerGroup.Put("/:project", func(ctx *fiber.Ctx) error {
+	moduleManagerGroup.Put("/:module/:project", func(ctx *fiber.Ctx) error {
 		return controllers.UpdateProjectBuildLimitController(appData, ctx)
 	})
 

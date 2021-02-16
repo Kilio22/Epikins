@@ -27,6 +27,7 @@ func getNewLimit(c *fiber.Ctx) (updateProjectBuildLimitService.NewLimit, error) 
 func UpdateProjectBuildLimitController(appData *internal.AppData, c *fiber.Ctx) error {
 	userEmail := c.Get("email")
 	projectName := c.Params("project")
+	module := c.Params("module")
 	newLimit, err := getNewLimit(c)
 	if err != nil {
 		return controllerUtil.SendMyError(util.GetMyError(updateProjectBuildLimitService.UpdateProjectBuildLimitError, err, http.StatusBadRequest), c)
@@ -37,7 +38,7 @@ func UpdateProjectBuildLimitController(appData *internal.AppData, c *fiber.Ctx) 
 		return controllerUtil.SendMyError(util.GetMyError(updateProjectBuildLimitService.UpdateProjectBuildLimitError, err, http.StatusInternalServerError), c)
 	}
 
-	myError := updateProjectBuildLimitService.UpdateProjectBuildLimitService(newLimit, projectName, jenkinsCredentials, appData)
+	myError := updateProjectBuildLimitService.UpdateProjectBuildLimitService(newLimit, projectName, module, jenkinsCredentials, appData)
 	if myError.Message != "" {
 		return controllerUtil.SendMyError(myError, c)
 	}

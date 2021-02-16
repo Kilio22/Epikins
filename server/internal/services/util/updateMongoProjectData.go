@@ -79,6 +79,5 @@ func UpdateMongoProjectData(
 	if err != nil {
 		return errors.New(UpdateMongoProjectDataError + err.Error())
 	}
-	mongoProjectData.MongoWorkgroupsData[city] = nil
 	return errors.New(UpdateMongoProjectDataError + "project does not exists on jenkins")
 }
