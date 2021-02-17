@@ -79,9 +79,10 @@ class MyProjects extends React.Component<IRouteProps, IMyProjectsState> {
 
         const res: IStudentJob[] | null = await EpikinsApiService.getStudentJobs(accessToken);
         if (res) {
-            let sortedProjects: IStudentJob[] = res.sort((a, b) => {
-                return a.project.name.localeCompare(b.project.name);
-            });
+            let sortedProjects: IStudentJob[] = res.filter((project) => project.mongoWorkgroupData.remainingBuilds !== 0)
+                                                   .sort((a, b) => {
+                                                       return a.project.name.localeCompare(b.project.name);
+                                                   });
             this.setState({
                 ...this.state,
                 projects: sortedProjects
