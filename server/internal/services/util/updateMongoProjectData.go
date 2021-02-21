@@ -22,6 +22,7 @@ func addMongoWorkgroupData(
 			mongoWorkgroupData.RemainingBuilds = mongoProjectData.BuildLimit
 			mongoWorkgroupData.LastBuildReset = mongoUtil.GetLastMondayDate()
 		}
+		mongoWorkgroupData.Url = job.Url
 		newWorkgroupsData = append(newWorkgroupsData, mongoWorkgroupData)
 	} else {
 		newWorkgroupsData = append(newWorkgroupsData, GetNewMongoWorkgroupData(job, mongoProjectData.BuildLimit))
