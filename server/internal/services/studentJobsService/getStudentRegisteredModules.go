@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"epikins-api/internal"
 	"epikins-api/internal/services/util"
@@ -19,6 +20,27 @@ var IntraAutologinLink = util.GetEnvVariable("INTRA_AUTOLOGIN_LINK")
 
 const GetStudentInfoError = "cannot get student info on Epitech intranet"
 
+func hasModule(toFind Module, modules []Module) bool {
+	for _, module := range modules {
+		if strings.Compare(module.CodeModule, toFind.CodeModule) == 0 {
+			return true
+		}
+	}
+	return false
+}
+
+func getFinalModuleList(modules []Module) []Module {
+	var finalModuleList []Module
+
+	for _, module := range modules {
+		if hasModule(module, finalModuleList) == true {
+			continue
+		}
+		finalModuleList = append(finalModuleList, module)
+	}
+	return finalModuleList
+}
+
 func getModulesFromIntraResponse(res *http.Response) ([]Module, internal.MyError) {
 	var intraResponse UserInformationIntraResponse
 	err := json.NewDecoder(res.Body).Decode(&intraResponse)
@@ -27,7 +49,7 @@ func getModulesFromIntraResponse(res *http.Response) ([]Module, internal.MyError
 		log.Println(err)
 		return nil, util.GetMyError(GetStudentInfoError, err, http.StatusInternalServerError)
 	}
-	return intraResponse.Modules, internal.MyError{}
+	return getFinalModuleList(intraResponse.Modules), internal.MyError{}
 }
 
 func getStudentRegisteredModules(studentEmail string) ([]Module, internal.MyError) {
