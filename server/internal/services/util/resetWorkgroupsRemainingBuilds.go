@@ -3,7 +3,6 @@ package util
 import (
 	"time"
 
-	"epikins-api/config"
 	"epikins-api/internal"
 	"epikins-api/internal/services/util/mongoUtil"
 	"go.mongodb.org/mongo-driver/bson"
@@ -20,7 +19,7 @@ func resetWorkgroupsRemainingBuilds(projectData *internal.MongoProjectData, city
 	}
 	if shouldResetWorkgroupRemainingBuilds(projectData.MongoWorkgroupsData[city][0]) {
 		for idx := range projectData.MongoWorkgroupsData[city] {
-			projectData.MongoWorkgroupsData[city][idx].RemainingBuilds = config.DefaultBuildNb
+			projectData.MongoWorkgroupsData[city][idx].RemainingBuilds = projectData.BuildLimit
 			projectData.MongoWorkgroupsData[city][idx].LastBuildReset = mongoUtil.GetLastMondayDate()
 		}
 		return mongoUtil.UpdateProject(projectData.Name, projectData.Module, bson.M{"$set": bson.M{"mongoworkgroupsdata": projectData.MongoWorkgroupsData}}, collection)
