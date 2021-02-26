@@ -8,11 +8,13 @@ import { IStudentJob } from '../../interfaces/myProjects/IStudentJob';
 import Loading from '../Loading';
 import StudentProjectsRenderer from './StudentProjectsRenderer';
 import StudentBuildForm from './StudentBuildForm';
+import BuildStartedToast from '../BuildStartedToast';
 
 export interface IMyProjectsState {
     isLoading: boolean,
     projects: IStudentJob[],
     showForm: boolean,
+    showToast: boolean,
     selectedProject: IStudentJob | null
 }
 
@@ -20,6 +22,7 @@ const myProjectsInitialState: IMyProjectsState = {
     isLoading: false,
     projects: [],
     showForm: false,
+    showToast: false,
     selectedProject: null
 };
 
@@ -33,6 +36,7 @@ class MyProjects extends React.Component<IRouteProps, IMyProjectsState> {
         this.getStudentProjects = this.getStudentProjects.bind(this);
         this.changeMyProjectsStateByProperty = this.changeMyProjectsStateByProperty.bind(this);
         this.onStudentProjectClick = this.onStudentProjectClick.bind(this);
+        this.closeToast = this.closeToast.bind(this);
         this.startBuild = this.startBuild.bind(this);
 
         this.state = myProjectsInitialState;
@@ -61,6 +65,9 @@ class MyProjects extends React.Component<IRouteProps, IMyProjectsState> {
                         <StudentBuildForm changeMyProjectsStateByProperty={this.changeMyProjectsStateByProperty}
                                           selectedProject={this.state.selectedProject} startBuild={this.startBuild}
                                           getStudentProjects={this.getStudentProjects}/>
+                    }
+                    {
+                        this.state.showToast && <BuildStartedToast onClose={this.closeToast}/>
                     }
                     <StudentProjectsRenderer projects={this.state.projects}
                                              showSwitch={true} onStudentProjectClick={this.onStudentProjectClick}/>
@@ -96,6 +103,13 @@ class MyProjects extends React.Component<IRouteProps, IMyProjectsState> {
                 this.context.changeAppStateByProperty('errorMessage', 'Cannot fetch data, please try to reload the page.', true);
             }
         }
+    }
+
+    closeToast() {
+        this.setState({
+            ...this.state,
+            showToast: false
+        });
     }
 
     async startBuild() {

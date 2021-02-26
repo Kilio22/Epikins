@@ -13,11 +13,13 @@ interface IStudentBuildFormProps {
 }
 
 interface IStudentBuildFormState {
-    isLoading: boolean
+    isLoading: boolean,
+    startButtonDisabled: boolean
 }
 
 const StudentBuildFormInitialState: IStudentBuildFormState = {
-    isLoading: false
+    isLoading: false,
+    startButtonDisabled: false
 };
 
 class StudentBuildForm extends Component<IStudentBuildFormProps, IStudentBuildFormState> {
@@ -58,9 +60,10 @@ class StudentBuildForm extends Component<IStudentBuildFormProps, IStudentBuildFo
                                     <Button variant="secondary"
                                             onClick={() => this.props.changeMyProjectsStateByProperty('showForm', false)}
                                             className={'mr-2'}>
-                                        Cancel
+                                        Close
                                     </Button>
-                                    <Button variant={'primary'} onClick={this.onBuildClick}>
+                                    <Button variant={'primary'} onClick={this.onBuildClick}
+                                            disabled={this.state.startButtonDisabled}>
                                         Start
                                     </Button>
                                 </div>
@@ -86,7 +89,8 @@ class StudentBuildForm extends Component<IStudentBuildFormProps, IStudentBuildFo
     async onBuildClick() {
         this.setState({
             ...this.state,
-            isLoading: true
+            isLoading: true,
+            startButtonDisabled: true
         });
         await this.props.startBuild();
         await this.props.getStudentProjects();
@@ -95,6 +99,7 @@ class StudentBuildForm extends Component<IStudentBuildFormProps, IStudentBuildFo
             isLoading: false
         });
         this.props.changeMyProjectsStateByProperty('showForm', false);
+        this.props.changeMyProjectsStateByProperty('showToast', true);
     }
 }
 
