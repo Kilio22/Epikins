@@ -33,6 +33,6 @@ func updateProjectData(newLimit NewLimit, projectName string, module string, col
 		return nil
 	}
 	updateValues(newLimit, &projectData)
-	_, err = collection.ReplaceOne(context.TODO(), bson.M{"name": projectName}, projectData)
+	_, err = collection.ReplaceOne(context.TODO(), bson.M{"name": projectName, "module": module}, projectData)
 	return err
 }
