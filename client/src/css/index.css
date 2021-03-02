@@ -5,11 +5,13 @@ html, body, #root {
 .build-toast {
     position: absolute;
     right: 2%;
+    z-index: 1000;
 }
 
 @media (max-width: 768px) {
     .build-toast {
         position: absolute;
         bottom: 8%;
+        z-index: 1000;
     }
 }
