@@ -38,5 +38,6 @@ func StudentBuildService(
 		Project:    studentBuildParams.Project,
 		Visibility: libJenkins.PUBLIC,
 	}
-	return buildService.BuildService(buildParams, userLogs, appData)
+	buildInfo := buildService.BuildInfo{BuildParams: buildParams, Starter: studentEmail}
+	return buildService.BuildService(buildInfo, userLogs, appData)
 }

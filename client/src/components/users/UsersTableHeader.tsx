@@ -4,7 +4,8 @@ export const roles: string[] = [
     'Projects',
     'Users',
     'Credentials',
-    'Module'
+    'Module',
+    'Log'
 ];
 
 const UsersTableHeader = () => {

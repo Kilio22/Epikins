@@ -9,8 +9,8 @@ import (
 )
 
 type ProjectsData struct {
-	ProjectList []libJenkins.Project
 	LastUpdate  time.Time
+	ProjectList []libJenkins.Project
 }
 
 type MongoWorkgroupData struct {
@@ -32,14 +32,23 @@ type Role string
 
 type User struct {
 	Email        string `json:"email" validate:"required,email"`
-	Roles        []Role `json:"roles" validate:"required"`
 	JenkinsLogin string `json:"jenkinsLogin" validate:"required"`
+	Roles        []Role `json:"roles" validate:"required"`
+}
+
+type BuildLog struct {
+	Module  string `json:"module"`
+	Project string `json:"project"`
+	Starter string `json:"starter"`
+	Target  string `json:"target"`
+	Time    int64  `json:"time"`
 }
 
 type AppData struct {
-	ProjectsCollection           *mongo.Collection
-	JenkinsCredentialsCollection *mongo.Collection
-	UsersCollection              *mongo.Collection
-	ProjectsData                 map[string]ProjectsData
 	AppId                        string
+	BuildLogCollection           *mongo.Collection
+	JenkinsCredentialsCollection *mongo.Collection
+	ProjectsCollection           *mongo.Collection
+	ProjectsData                 map[string]ProjectsData
+	UsersCollection              *mongo.Collection
 }

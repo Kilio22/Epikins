@@ -94,6 +94,13 @@ func setupApp(appData *internal.AppData) *fiber.App {
 		return controllers.StudentBuildController(appData, ctx)
 	})
 
+	logGroup := app.Group("/log", func(ctx *fiber.Ctx) error {
+		return checkUserRole(appData, ctx, config.LOG)
+	})
+	logGroup.Get("/", func(ctx *fiber.Ctx) error {
+		return controllers.GetBuildLogsController(appData, ctx)
+	})
+
 	app.Use(func(c *fiber.Ctx) error {
 		return c.SendStatus(404)
 	})

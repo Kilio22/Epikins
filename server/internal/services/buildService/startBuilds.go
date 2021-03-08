@@ -7,22 +7,23 @@ import (
 	"epikins-api/internal/services/util"
 	"epikins-api/internal/services/util/mongoUtil"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 
 	"epikins-api/pkg/libJenkins"
-
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 const StartBuildsError = "cannot start builds"
 
-func buildLoop(buildParams BuildParams, groupsBuildData []internal.MongoWorkgroupData, userLogs libJenkins.JenkinsCredentials) error {
-	for _, jobName := range buildParams.Jobs {
+func buildLoop(
+	buildInfo BuildInfo, groupsBuildData []internal.MongoWorkgroupData, userLogs libJenkins.JenkinsCredentials,
+	buildLogsCollection *mongo.Collection) error {
+	for _, jobName := range buildInfo.BuildParams.Jobs {
 		for idx := range groupsBuildData {
 			if groupsBuildData[idx].Name != jobName {
 				continue
 			}
-			shouldBreak, err := startBuild(&groupsBuildData[idx], buildParams, userLogs)
-			if err != nil {
+			shouldBreak, err := startBuild(&groupsBuildData[idx], buildInfo, userLogs, buildLogsCollection)
+			if err != nil && !shouldBreak {
 				return err
 			}
 			if shouldBreak {
@@ -34,22 +35,22 @@ func buildLoop(buildParams BuildParams, groupsBuildData []internal.MongoWorkgrou
 }
 
 func startBuilds(
-	buildParams BuildParams, localProjectData libJenkins.Project, city string, projectCollection *mongo.Collection,
+	buildInfo BuildInfo, localProjectData libJenkins.Project, appData *internal.AppData,
 	userLogs libJenkins.JenkinsCredentials,
 ) error {
-	mongoProjectData, err := util.GetMongoProjectData(localProjectData, city, userLogs, projectCollection)
+	mongoProjectData, err := util.GetMongoProjectData(localProjectData, buildInfo.BuildParams.City, userLogs, appData.ProjectsCollection)
 	if err != nil {
 		return errors.New(StartBuildsError + ": " + err.Error())
 	}
-	err = util.UpdateMongoProjectData(&mongoProjectData, localProjectData, city, userLogs, projectCollection)
+	err = util.UpdateMongoProjectData(&mongoProjectData, localProjectData, buildInfo.BuildParams.City, userLogs, appData.ProjectsCollection)
 	if err != nil {
 		return errors.New(StartBuildsError + ": cannot get workgroups data: " + err.Error())
 	}
 
-	err = buildLoop(buildParams, mongoProjectData.MongoWorkgroupsData[city], userLogs)
+	err = buildLoop(buildInfo, mongoProjectData.MongoWorkgroupsData[buildInfo.BuildParams.City], userLogs, appData.BuildLogCollection)
 	if err != nil {
 		return err
 	}
 	return mongoUtil.UpdateProject(mongoProjectData.Name, mongoProjectData.Module,
-		bson.M{"$set": bson.M{"mongoworkgroupsdata": mongoProjectData.MongoWorkgroupsData}}, projectCollection)
+		bson.M{"$set": bson.M{"mongoworkgroupsdata": mongoProjectData.MongoWorkgroupsData}}, appData.ProjectsCollection)
 }

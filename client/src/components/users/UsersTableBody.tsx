@@ -5,7 +5,6 @@ import { roles } from './UsersTableHeader';
 
 const UsersTableBody: React.FunctionComponent<IUsersTableBodyProps> = ({
                                                                            users,
-                                                                           connectedUser,
                                                                            isEditing,
                                                                            jenkinsCredentials,
                                                                            onCheckboxClick,
@@ -16,9 +15,6 @@ const UsersTableBody: React.FunctionComponent<IUsersTableBodyProps> = ({
         <tbody>
         {
             sortedUsers.map((user, userIdx) => {
-                if (!user.email.localeCompare(connectedUser.email)) {
-                    return null;
-                }
                 return (
                     <tr key={userIdx}>
                         <td>{user.email}</td>

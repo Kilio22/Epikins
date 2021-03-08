@@ -5,18 +5,20 @@ import (
 )
 
 const (
-	PROJECTS    internal.Role = "projects"
-	USERS       internal.Role = "users"
 	CREDENTIALS internal.Role = "credentials"
+	LOG         internal.Role = "log"
 	MODULE      internal.Role = "module"
+	PROJECTS    internal.Role = "projects"
 	STUDENT     internal.Role = "student"
+	USERS       internal.Role = "users"
 )
 
 var Roles = []internal.Role{
+	CREDENTIALS,
+	LOG,
+	MODULE,
 	PROJECTS,
 	USERS,
-	CREDENTIALS,
-	MODULE,
 }
 
 const DefaultBuildNb int = 0

@@ -5,6 +5,7 @@ import { IApiUser } from '../interfaces/users/IApiUser';
 import { IApiJenkinsCredentials } from '../interfaces/jenkinsCredentials/IApiJenkinsCredentials';
 import { IProject } from '../interfaces/projects/IProject';
 import { IStudentJob } from '../interfaces/myProjects/IStudentJob';
+import { IBuildLogInfo } from '../interfaces/log/IBuildLogInfo';
 
 class EpikinsApiService {
     static async login(accessToken: string): Promise<IApiUser | null> {
@@ -227,6 +228,19 @@ class EpikinsApiService {
             console.log(e);
         }
         return false;
+    }
+
+    static async getLog(apiAccessToken: string): Promise<IBuildLogInfo | null> {
+        try {
+            const res = await Axios.get<IBuildLogInfo>(apiBaseURI + '/log',
+                {
+                    headers: {'Authorization': apiAccessToken}
+                });
+            return res.data;
+        } catch (e) {
+            console.log(e);
+        }
+        return null;
     }
 }
 

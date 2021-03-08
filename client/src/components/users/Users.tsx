@@ -45,38 +45,33 @@ class Users extends Component<IRouteProps, IUsersState> {
 
     render() {
         return (
-            <appInitialContext.Consumer>
-                {context => (
-                    this.state.isLoading ?
-                        <Loading/>
-                        :
-                        <div className={'h-100'}>
-                            {
-                                this.state.isAdding &&
-                                <UsersForm changeUsersStateByProperty={this.changeUsersStateByProperty}
-                                           jenkinsCredentials={this.state.jenkinsCredentials}
-                                           getUsers={this.getUsers}/>
-                            }
-                            {
-                                this.state.isDeleting &&
-                                <UsersDeletePopup onDeleteClick={this.onDeleteClick}
-                                                  changeUsersStateByProperty={this.changeUsersStateByProperty}/>
-                            }
-                            <UsersToolbox isEditing={this.state.isEditing}
-                                          isSaving={this.state.isSaving}
-                                          onSaveClick={this.onSaveClick}
-                                          onCancelClick={this.onCancelClick}
-                                          onEditClick={this.onEditClick}
-                                          onAddClick={this.onAddClick}/>
-                            <UsersTable users={this.state.modifiedUsers}
-                                        jenkinsCredentials={this.state.jenkinsCredentials}
-                                        isEditing={this.state.isEditing}
-                                        onFirstDeleteClick={this.onFirstDeleteClick}
-                                        changeUsersStateByProperty={this.changeUsersStateByProperty}
-                                        connectedUser={context.user}/>
-                        </div>
-                )}
-            </appInitialContext.Consumer>
+            this.state.isLoading ?
+                <Loading/>
+                :
+                <div className={'h-100'}>
+                    {
+                        this.state.isAdding &&
+                        <UsersForm changeUsersStateByProperty={this.changeUsersStateByProperty}
+                                   jenkinsCredentials={this.state.jenkinsCredentials}
+                                   getUsers={this.getUsers}/>
+                    }
+                    {
+                        this.state.isDeleting &&
+                        <UsersDeletePopup onDeleteClick={this.onDeleteClick}
+                                          changeUsersStateByProperty={this.changeUsersStateByProperty}/>
+                    }
+                    <UsersToolbox isEditing={this.state.isEditing}
+                                  isSaving={this.state.isSaving}
+                                  onSaveClick={this.onSaveClick}
+                                  onCancelClick={this.onCancelClick}
+                                  onEditClick={this.onEditClick}
+                                  onAddClick={this.onAddClick}/>
+                    <UsersTable users={this.state.modifiedUsers}
+                                jenkinsCredentials={this.state.jenkinsCredentials}
+                                isEditing={this.state.isEditing}
+                                onFirstDeleteClick={this.onFirstDeleteClick}
+                                changeUsersStateByProperty={this.changeUsersStateByProperty}/>
+                </div>
         );
     }
 

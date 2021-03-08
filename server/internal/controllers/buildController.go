@@ -13,26 +13,29 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func getBuildParams(c *fiber.Ctx) (buildService.BuildParams, internal.MyError) {
+func getBuildInfo(c *fiber.Ctx, userEmail string) (buildService.BuildInfo, internal.MyError) {
 	var buildParams buildService.BuildParams
 
 	err := c.BodyParser(&buildParams)
 	if err != nil {
-		return buildService.BuildParams{}, util.GetMyError(buildService.BuildError, errors.New("wrong body"), http.StatusBadRequest)
+		return buildService.BuildInfo{}, util.GetMyError(buildService.BuildError, errors.New("wrong body"), http.StatusBadRequest)
 	}
 	err = validator.New().Struct(buildParams)
 	if err != nil {
-		return buildService.BuildParams{}, util.GetMyError(buildService.BuildError, err, http.StatusBadRequest)
+		return buildService.BuildInfo{}, util.GetMyError(buildService.BuildError, err, http.StatusBadRequest)
 	}
 	if buildParams.Visibility != libJenkins.PUBLIC && buildParams.Visibility != libJenkins.PRIVATE {
-		return buildService.BuildParams{}, util.GetMyError(buildService.BuildError, errors.New("wrong body"), http.StatusBadRequest)
+		return buildService.BuildInfo{}, util.GetMyError(buildService.BuildError, errors.New("wrong body"), http.StatusBadRequest)
 	}
-	return buildParams, internal.MyError{}
+	return buildService.BuildInfo{
+		BuildParams: buildParams,
+		Starter:     userEmail,
+	}, internal.MyError{}
 }
 
 func BuildController(appData *internal.AppData, c *fiber.Ctx) error {
 	userEmail := c.Get("email")
-	buildParams, myError := getBuildParams(c)
+	buildInfo, myError := getBuildInfo(c, userEmail)
 	if myError.Message != "" {
 		return controllerUtil.SendMyError(myError, c)
 	}
@@ -41,7 +44,7 @@ func BuildController(appData *internal.AppData, c *fiber.Ctx) error {
 	if err != nil {
 		return controllerUtil.SendMyError(util.GetMyError(buildService.BuildError, err, http.StatusInternalServerError), c)
 	}
-	myError = buildService.BuildService(buildParams, userLogs, appData)
+	myError = buildService.BuildService(buildInfo, userLogs, appData)
 	if myError.Message != "" {
 		return controllerUtil.SendMyError(myError, c)
 	}

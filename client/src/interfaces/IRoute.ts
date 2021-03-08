@@ -9,6 +9,7 @@ import ProjectsManagement from '../components/projectsManagement/ProjectsManagem
 import { StaticContext } from 'react-router';
 import * as H from 'history';
 import MyProjects from '../components/myProjects/MyProjects';
+import Log from '../components/log/Log';
 
 interface IRoute {
     path: string,
@@ -72,6 +73,13 @@ export const routes: IRoute[] = [
         name: 'My projects',
         component: MyProjects,
         role: 'student',
+        inNavbar: true
+    },
+    {
+        path: routePrefix + 'log',
+        name: 'Log',
+        component: Log,
+        role: 'log',
         inNavbar: true
     }
 ];
