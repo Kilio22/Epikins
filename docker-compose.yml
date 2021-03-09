@@ -28,6 +28,11 @@ services:
         volumes:
             - mongodb_data_volume:/data/db
             - ./init_mongo.js:/docker-entrypoint-initdb.d/init_mongo.js
+    maintenance:
+        build: ./maintenance
+        ports:
+            - "8081:80"
+        restart: unless-stopped
 
 volumes:
     mongodb_data_volume:
