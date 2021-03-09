@@ -47,7 +47,7 @@ func startBuilds(
 		return errors.New(StartBuildsError + ": cannot get workgroups data: " + err.Error())
 	}
 
-	err = buildLoop(buildInfo, mongoProjectData.MongoWorkgroupsData[buildInfo.BuildParams.City], userLogs, appData.BuildLogCollection)
+	err = buildLoop(buildInfo, mongoProjectData.MongoWorkgroupsData[buildInfo.BuildParams.City], userLogs, appData.BuildLogsCollection)
 	if err != nil {
 		return err
 	}

@@ -15,7 +15,7 @@ func getPage(c *fiber.Ctx) (int64, internal.MyError) {
 	if pageString == "" {
 		return 1, internal.MyError{}
 	}
-	if pageValue, err := strconv.ParseInt(pageString, 10, 64); err != nil {
+	if pageValue, err := strconv.ParseInt(pageString, 10, 64); err == nil {
 		return pageValue, internal.MyError{}
 	}
 	return 0, internal.MyError{
@@ -26,11 +26,13 @@ func getPage(c *fiber.Ctx) (int64, internal.MyError) {
 
 func GetBuildLogsController(appData *internal.AppData, c *fiber.Ctx) error {
 	page, myError := getPage(c)
+	project := c.Query("project")
+	starter := c.Query("starter")
 	if myError.Message != "" {
 		return controllerUtil.SendMyError(myError, c)
 	}
 
-	buildLogsInfo, myError := getBuildLogsService.GetBuildLogsService(page, appData)
+	buildLogsInfo, myError := getBuildLogsService.GetBuildLogsService(page, project, starter, appData)
 	if myError.Message != "" {
 		return controllerUtil.SendMyError(myError, c)
 	}

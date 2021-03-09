@@ -20,8 +20,9 @@ func initAppData(mongoClient *mongo.Client) *internal.AppData {
 
 	return &internal.AppData{
 		AppId:                        util.GetEnvVariable("APP_ID"),
-		BuildLogCollection:           buildLogCollection,
+		BuildLogsCollection:          buildLogCollection,
 		JenkinsCredentialsCollection: credentialsCollection,
+		LastBuildLogsCleanup:         0,
 		ProjectsCollection:           projectsCollection,
 		ProjectsData:                 make(map[string]internal.ProjectsData),
 		UsersCollection:              usersCollection,
