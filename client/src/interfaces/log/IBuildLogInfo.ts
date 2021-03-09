@@ -1,4 +1,4 @@
-interface IBuildLog {
+export interface IBuildLog {
     module: string,
     project: string,
     starter: string,

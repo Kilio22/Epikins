@@ -230,11 +230,16 @@ class EpikinsApiService {
         return false;
     }
 
-    static async getLog(apiAccessToken: string): Promise<IBuildLogInfo | null> {
+    static async getLog(page: number, projectString: string, starterString: string, apiAccessToken: string): Promise<IBuildLogInfo | null> {
         try {
             const res = await Axios.get<IBuildLogInfo>(apiBaseURI + '/log',
                 {
-                    headers: {'Authorization': apiAccessToken}
+                    headers: {'Authorization': apiAccessToken},
+                    params: {
+                        page,
+                        project: projectString,
+                        starter: starterString
+                    }
                 });
             return res.data;
         } catch (e) {
