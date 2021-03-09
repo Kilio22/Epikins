@@ -32,7 +32,6 @@ class Log extends React.Component<IRouteProps, ILogState> {
                            className={'ml-1'}
                            autoFocus={true}
                            onChange={(async (event) => {
-                               console.log(event.target.value);
                                this.setState({
                                    ...this.state,
                                    projectString: event.target.value.trim()
@@ -45,7 +44,6 @@ class Log extends React.Component<IRouteProps, ILogState> {
                            color={'primary'}
                            className={'ml-1'}
                            onChange={(async (event) => {
-                               console.log(event.target.value);
                                this.setState({
                                    ...this.state,
                                    starterString: event.target.value.trim()
