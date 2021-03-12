@@ -44,8 +44,7 @@ class EpikinsApiService {
 
     static async getProjectInformation(project: string, module: string, apiAccessToken: string): Promise<IProject | null> {
         try {
-            console.log(apiBaseURI + '/' + module + '/projects/' + project);
-            const res = await Axios.get<IProject>(apiBaseURI + '/' + module + '/projects/' + project, {headers: {'Authorization': apiAccessToken}});
+            const res = await Axios.get<IProject>(apiBaseURI + '/projects/' + module + '/' + project, {headers: {'Authorization': apiAccessToken}});
             return res.data;
         } catch (e) {
             console.log(e);

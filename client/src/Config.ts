@@ -1,4 +1,4 @@
-import { Configuration, LogLevel } from '@azure/msal-browser';
+import { Configuration } from '@azure/msal-browser';
 
 export const apiBaseURI: string = process.env.REACT_APP_API_BASE_URI;
 
@@ -22,28 +22,28 @@ export const msalConfig: Configuration = {
     cache: {
         cacheLocation: 'localStorage',
         storeAuthStateInCookie: true
-    },
-    system: {
-        loggerOptions: {
-            loggerCallback: (level: LogLevel, message: string, containsPii: boolean): void => {
-                if (containsPii) {
-                    return;
-                }
-                switch (level) {
-                    case LogLevel.Error:
-                        console.log(message);
-                        return;
-                    case LogLevel.Info:
-                        console.log(message);
-                        return;
-                    case LogLevel.Verbose:
-                        console.log(message);
-                        return;
-                    case LogLevel.Warning:
-                        console.log(message);
-                        return;
-                }
-            }
-        }
     }
+    /*system: {
+     loggerOptions: {
+     loggerCallback: (level: LogLevel, message: string, containsPii: boolean): void => {
+     if (containsPii) {
+     return;
+     }
+     switch (level) {
+     case LogLevel.Error:
+     console.log(message);
+     return;
+     case LogLevel.Info:
+     console.log(message);
+     return;
+     case LogLevel.Verbose:
+     console.log(message);
+     return;
+     case LogLevel.Warning:
+     console.log(message);
+     return;
+     }
+     }
+     }
+     }*/
 };

@@ -66,7 +66,7 @@ class Projects extends Component<IRouteProps, IProjectsState> {
                 return project.cities.length !== 0;
             });
             sortedProjects.forEach((project) => {
-                project.epikinsProjectURL = routePrefix + 'projects/' + project.job.name;
+                project.epikinsProjectURL = routePrefix + 'projects/' + project.module + '/' + project.job.name;
                 project.checked = false;
             });
             this.setState({

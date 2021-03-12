@@ -41,7 +41,7 @@ export const routes: IRoute[] = [
         inNavbar: true
     },
     {
-        path: routePrefix + 'projects/:project',
+        path: routePrefix + 'projects/:module/:project',
         name: '',
         component: ProjectJobs,
         role: 'projects',

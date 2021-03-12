@@ -1,7 +1,12 @@
 import React from 'react';
 import EpikinsApiService from '../../services/EpikinsApiService';
 import { apiBaseURI } from '../../Config';
-import { IProjectJobsState, IProjectLocationState, projectJobsInitialState } from '../../interfaces/jobs/IProjectJobs';
+import {
+    IProjectJobsLocationState,
+    IProjectJobsMatchParams,
+    IProjectJobsState,
+    projectJobsInitialState
+} from '../../interfaces/jobs/IProjectJobs';
 import ProjectJobsRenderer from './ProjectJobsRenderer';
 import { IWorkgroupsData } from '../../interfaces/IWorkgroupsData';
 import { IRouteProps } from '../../interfaces/IRoute';
@@ -11,12 +16,12 @@ import Loading from '../Loading';
 import { userInitialState } from '../../interfaces/IUser';
 import { IProject } from '../../interfaces/projects/IProject';
 
-class ProjectJobs extends React.Component<IRouteProps<{}, IProjectLocationState>, IProjectJobsState> {
+class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams, IProjectJobsLocationState>, IProjectJobsState> {
     static contextType = appInitialContext;
     context!: React.ContextType<typeof appInitialContext>;
     private mounted = false;
 
-    constructor(props: IRouteProps<{}, IProjectLocationState>) {
+    constructor(props: IRouteProps<IProjectJobsMatchParams, IProjectJobsLocationState>) {
         super(props);
 
         if (props.routeProps.location?.state?.project) {
@@ -79,9 +84,6 @@ class ProjectJobs extends React.Component<IRouteProps<{}, IProjectLocationState>
     }
 
     async getProjectInformation() {
-        if (this.state.project == null) {
-            return;
-        }
         const accessToken: string = await authServiceObj.getToken();
         if (accessToken === '') {
             if (this.context.changeAppStateByProperty != null) {
@@ -90,7 +92,7 @@ class ProjectJobs extends React.Component<IRouteProps<{}, IProjectLocationState>
             return;
         }
 
-        const res: IProject | null = await EpikinsApiService.getProjectInformation(this.state.project.job.name, this.state.project.module, accessToken);
+        const res: IProject | null = await EpikinsApiService.getProjectInformation(this.props.routeProps.match.params.project, this.props.routeProps.match.params.module, accessToken);
         if (!this.mounted) {
             return;
         }
