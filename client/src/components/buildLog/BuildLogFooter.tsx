@@ -3,13 +3,13 @@ import ReactPaginate from 'react-paginate';
 
 type OnPageClick = (selectedItem: { selected: number }) => void;
 
-interface ILogFooterProps {
+interface IBuildLogFooterProps {
     currentPage: number,
     totalPage: number,
     onPageClick: OnPageClick
 }
 
-const LogFooter: React.FunctionComponent<ILogFooterProps> = ({currentPage, totalPage, onPageClick}) => {
+const BuildLogFooter: React.FunctionComponent<IBuildLogFooterProps> = ({currentPage, totalPage, onPageClick}) => {
     return (
         <ReactPaginate
             forcePage={currentPage - 1}
@@ -29,8 +29,11 @@ const LogFooter: React.FunctionComponent<ILogFooterProps> = ({currentPage, total
             marginPagesDisplayed={2}
             pageRangeDisplayed={5}
             onPageChange={onPageClick}
+            breakLabel={'...'}
+            breakClassName={'page-item'}
+            breakLinkClassName={'page-link'}
         />
     );
 };
 
-export default LogFooter;
+export default BuildLogFooter;

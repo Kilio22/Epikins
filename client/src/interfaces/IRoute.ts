@@ -9,7 +9,7 @@ import ProjectsManagement from '../components/projectsManagement/ProjectsManagem
 import { StaticContext } from 'react-router';
 import * as H from 'history';
 import MyProjects from '../components/myProjects/MyProjects';
-import Log from '../components/log/Log';
+import BuildLog from '../components/buildLog/BuildLog';
 
 interface IRoute {
     path: string,
@@ -77,8 +77,8 @@ export const routes: IRoute[] = [
     },
     {
         path: routePrefix + 'log',
-        name: 'Log',
-        component: Log,
+        name: 'Build log',
+        component: BuildLog,
         role: 'log',
         inNavbar: true
     }

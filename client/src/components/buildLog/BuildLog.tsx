@@ -2,14 +2,14 @@ import React from 'react';
 import { IRouteProps } from '../../interfaces/IRoute';
 import Loading from '../Loading';
 import BuildLogCard from './BuildLogCard';
-import LogFooter from './LogFooter';
+import BuildLogFooter from './BuildLogFooter';
 import { userInitialState } from '../../interfaces/IUser';
 import { authServiceObj } from '../../services/AuthService';
 import EpikinsApiService from '../../services/EpikinsApiService';
 import { TextField } from '@material-ui/core';
-import { ILogState, LogInitialState } from '../../interfaces/log/ILogState';
+import { IBuildLogState, LogInitialState } from '../../interfaces/buildLog/IBuildLogState';
 
-class Log extends React.Component<IRouteProps, ILogState> {
+class BuildLog extends React.Component<IRouteProps, IBuildLogState> {
     constructor(props: IRouteProps) {
         super(props);
 
@@ -66,9 +66,9 @@ class Log extends React.Component<IRouteProps, ILogState> {
                                                 );
                                             }))
                                         }
-                                        <LogFooter currentPage={this.state.currentPage}
-                                                   totalPage={this.state.buildLogInfo.totalPage}
-                                                   onPageClick={this.onPageClick}/>
+                                        <BuildLogFooter currentPage={this.state.currentPage}
+                                                        totalPage={this.state.buildLogInfo.totalPage}
+                                                        onPageClick={this.onPageClick}/>
                                     </div>
                                     :
                                     <h2 className={'text-center'}>No build log to display</h2>
@@ -137,4 +137,4 @@ class Log extends React.Component<IRouteProps, ILogState> {
     }
 }
 
-export default Log;
+export default BuildLog;

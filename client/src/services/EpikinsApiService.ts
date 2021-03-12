@@ -5,7 +5,7 @@ import { IApiUser } from '../interfaces/users/IApiUser';
 import { IApiJenkinsCredentials } from '../interfaces/jenkinsCredentials/IApiJenkinsCredentials';
 import { IProject } from '../interfaces/projects/IProject';
 import { IStudentJob } from '../interfaces/myProjects/IStudentJob';
-import { IBuildLogInfo } from '../interfaces/log/IBuildLogInfo';
+import { IBuildLogInfo } from '../interfaces/buildLog/IBuildLogInfo';
 
 class EpikinsApiService {
     static async login(accessToken: string): Promise<IApiUser | null> {
@@ -232,7 +232,7 @@ class EpikinsApiService {
 
     static async getLog(page: number, projectString: string, starterString: string, apiAccessToken: string): Promise<IBuildLogInfo | null> {
         try {
-            const res = await Axios.get<IBuildLogInfo>(apiBaseURI + '/log',
+            const res = await Axios.get<IBuildLogInfo>(apiBaseURI + '/buildLog',
                 {
                     headers: {'Authorization': apiAccessToken},
                     params: {

@@ -1,6 +1,6 @@
 import { IBuildLogInfo } from './IBuildLogInfo';
 
-export interface ILogState {
+export interface IBuildLogState {
     buildLogInfo: IBuildLogInfo | null,
     currentPage: number,
     isLoading: boolean,
@@ -9,7 +9,7 @@ export interface ILogState {
     starterString: string
 }
 
-export const LogInitialState: ILogState = {
+export const LogInitialState: IBuildLogState = {
     buildLogInfo: null,
     currentPage: 1,
     isLoading: false,
