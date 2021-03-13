@@ -3,7 +3,7 @@ import { IMongoWorkgroupData } from '../IWorkgroupsData';
 interface IStudentProject {
     module: string,
     name: string,
-    buildLimit: string
+    buildLimit: number
 }
 
 export interface IStudentJob {

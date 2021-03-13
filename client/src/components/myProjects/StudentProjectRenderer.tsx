@@ -27,13 +27,25 @@ const StudentProjectRenderer: React.FunctionComponent<IStudentProjectRendererPro
                 [
                 {
                     job.mongoWorkgroupData.remainingBuilds >= 4 ?
-                        <span className={'font-weight-bold remaining-builds-green'}>
-                                {job.mongoWorkgroupData.remainingBuilds}
+                        <span>
+                            <span className={'font-weight-bold remaining-builds-green'}>
+                                    {job.mongoWorkgroupData.remainingBuilds}
+                            </span>
+                            /
+                            <span className={'build-limit'}>
+                                {job.project.buildLimit}
+                            </span>
                         </span>
                         :
+                        <span>
                         <span className={'font-weight-bold remaining-builds-' +
                         cssColorArray[job.mongoWorkgroupData.remainingBuilds]}>
                                 {job.mongoWorkgroupData.remainingBuilds}
+                        </span>
+                            /
+                            <span className={'build-limit'}>
+                                {job.project.buildLimit}
+                            </span>
                         </span>
                 }
                 ]
