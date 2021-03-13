@@ -14,15 +14,15 @@ func shouldResetWorkgroupRemainingBuilds(workgroupData internal.MongoWorkgroupDa
 }
 
 func resetWorkgroupsRemainingBuilds(projectData *internal.MongoProjectData, city string, collection *mongo.Collection) error {
-	if len(projectData.MongoWorkgroupsData[city]) == 0 {
+	if len(projectData.CitiesData[city].MongoWorkgroupsData) == 0 {
 		return nil
 	}
-	if shouldResetWorkgroupRemainingBuilds(projectData.MongoWorkgroupsData[city][0]) {
-		for idx := range projectData.MongoWorkgroupsData[city] {
-			projectData.MongoWorkgroupsData[city][idx].RemainingBuilds = projectData.BuildLimit
-			projectData.MongoWorkgroupsData[city][idx].LastBuildReset = mongoUtil.GetLastMondayDate()
+	if shouldResetWorkgroupRemainingBuilds(projectData.CitiesData[city].MongoWorkgroupsData[0]) {
+		for idx := range projectData.CitiesData[city].MongoWorkgroupsData {
+			projectData.CitiesData[city].MongoWorkgroupsData[idx].RemainingBuilds = projectData.BuildLimit
+			projectData.CitiesData[city].MongoWorkgroupsData[idx].LastBuildReset = mongoUtil.GetLastMondayDate()
 		}
-		return mongoUtil.UpdateProject(projectData.Name, projectData.Module, bson.M{"$set": bson.M{"mongoworkgroupsdata": projectData.MongoWorkgroupsData}}, collection)
+		return mongoUtil.UpdateProject(projectData.Name, projectData.Module, bson.M{"$set": bson.M{"citiesdata": projectData.CitiesData}}, collection)
 	}
 	return nil
 }

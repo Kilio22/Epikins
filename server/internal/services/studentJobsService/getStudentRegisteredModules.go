@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 
+	"epikins-api/config"
 	"epikins-api/internal"
 	"epikins-api/internal/services/util"
 )
@@ -16,7 +17,7 @@ type UserInformationIntraResponse struct {
 	Modules []Module `json:"modules"`
 }
 
-var IntraAutologinLink = util.GetEnvVariable("INTRA_AUTOLOGIN_LINK")
+var IntraAutologinLink = util.GetEnvVariable(config.IntraAutologinLinkKey)
 
 const GetStudentInfoError = "cannot get student info on Epitech intranet"
 

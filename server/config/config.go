@@ -4,6 +4,17 @@ import (
 	"epikins-api/internal"
 )
 
+const AppIdKey = "APP_ID"
+const TenantIdKey = "TENANT_ID"
+const ServerPortKey = "SERVER_PORT"
+const MongoHostKey = "MONGO_HOST"
+const MongoPortKey = "MONGO_PORT"
+const MongoUsernameKey = "MONGO_INITDB_ROOT_USERNAME"
+const MongoPasswordKey = "MONGO_INITDB_ROOT_PASSWORD"
+const MongoDbKey = "MONGO_INITDB_DATABASE"
+const StudentJenkinsLoginKey = "STUDENT_JENKINS_LOGIN"
+const IntraAutologinLinkKey = "INTRA_AUTOLOGIN_LINK"
+
 const (
 	CREDENTIALS internal.Role = "credentials"
 	LOG         internal.Role = "log"

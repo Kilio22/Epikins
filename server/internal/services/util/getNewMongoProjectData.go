@@ -1,20 +1,17 @@
 package util
 
 import (
-	"time"
-
 	"epikins-api/config"
 	"epikins-api/internal"
 	"epikins-api/pkg/libJenkins"
 )
 
 func GetNewMongoProjectData(
-	project libJenkins.Project, mongoWorkgroupsData map[string][]internal.MongoWorkgroupData) internal.MongoProjectData {
+	project libJenkins.Project, citiesData map[string]internal.CityData) internal.MongoProjectData {
 	return internal.MongoProjectData{
-		BuildLimit:          config.DefaultBuildNb,
-		LastUpdate:          time.Now().Unix(),
-		Module:              project.Module,
-		MongoWorkgroupsData: mongoWorkgroupsData,
-		Name:                project.Job.Name,
+		BuildLimit: config.DefaultBuildNb,
+		Module:     project.Module,
+		CitiesData: citiesData,
+		Name:       project.Job.Name,
 	}
 }

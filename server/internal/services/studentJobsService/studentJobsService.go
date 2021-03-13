@@ -30,7 +30,7 @@ const StudentJobsError = "cannot get student jobs"
 func getStudentWorkgroup(studentName string, city string, mongoWorkgroupsData internal.MongoProjectData) (
 	internal.MongoWorkgroupData, bool,
 ) {
-	for _, mongoWorkgroupData := range mongoWorkgroupsData.MongoWorkgroupsData[city] {
+	for _, mongoWorkgroupData := range mongoWorkgroupsData.CitiesData[city].MongoWorkgroupsData {
 		if strings.Contains(mongoWorkgroupData.Name, studentName) {
 			return mongoWorkgroupData, true
 		}

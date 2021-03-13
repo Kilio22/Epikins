@@ -20,12 +20,16 @@ type MongoWorkgroupData struct {
 	Url             string `json:"url"`
 }
 
+type CityData struct {
+	LastUpdate          int64                `json:"lastUpdate"`
+	MongoWorkgroupsData []MongoWorkgroupData `bson:"mongoworkgroupsdata,omitempty" json:"mongoWorkgroupsData"`
+}
+
 type MongoProjectData struct {
-	BuildLimit          int                             `json:"buildLimit"`
-	LastUpdate          int64                           `json:"lastUpdate"`
-	Module              string                          `json:"module"`
-	MongoWorkgroupsData map[string][]MongoWorkgroupData `bson:"mongoworkgroupsdata,omitempty" json:"mongoWorkgroupsData"`
-	Name                string                          `json:"name"`
+	BuildLimit int                 `json:"buildLimit"`
+	CitiesData map[string]CityData `bson:"citiesdata,omitempty" json:"citiesData"`
+	Module     string              `json:"module"`
+	Name       string              `json:"name"`
 }
 
 type Role string

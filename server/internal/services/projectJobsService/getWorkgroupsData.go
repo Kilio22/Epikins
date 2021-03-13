@@ -20,7 +20,7 @@ func getWorkgroupsDataFromMongoProjectData(mongoProjectData internal.MongoProjec
 ) {
 	var workgroupsData []WorkgroupData
 	for _, workgroup := range workgroups {
-		if mongoGroupData, ok := util.HasMongoWorkgroupData(workgroup.Job.Name, mongoProjectData.MongoWorkgroupsData[city]); ok {
+		if mongoGroupData, ok := util.HasMongoWorkgroupData(workgroup.Job.Name, mongoProjectData.CitiesData[city].MongoWorkgroupsData); ok {
 			workgroupsData = append(workgroupsData, WorkgroupData{
 				JobInfos:           workgroup.JobInfos,
 				MongoWorkgroupData: mongoGroupData,

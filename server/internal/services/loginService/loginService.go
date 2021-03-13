@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strings"
 
+	"epikins-api/config"
 	"epikins-api/internal"
 	"epikins-api/internal/services/util"
 	"go.mongodb.org/mongo-driver/bson"
@@ -14,7 +15,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-var IssuerURL = "https://login.microsoftonline.com/" + util.GetEnvVariable("TENANT_ID") + "/v2.0"
+var IssuerURL = "https://login.microsoftonline.com/" + util.GetEnvVariable(config.TenantIdKey) + "/v2.0"
 
 type MyClaims struct {
 	Email string `json:"email"`

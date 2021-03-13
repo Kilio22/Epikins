@@ -47,10 +47,10 @@ func startBuilds(
 		return errors.New(StartBuildsError + ": cannot get workgroups data: " + err.Error())
 	}
 
-	err = buildLoop(buildInfo, mongoProjectData.MongoWorkgroupsData[buildInfo.BuildParams.City], userLogs, appData.BuildLogsCollection)
+	err = buildLoop(buildInfo, mongoProjectData.CitiesData[buildInfo.BuildParams.City].MongoWorkgroupsData, userLogs, appData.BuildLogsCollection)
 	if err != nil {
 		return err
 	}
 	return mongoUtil.UpdateProject(mongoProjectData.Name, mongoProjectData.Module,
-		bson.M{"$set": bson.M{"mongoworkgroupsdata": mongoProjectData.MongoWorkgroupsData}}, appData.ProjectsCollection)
+		bson.M{"$set": bson.M{"citiesdata": mongoProjectData.CitiesData}}, appData.ProjectsCollection)
 }

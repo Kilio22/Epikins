@@ -25,7 +25,7 @@ func handleErrorNoDocument(
 			return internal.MongoProjectData{}, errors.New(GetMongoProjectDataError + err.Error())
 		}
 	}
-	return mongoUtil.AddMongoProjectData(GetNewMongoProjectData(project, GetMongoWorkgroupsDataFromJobs(jobs, city)), projectCollection)
+	return mongoUtil.AddMongoProjectData(GetNewMongoProjectData(project, GetCitiesDataMapFromJobs(jobs, city)), projectCollection)
 }
 
 func GetMongoProjectData(

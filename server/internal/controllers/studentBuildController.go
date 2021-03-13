@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 
+	"epikins-api/config"
 	"epikins-api/internal"
 	"epikins-api/internal/controllers/controllerUtil"
 	"epikins-api/internal/services/studentBuildService"
@@ -12,7 +13,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-var StudentJenkinsLogin = util.GetEnvVariable("STUDENT_JENKINS_LOGIN")
+var StudentJenkinsLogin = util.GetEnvVariable(config.StudentJenkinsLoginKey)
 
 func getStudentBuildParams(c *fiber.Ctx) (studentBuildService.StudentBuildParams, error) {
 	var studentBuildParams studentBuildService.StudentBuildParams

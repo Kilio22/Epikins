@@ -49,7 +49,7 @@ func UpdateProjectBuildLimitService(
 		return util.CheckLocalProjectDataError(myError, projectName, module, appData.ProjectsCollection)
 	}
 
-	if _, err = mongoUtil.AddMongoProjectData(util.GetNewMongoProjectData(localProjectData, map[string][]internal.MongoWorkgroupData{}), appData.ProjectsCollection); err != nil {
+	if _, err = mongoUtil.AddMongoProjectData(util.GetNewMongoProjectData(localProjectData, map[string]internal.CityData{}), appData.ProjectsCollection); err != nil {
 		return util.GetMyError(UpdateProjectBuildLimitError, err, http.StatusInternalServerError)
 	}
 	err = updateProjectData(newLimit, projectName, module, appData.ProjectsCollection)
