@@ -1,3 +1,7 @@
 .build-limit {
     color: black;
 }
+
+.build-limit-green {
+    color: blue;
+}

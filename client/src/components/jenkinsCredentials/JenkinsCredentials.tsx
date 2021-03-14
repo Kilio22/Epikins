@@ -52,7 +52,7 @@ class JenkinsCredentials extends Component<IRouteProps, IJenkinsCredentialsState
                             getJenkinsCredentials={this.getJenkinsCredentials}/>
                     }
                     {
-                        this.state.isDeleting &&
+                        this.state.showDeletePopup &&
                         <JenkinsCredentialsDeletePopup onDeleteClick={this.onDeleteClick}
                                                        changeJenkinsCredentialStateByProperty={this.changeJenkinsCredentialsStateByProperty}/>
                     }
@@ -83,7 +83,7 @@ class JenkinsCredentials extends Component<IRouteProps, IJenkinsCredentialsState
         }
         this.setState({
             ...this.state,
-            isDeleting: false,
+            showDeletePopup: false,
             toDelete: ''
         });
         await this.getJenkinsCredentials();
@@ -92,7 +92,7 @@ class JenkinsCredentials extends Component<IRouteProps, IJenkinsCredentialsState
     onFirstDeleteClick(toDelete: string) {
         this.setState({
             ...this.state,
-            isDeleting: true,
+            showDeletePopup: true,
             toDelete: toDelete
         });
     }

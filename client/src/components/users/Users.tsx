@@ -56,7 +56,7 @@ class Users extends Component<IRouteProps, IUsersState> {
                                    getUsers={this.getUsers}/>
                     }
                     {
-                        this.state.isDeleting &&
+                        this.state.showDeletePopup &&
                         <UsersDeletePopup onDeleteClick={this.onDeleteClick}
                                           changeUsersStateByProperty={this.changeUsersStateByProperty}/>
                     }
@@ -96,21 +96,26 @@ class Users extends Component<IRouteProps, IUsersState> {
         }
 
         const res = await EpikinsApiService.deleteUser(this.state.toDelete, accessToken);
+        this.setState({
+            ...this.state,
+            isLoading: true
+        });
         if (!res) {
             this.setErrorMessage('Cannot delete user, please try to reload the page.');
         }
+        await this.getUsers();
         this.setState({
             ...this.state,
+            isLoading: false,
             toDelete: '',
-            isDeleting: false
+            showDeletePopup: false
         });
-        await this.getUsers();
     }
 
     onFirstDeleteClick(toDelete: string) {
         this.setState({
             ...this.state,
-            isDeleting: true,
+            showDeletePopup: true,
             toDelete
         });
     }

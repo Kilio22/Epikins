@@ -48,6 +48,13 @@ export const routes: IRoute[] = [
         inNavbar: false
     },
     {
+        path: routePrefix + 'manage/projects',
+        name: 'Projects management',
+        component: ProjectsManagement,
+        role: 'module',
+        inNavbar: true
+    },
+    {
         path: routePrefix + 'manage/users',
         name: 'Users',
         component: Users,
@@ -62,10 +69,10 @@ export const routes: IRoute[] = [
         inNavbar: true
     },
     {
-        path: routePrefix + 'manage/projects',
-        name: 'Projects management',
-        component: ProjectsManagement,
-        role: 'module',
+        path: routePrefix + 'build-log',
+        name: 'Build log',
+        component: BuildLog,
+        role: 'log',
         inNavbar: true
     },
     {
@@ -73,13 +80,6 @@ export const routes: IRoute[] = [
         name: 'My projects',
         component: MyProjects,
         role: 'student',
-        inNavbar: true
-    },
-    {
-        path: routePrefix + 'log',
-        name: 'Build log',
-        component: BuildLog,
-        role: 'log',
         inNavbar: true
     }
 ];

@@ -170,10 +170,9 @@ class UsersForm extends Component<IUsersFormProps, IUsersFormState> {
             isLoading: true
         });
         await this.addUser(this.state.user);
-        this.setState({
-            ...this.state,
-            isLoading: false
-        });
+        this.props.changeUsersStateByProperty('isLoading', true);
+        await this.props.getUsers();
+        this.props.changeUsersStateByProperty('isLoading', false);
         this.props.changeUsersStateByProperty('isAdding', false);
     }
 
@@ -190,7 +189,6 @@ class UsersForm extends Component<IUsersFormProps, IUsersFormState> {
         } else if (res !== 201) {
             this.setErrorMessage('Cannot add user, please try to reload the page.');
         }
-        await this.props.getUsers();
     }
 }
 

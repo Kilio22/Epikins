@@ -3,7 +3,7 @@ export type ChangeJenkinsCredentialsStateByProperty = (propertyName: keyof IJenk
 export interface IJenkinsCredentialsState {
     jenkinsCredentials: string[],
     isAdding: boolean,
-    isDeleting: boolean,
+    showDeletePopup: boolean,
     toDelete: string,
     isLoading: boolean
 }
@@ -11,7 +11,7 @@ export interface IJenkinsCredentialsState {
 export const jenkinsCredentialsInitialState: IJenkinsCredentialsState = {
     jenkinsCredentials: [],
     isAdding: false,
-    isDeleting: false,
+    showDeletePopup: false,
     toDelete: '',
     isLoading: false
 };

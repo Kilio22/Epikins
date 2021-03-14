@@ -40,7 +40,13 @@ const UsersTableBody: React.FunctionComponent<IUsersTableBodyProps> = ({
                                           onChange={(event => {
                                               users[userIdx].jenkinsLogin = event.target.value;
                                           })}
-                                          defaultValue={user.jenkinsLogin}>
+                                          defaultValue={jenkinsCredentials.includes(user.jenkinsLogin) ? user.jenkinsLogin : ''}>
+                                {
+                                    !jenkinsCredentials.includes(user.jenkinsLogin) &&
+                                    <option>
+                                        {''}
+                                    </option>
+                                }
                                 {
                                     jenkinsCredentials.map((value, index) => {
                                         return (
@@ -50,6 +56,7 @@ const UsersTableBody: React.FunctionComponent<IUsersTableBodyProps> = ({
                                         );
                                     })
                                 }
+
                             </NativeSelect>
                         </td>
                         {

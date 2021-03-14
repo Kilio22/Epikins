@@ -7,7 +7,7 @@ export interface IUsersState {
     isEditing: boolean,
     isSaving: boolean,
     isAdding: boolean,
-    isDeleting: boolean,
+    showDeletePopup: boolean,
     toDelete: string,
     isLoading: boolean
 }
@@ -19,7 +19,7 @@ export const usersInitialState: IUsersState = {
     isEditing: false,
     isSaving: false,
     isAdding: false,
-    isDeleting: false,
+    showDeletePopup: false,
     toDelete: '',
     isLoading: false
 };
