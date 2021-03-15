@@ -1,6 +1,5 @@
 import React from 'react';
 import EpikinsApiService from '../../services/EpikinsApiService';
-import { apiBaseURI } from '../../Config';
 import {
     IProjectJobsLocationState,
     IProjectJobsMatchParams,
@@ -20,6 +19,8 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams, I
     static contextType = appInitialContext;
     context!: React.ContextType<typeof appInitialContext>;
     private mounted = false;
+    private request: NodeJS.Timeout | null = null;
+
 
     constructor(props: IRouteProps<IProjectJobsMatchParams, IProjectJobsLocationState>) {
         super(props);
@@ -79,6 +80,10 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams, I
             selectedCity: city,
             isLoading: true
         });
+        if (this.request) {
+            clearTimeout(this.request);
+            this.request = null;
+        }
         await this.getJobsByProject(true);
         this.setState({...this.state, isLoading: false});
     }
@@ -123,7 +128,7 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams, I
         }
 
         const res: IWorkgroupsData[] | null = await EpikinsApiService.getWorkgroupsData(
-            apiBaseURI + '/projects/' + this.state.project.module + '/' + this.state.project.job.name + '/' + this.state.selectedCity, accessToken);
+            this.state.project.module, this.state.project.job.name, this.state.selectedCity, accessToken);
 
         if (!this.mounted) {
             return;
@@ -132,26 +137,26 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams, I
             const sortedWorkgroupsData: IWorkgroupsData[] = res.sort((a, b) => {
                 return a.mongoWorkgroupData.name.localeCompare(b.mongoWorkgroupData.name);
             });
+            this.setState({
+                ...this.state,
+                workgroupsData: sortedWorkgroupsData
+            });
             if (shouldCallback) {
-                this.setState({
-                    ...this.state,
-                    workgroupsData: sortedWorkgroupsData
-                }, () => setTimeout(() => {
+                this.request = setTimeout(async () => {
                     if (this.mounted) {
-                        this.getJobsByProject(true);
+                        await this.getJobsByProject(true);
                     }
-                }, 5000));
-            } else {
-                this.setState({
-                    ...this.state,
-                    workgroupsData: sortedWorkgroupsData
-                });
+                }, 5000);
             }
         } else {
             this.setState({
                 ...this.state,
                 workgroupsData: []
             });
+            if (this.request) {
+                clearTimeout(this.request);
+                this.request = null;
+            }
             if (this.context.changeAppStateByProperty) {
                 this.context.changeAppStateByProperty('errorMessage',
                     'Cannot fetch data, please try to reload the page.', true);

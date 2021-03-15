@@ -11,19 +11,19 @@ export interface IProjectJobsMatchParams {
 }
 
 export interface IProjectJobsState {
-    project: IProject | null,
     isBuilding: boolean,
     isLoading: boolean,
-    workgroupsData: IWorkgroupsData[],
     selectedCity: string,
     selectedJobs: string[]
+    project: IProject | null,
+    workgroupsData: IWorkgroupsData[],
 }
 
 export const projectJobsInitialState: IProjectJobsState = {
-    project: null,
     isBuilding: false,
     isLoading: false,
-    workgroupsData: [],
     selectedCity: '',
-    selectedJobs: []
+    selectedJobs: [],
+    project: null,
+    workgroupsData: []
 };

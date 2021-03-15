@@ -22,9 +22,9 @@ class EpikinsApiService {
         return null;
     }
 
-    static async getWorkgroupsData(url: string, apiAccessToken: string): Promise<IWorkgroupsData[] | null> {
+    static async getWorkgroupsData(module: string, project: string, city: string, apiAccessToken: string): Promise<IWorkgroupsData[] | null> {
         try {
-            const res: AxiosResponse<IWorkgroupsData[]> = await Axios.get<IWorkgroupsData[]>(url, {headers: {'Authorization': apiAccessToken}});
+            const res: AxiosResponse<IWorkgroupsData[]> = await Axios.get<IWorkgroupsData[]>(apiBaseURI + '/projects/' + module + '/' + project + '/' + city, {headers: {'Authorization': apiAccessToken}});
             return res.data;
         } catch (e) {
             console.log(e);
