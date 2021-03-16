@@ -229,16 +229,50 @@ class EpikinsApiService {
         return false;
     }
 
-    static async getLog(page: number, projectString: string, starterString: string, apiAccessToken: string): Promise<IBuildLogInfo | null> {
+    static async getCities(apiAccessToken: string): Promise<string[] | null> {
         try {
-            const res = await Axios.get<IBuildLogInfo>(apiBaseURI + '/log',
+            const res = await Axios.get<string[]>(apiBaseURI + '/cities',
+                {
+                    headers: {'Authorization': apiAccessToken}
+                });
+            return res.data;
+        } catch (e) {
+            console.log(e);
+        }
+        return null;
+    }
+
+    static async getBuildLog(city: string, page: number, projectString: string, starterString: string, apiAccessToken: string): Promise<IBuildLogInfo | null> {
+        try {
+            const res = await Axios.get<IBuildLogInfo>(apiBaseURI + '/build-log',
                 {
                     headers: {'Authorization': apiAccessToken},
                     params: {
+                        city,
                         page,
                         project: projectString,
                         starter: starterString
                     }
+                });
+            return res.data;
+        } catch (e) {
+            console.log(e);
+        }
+        return null;
+    }
+
+    static async exportBuildLog(city: string, start: number, end: number, project: string, apiAccessToken: string): Promise<any | null> {
+        try {
+            const res = await Axios.get(apiBaseURI + '/build-log/export',
+                {
+                    headers: {'Authorization': apiAccessToken},
+                    params: {
+                        city,
+                        start,
+                        end,
+                        project
+                    },
+                    responseType: 'blob'
                 });
             return res.data;
         } catch (e) {

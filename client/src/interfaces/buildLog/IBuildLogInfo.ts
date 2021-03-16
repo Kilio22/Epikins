@@ -7,6 +7,6 @@ export interface IBuildLog {
 }
 
 export interface IBuildLogInfo {
-    buildLogs: IBuildLog[],
+    buildLog: IBuildLog[],
     totalPage: number
 }

@@ -6,6 +6,7 @@ import './css/footer.css';
 import './css/users.css';
 import './css/projectsManagement.css';
 import './css/myProjects.css';
+import './css/buildLog.css';
 import * as serviceWorker from './serviceWorker';
 import App from './components/App';
 

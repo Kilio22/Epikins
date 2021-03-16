@@ -6,51 +6,56 @@ import BuildLogFooter from './BuildLogFooter';
 import { userInitialState } from '../../interfaces/IUser';
 import { authServiceObj } from '../../services/AuthService';
 import EpikinsApiService from '../../services/EpikinsApiService';
-import { TextField } from '@material-ui/core';
 import { IBuildLogState, LogInitialState } from '../../interfaces/buildLog/IBuildLogState';
+import BuildLogExportForm from './BuildLogExportForm';
+import BuildLogHeader from './BuildLogHeader';
 
 class BuildLog extends React.Component<IRouteProps, IBuildLogState> {
     constructor(props: IRouteProps) {
         super(props);
 
+        this.changeBuildLogStateByProperty = this.changeBuildLogStateByProperty.bind(this);
+        this.getCities = this.getCities.bind(this);
+        this.getLog = this.getLog.bind(this);
         this.onPageClick = this.onPageClick.bind(this);
-        this.updateLog = this.updateLog.bind(this);
+        this.resetUser = this.resetUser.bind(this);
+        this.setErrorMessage = this.setErrorMessage.bind(this);
+        this.updateBuildLog = this.updateBuildLog.bind(this);
 
         this.state = LogInitialState;
     }
 
     async componentDidMount() {
-        await this.updateLog(this.state.currentPage, this.state.projectString, this.state.starterString);
+        this.setState({
+            ...this.state,
+            isLoading: true,
+            requestInProgressNb: this.state.requestInProgressNb + 1
+        });
+        await this.getLog(this.state.selectedCity, this.state.currentPage, this.state.projectString, this.state.starterString);
+        await this.getCities();
+        this.setState({
+            ...this.state,
+            isLoading: this.state.requestInProgressNb === 0,
+            requestInProgressNb: this.state.requestInProgressNb - 1
+        });
     }
 
     render() {
         return (
-            <div>
-                <TextField placeholder={'Starter email'}
-                           variant={'standard'}
-                           color={'primary'}
-                           className={'ml-1'}
-                           autoFocus={true}
-                           onChange={(async (event) => {
-                               this.setState({
-                                   ...this.state,
-                                   projectString: event.target.value.trim()
-                               });
-                               await this.updateLog(this.state.currentPage, this.state.projectString, event.target.value.trim());
-                           })}
-                />
-                <TextField placeholder={'Project name'}
-                           variant={'standard'}
-                           color={'primary'}
-                           className={'ml-1'}
-                           onChange={(async (event) => {
-                               this.setState({
-                                   ...this.state,
-                                   starterString: event.target.value.trim()
-                               });
-                               await this.updateLog(this.state.currentPage, event.target.value.trim(), this.state.starterString);
-                           })}
-                />
+            <div className={'h-100 d-flex flex-column'}>
+                <BuildLogHeader cities={this.state.cities}
+                                changeBuildLogStateByProperty={this.changeBuildLogStateByProperty}
+                                currentPage={this.state.currentPage}
+                                isLoading={this.state.isLoading}
+                                projectString={this.state.projectString}
+                                selectedCity={this.state.selectedCity}
+                                starterString={this.state.starterString}
+                                updateBuildLog={this.updateBuildLog}/>
+                {
+                    this.state.showExportForm &&
+                    <BuildLogExportForm changeBuildLogStateByProperty={this.changeBuildLogStateByProperty}
+                                        cities={this.state.cities}/>
+                }
                 {
                     this.state.isLoading ?
                         <Loading/>
@@ -60,7 +65,7 @@ class BuildLog extends React.Component<IRouteProps, IBuildLogState> {
                                 this.state.buildLogInfo && this.state.buildLogInfo.totalPage !== 0 ?
                                     <div className={'d-flex flex-column'}>
                                         {
-                                            this.state.buildLogInfo.buildLogs.map(((value, index) => {
+                                            this.state.buildLogInfo.buildLog.map(((value, index) => {
                                                 return (
                                                     <BuildLogCard buildLog={value} key={index}/>
                                                 );
@@ -79,13 +84,31 @@ class BuildLog extends React.Component<IRouteProps, IBuildLogState> {
         );
     }
 
-    async updateLog(page: number, projectString: string, starterString: string) {
+    async getCities() {
+        const accessToken: string = await authServiceObj.getToken();
+        if (accessToken === '') {
+            this.resetUser();
+            return;
+        }
+
+        const res = await EpikinsApiService.getCities(accessToken);
+        if (res) {
+            this.setState({
+                ...this.state,
+                cities: res.sort(((a, b) => a.localeCompare(b)))
+            });
+        } else {
+            this.setErrorMessage('Cannot fetch cities list, please try to reload the page.');
+        }
+    }
+
+    async updateBuildLog(city: string, page: number, projectString: string, starterString: string) {
         this.setState({
             ...this.state,
             isLoading: true,
             requestInProgressNb: this.state.requestInProgressNb + 1
         });
-        await this.getLog(page, projectString, starterString);
+        await this.getLog(city, page, projectString, starterString);
         this.setState({
             ...this.state,
             isLoading: this.state.requestInProgressNb === 0,
@@ -99,7 +122,7 @@ class BuildLog extends React.Component<IRouteProps, IBuildLogState> {
             isLoading: true,
             currentPage: selectedItem.selected + 1
         });
-        await this.getLog(selectedItem.selected + 1, this.state.projectString, this.state.starterString);
+        await this.getLog(this.state.selectedCity, selectedItem.selected + 1, this.state.projectString, this.state.starterString);
         this.setState({
             ...this.state,
             isLoading: false
@@ -118,14 +141,15 @@ class BuildLog extends React.Component<IRouteProps, IBuildLogState> {
         }
     }
 
-    async getLog(page: number, projectString: string, starterString: string) {
+    async getLog(city: string, page: number, projectString: string, starterString: string) {
         const accessToken: string = await authServiceObj.getToken();
         if (accessToken === '') {
             this.resetUser();
             return;
         }
 
-        const res = await EpikinsApiService.getLog(page, projectString, starterString, accessToken);
+        city = city.localeCompare('Any') === 0 ? '' : city;
+        const res = await EpikinsApiService.getBuildLog(city, page, projectString, starterString, accessToken);
         if (res) {
             this.setState({
                 ...this.state,
@@ -134,6 +158,13 @@ class BuildLog extends React.Component<IRouteProps, IBuildLogState> {
         } else {
             this.setErrorMessage('Cannot fetch data, please try to reload the page.');
         }
+    }
+
+    changeBuildLogStateByProperty(key: keyof IBuildLogState, value: any) {
+        this.setState({
+            ...this.state,
+            [key]: value
+        });
     }
 }
 

@@ -3,11 +3,11 @@ import { IBuildLog } from '../../interfaces/buildLog/IBuildLogInfo';
 import { Card } from 'react-bootstrap';
 import moment from 'moment-timezone';
 
-interface IBuildLogCard {
+interface IBuildLogCardProps {
     buildLog: IBuildLog
 }
 
-const BuildLogCard: React.FunctionComponent<IBuildLogCard> = ({buildLog}) => {
+const BuildLogCard: React.FunctionComponent<IBuildLogCardProps> = ({buildLog}) => {
     const momentObj = moment.unix(buildLog.time);
     return (
         <Card className={'mt-2'}>
@@ -18,7 +18,7 @@ const BuildLogCard: React.FunctionComponent<IBuildLogCard> = ({buildLog}) => {
                 (<span className={'font-weight-bold'}>{buildLog.module}</span>) for <span
                 className={'font-weight-bold'}>{buildLog.target}</span> workgroup, on{' '}
                 <span
-                    className={'font-weight-bold'}>{momentObj.format('ddd, MMMM Do, YYYY, HH:mm')} GMT{momentObj.format('Z')}</span>
+                    className={'font-weight-bold'}>{momentObj.format('ddd, MMMM Do, YYYY, HH:mm [GMT]Z')}</span>
             </Card.Body>
         </Card>
     );
