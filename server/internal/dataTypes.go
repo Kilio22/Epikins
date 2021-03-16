@@ -40,7 +40,8 @@ type User struct {
 	Roles        []Role `json:"roles" validate:"required"`
 }
 
-type BuildLogs struct {
+type BuildLogElem struct {
+	City    string `json:"city"`
 	Module  string `json:"module"`
 	Project string `json:"project"`
 	Starter string `json:"starter"`
@@ -50,9 +51,8 @@ type BuildLogs struct {
 
 type AppData struct {
 	AppId                        string
-	BuildLogsCollection          *mongo.Collection
+	BuildLogCollection           *mongo.Collection
 	JenkinsCredentialsCollection *mongo.Collection
-	LastBuildLogsCleanup         int64
 	ProjectsCollection           *mongo.Collection
 	ProjectsData                 map[string]ProjectsData
 	UsersCollection              *mongo.Collection

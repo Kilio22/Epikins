@@ -6,8 +6,9 @@ import (
 	"epikins-api/internal"
 )
 
-func GetNewBuildLog(module string, starter string, target string, project string) internal.BuildLogs {
-	return internal.BuildLogs{
+func GetNewBuildLog(city string, module string, starter string, target string, project string) internal.BuildLogElem {
+	return internal.BuildLogElem{
+		City:    city,
 		Module:  module,
 		Project: project,
 		Starter: starter,

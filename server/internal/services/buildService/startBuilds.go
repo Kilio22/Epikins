@@ -16,13 +16,13 @@ const StartBuildsError = "cannot start builds"
 
 func buildLoop(
 	buildInfo BuildInfo, groupsBuildData []internal.MongoWorkgroupData, userLogs libJenkins.JenkinsCredentials,
-	buildLogsCollection *mongo.Collection) error {
+	buildLogCollection *mongo.Collection) error {
 	for _, jobName := range buildInfo.BuildParams.Jobs {
 		for idx := range groupsBuildData {
 			if groupsBuildData[idx].Name != jobName {
 				continue
 			}
-			shouldBreak, err := startBuild(&groupsBuildData[idx], buildInfo, userLogs, buildLogsCollection)
+			shouldBreak, err := startBuild(&groupsBuildData[idx], buildInfo, userLogs, buildLogCollection)
 			if err != nil && !shouldBreak {
 				return err
 			}
@@ -47,7 +47,7 @@ func startBuilds(
 		return errors.New(StartBuildsError + ": cannot get workgroups data: " + err.Error())
 	}
 
-	err = buildLoop(buildInfo, mongoProjectData.CitiesData[buildInfo.BuildParams.City].MongoWorkgroupsData, userLogs, appData.BuildLogsCollection)
+	err = buildLoop(buildInfo, mongoProjectData.CitiesData[buildInfo.BuildParams.City].MongoWorkgroupsData, userLogs, appData.BuildLogCollection)
 	if err != nil {
 		return err
 	}

@@ -4,6 +4,7 @@ import (
 	"epikins-api/config"
 	"epikins-api/internal"
 	"epikins-api/internal/controllers"
+	buildLog "epikins-api/internal/controllers/buildLog"
 	"epikins-api/internal/controllers/jenkinsCredentials"
 	"epikins-api/internal/controllers/users"
 	"github.com/gofiber/fiber/v2"
@@ -94,12 +95,17 @@ func setupApp(appData *internal.AppData) *fiber.App {
 		return controllers.StudentBuildController(appData, ctx)
 	})
 
-	logGroup := app.Group("/log", func(ctx *fiber.Ctx) error {
+	logGroup := app.Group("/build-log", func(ctx *fiber.Ctx) error {
 		return checkUserRole(appData, ctx, config.LOG)
 	})
 	logGroup.Get("/", func(ctx *fiber.Ctx) error {
-		return controllers.GetBuildLogsController(appData, ctx)
+		return buildLog.GetBuildLogController(appData, ctx)
 	})
+	logGroup.Get("/export", func(ctx *fiber.Ctx) error {
+		return buildLog.ExportBuildLogController(appData, ctx)
+	})
+
+	app.Get("/cities", controllers.GetCitiesController)
 
 	app.Use(func(c *fiber.Ctx) error {
 		return c.SendStatus(404)

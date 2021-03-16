@@ -18,7 +18,7 @@ func canBuild(mongoWorkgroupData internal.MongoWorkgroupData) bool {
 
 func startBuild(
 	mongoWorkgroupData *internal.MongoWorkgroupData, buildInfo BuildInfo, userLogs libJenkins.JenkinsCredentials,
-	buildLogsCollection *mongo.Collection) (
+	buildLogCollection *mongo.Collection) (
 	bool, error,
 ) {
 	if !buildInfo.BuildParams.Fu {
@@ -33,7 +33,7 @@ func startBuild(
 		return false, errors.New(StartBuildError + err.Error())
 	}
 
-	_, err = mongoUtil.AddBuildLog(util.GetNewBuildLog(buildInfo.BuildParams.Module, buildInfo.Starter, mongoWorkgroupData.Name, buildInfo.BuildParams.Project), buildLogsCollection)
+	_, err = mongoUtil.AddBuildLog(util.GetNewBuildLog(buildInfo.BuildParams.City, buildInfo.BuildParams.Module, buildInfo.Starter, mongoWorkgroupData.Name, buildInfo.BuildParams.Project), buildLogCollection)
 	if err != nil {
 		return true, errors.New(StartBuildError + err.Error())
 	}
