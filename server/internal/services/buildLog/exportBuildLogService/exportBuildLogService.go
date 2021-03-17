@@ -45,11 +45,12 @@ func getBuildLog(start int64, end int64, project string, city string, buildLogCo
 
 func convertBuildLog(buildLog []internal.BuildLogElem) [][]string {
 	convertedBuildLog := [][]string{
-		{"module", "project", "starter", "target", "time"},
+		{"city", "module", "project", "starter", "target", "time"},
 	}
 	for _, log := range buildLog {
 		timestampString := strconv.FormatInt(log.Time, 10)
 		convertedBuildLog = append(convertedBuildLog, []string{
+			log.City,
 			log.Module,
 			log.Project,
 			log.Starter,
