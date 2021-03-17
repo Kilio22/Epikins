@@ -31,5 +31,7 @@ You're app is now fully configured on Azure, congrats!
 First, make sure **Docker** is installed on the machine targeted by the deployment.  
 Before typing the `docker-compose up` magic command, you must fill both `.env` files you'll find in `server` and `client` directories.  
 
+After that, you must fill in the content of `init_mongo.js` file. It'll allow you to create a first user which has access to the entire application. You must also enter a first Jenkins username and its corresponding API Key.  
+
 After that, you can enter `docker-compose up` in your command line prompt and you're app is deployed locally!  
 In order that your app can be reached from the outside world, you'll need to configure an internal redirection to localhost:8081 for the client and localhost:8082 for the server.
