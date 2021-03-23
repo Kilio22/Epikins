@@ -44,7 +44,7 @@ func UpdateProjectBuildLimitService(
 		return myError
 	}
 
-	localProjectData, myError := util.GetLocalProjectData(projectName, module, userLogs, appData)
+	localProjectData, myError := util.GetLocalProjectData(projectName, module, false, userLogs, appData)
 	if myError.Message != "" {
 		return util.CheckLocalProjectDataError(myError, projectName, module, appData.ProjectsCollection)
 	}

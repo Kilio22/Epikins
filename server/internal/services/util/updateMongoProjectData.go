@@ -56,10 +56,11 @@ func updateMongoWorkgroupsData(
 }
 
 func UpdateMongoProjectData(
-	mongoProjectData *internal.MongoProjectData, localProjectData libJenkins.Project, city string, userLogs libJenkins.JenkinsCredentials,
+	mongoProjectData *internal.MongoProjectData, localProjectData libJenkins.Project, city string, forceUpdate bool,
+	userLogs libJenkins.JenkinsCredentials,
 	projectCollection *mongo.Collection,
 ) error {
-	if time.Since(time.Unix(mongoProjectData.CitiesData[city].LastUpdate, 0)).Hours() < config.ProjectJobsRefreshTime && len(mongoProjectData.CitiesData[city].MongoWorkgroupsData) != 0 {
+	if time.Since(time.Unix(mongoProjectData.CitiesData[city].LastUpdate, 0)).Hours() < config.ProjectJobsRefreshTime && len(mongoProjectData.CitiesData[city].MongoWorkgroupsData) != 0 && !forceUpdate {
 		err := resetWorkgroupsRemainingBuilds(mongoProjectData, city, projectCollection)
 		if err != nil {
 			return errors.New(UpdateMongoProjectDataError + err.Error())

@@ -14,7 +14,7 @@ const ProjectInformationError = "cannot retrieve cities linked to the given proj
 func ProjectInformationService(projectName string, module string, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) (
 	projectsService.ProjectResponse, internal.MyError,
 ) {
-	localProjectData, myError := util.GetLocalProjectData(projectName, module, userLogs, appData)
+	localProjectData, myError := util.GetLocalProjectData(projectName, module, false, userLogs, appData)
 	if myError.Message != "" {
 		return projectsService.ProjectResponse{}, util.CheckLocalProjectDataError(myError, projectName, module, appData.ProjectsCollection)
 	}

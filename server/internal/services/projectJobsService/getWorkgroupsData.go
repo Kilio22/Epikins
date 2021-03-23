@@ -31,17 +31,18 @@ func getWorkgroupsDataFromMongoProjectData(mongoProjectData internal.MongoProjec
 }
 
 func getWorkgroupsData(
-	workgroups []libJenkins.Workgroup, localProjectData libJenkins.Project, city string, userLogs libJenkins.JenkinsCredentials,
+	workgroups []libJenkins.Workgroup, localProjectData libJenkins.Project, projectJobsParams ProjectJobsParams,
+	userLogs libJenkins.JenkinsCredentials,
 	projectCollection *mongo.Collection) (
 	[]WorkgroupData, error,
 ) {
-	mongoProjectData, err := util.GetMongoProjectData(localProjectData, city, userLogs, projectCollection)
+	mongoProjectData, err := util.GetMongoProjectData(localProjectData, projectJobsParams.City, userLogs, projectCollection)
 	if err != nil {
 		return []WorkgroupData{}, errors.New("cannot get workgroups data: " + err.Error())
 	}
-	err = util.UpdateMongoProjectData(&mongoProjectData, localProjectData, city, userLogs, projectCollection)
+	err = util.UpdateMongoProjectData(&mongoProjectData, localProjectData, projectJobsParams.City, projectJobsParams.ForceUpdate, userLogs, projectCollection)
 	if err != nil {
 		return []WorkgroupData{}, errors.New("cannot get workgroups data: " + err.Error())
 	}
-	return getWorkgroupsDataFromMongoProjectData(mongoProjectData, city, workgroups)
+	return getWorkgroupsDataFromMongoProjectData(mongoProjectData, projectJobsParams.City, workgroups)
 }

@@ -16,7 +16,7 @@ func updateMongoProjectsData(
 	var definitiveMongoProjectsData []internal.MongoProjectData
 
 	for idx, mongoProjectData := range mongoProjectsData {
-		localProjectData, myError := util.GetLocalProjectData(mongoProjectData.Name, mongoProjectData.Module, userLogs, appData)
+		localProjectData, myError := util.GetLocalProjectData(mongoProjectData.Name, mongoProjectData.Module, false, userLogs, appData)
 		if myError.Message != "" {
 			if myError.Status == http.StatusBadRequest {
 				util.CheckLocalProjectDataError(myError, mongoProjectData.Name, mongoProjectData.Module, appData.ProjectsCollection)
@@ -24,7 +24,7 @@ func updateMongoProjectsData(
 			}
 			return nil, util.CheckLocalProjectDataError(myError, mongoProjectData.Name, mongoProjectData.Module, appData.ProjectsCollection)
 		}
-		err := util.UpdateMongoProjectData(&mongoProjectsData[idx], localProjectData, city, userLogs, appData.ProjectsCollection)
+		err := util.UpdateMongoProjectData(&mongoProjectsData[idx], localProjectData, city, false, userLogs, appData.ProjectsCollection)
 		if err != nil {
 			if strings.Contains(err.Error(), "does not exists on jenkins") {
 				continue

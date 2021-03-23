@@ -42,7 +42,7 @@ func startBuilds(
 	if err != nil {
 		return errors.New(StartBuildsError + ": " + err.Error())
 	}
-	err = util.UpdateMongoProjectData(&mongoProjectData, localProjectData, buildInfo.BuildParams.City, userLogs, appData.ProjectsCollection)
+	err = util.UpdateMongoProjectData(&mongoProjectData, localProjectData, buildInfo.BuildParams.City, false, userLogs, appData.ProjectsCollection)
 	if err != nil {
 		return errors.New(StartBuildsError + ": cannot get workgroups data: " + err.Error())
 	}

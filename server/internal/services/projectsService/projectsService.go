@@ -17,10 +17,10 @@ type ProjectResponse struct {
 	Module     string         `json:"module"`
 }
 
-func ProjectsService(shouldUpdateProjectList bool, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) (
+func ProjectsService(forceUpdate bool, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) (
 	[]ProjectResponse, internal.MyError,
 ) {
-	if err := util.CheckLocalProjectsData(userLogs, shouldUpdateProjectList, appData); err != nil {
+	if err := util.CheckLocalProjectsData(userLogs, forceUpdate, appData); err != nil {
 		return []ProjectResponse{}, util.GetMyError(ProjectsError, err, http.StatusInternalServerError)
 	}
 

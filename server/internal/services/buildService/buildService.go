@@ -26,7 +26,7 @@ type BuildInfo struct {
 }
 
 func BuildService(buildInfo BuildInfo, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) internal.MyError {
-	askedProjectData, myError := util.GetLocalProjectData(buildInfo.BuildParams.Project, buildInfo.BuildParams.Module, userLogs, appData)
+	askedProjectData, myError := util.GetLocalProjectData(buildInfo.BuildParams.Project, buildInfo.BuildParams.Module, false, userLogs, appData)
 	if myError.Message != "" {
 		myError = util.CheckLocalProjectDataError(myError, buildInfo.BuildParams.Project, buildInfo.BuildParams.Module, appData.ProjectsCollection)
 		return util.GetMyError(BuildError, errors.New(myError.Message), myError.Status)

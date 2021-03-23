@@ -19,7 +19,7 @@ type GlobalBuildParams struct {
 
 func GlobalBuildService(
 	globalBuildParams GlobalBuildParams, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) internal.MyError {
-	askedProjectData, myError := util.GetLocalProjectData(globalBuildParams.Project, globalBuildParams.Module, userLogs, appData)
+	askedProjectData, myError := util.GetLocalProjectData(globalBuildParams.Project, globalBuildParams.Module, false, userLogs, appData)
 	if myError.Message != "" {
 		return util.CheckLocalProjectDataError(myError, globalBuildParams.Project, globalBuildParams.Module, appData.ProjectsCollection)
 	}

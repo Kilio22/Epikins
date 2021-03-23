@@ -7,10 +7,11 @@ import (
 	"epikins-api/pkg/libJenkins"
 )
 
-func GetLocalProjectData(projectName string, module string, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) (
+func GetLocalProjectData(
+	projectName string, module string, forceUpdate bool, userLogs libJenkins.JenkinsCredentials, appData *internal.AppData) (
 	libJenkins.Project, internal.MyError,
 ) {
-	if err := CheckLocalProjectsData(userLogs, false, appData); err != nil {
+	if err := CheckLocalProjectsData(userLogs, forceUpdate, appData); err != nil {
 		return libJenkins.Project{}, GetMyError(err.Error(), nil, http.StatusInternalServerError)
 	}
 	projectsData := appData.ProjectsData[userLogs.Login]
