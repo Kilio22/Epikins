@@ -1,6 +1,6 @@
 import { RouteComponentProps } from 'react-router-dom';
 import { IWorkgroupsData } from '../IWorkgroupsData';
-import { OnBuildClick, OnCheckboxChange } from '../Functions';
+import { OnBuildClick, OnButtonClick, OnCheckboxChange } from '../Functions';
 
 export interface IProjectJobsRendererProps {
     availableCities: string[] | undefined,
@@ -10,6 +10,7 @@ export interface IProjectJobsRendererProps {
     selectedCity: string,
     onCheckboxChange: OnCheckboxChange<IWorkgroupsData>,
     onBuildClick: OnBuildClick,
+    onForceUpdateClick: OnButtonClick,
     onGlobalBuildClick: OnBuildClick,
     routeProps: RouteComponentProps,
     onCitySelected: OnBuildClick

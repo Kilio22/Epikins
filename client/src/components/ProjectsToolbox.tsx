@@ -3,10 +3,12 @@ import { TextField } from '@material-ui/core';
 import Select, { ValueType } from 'react-select';
 import { ISelectOption } from '../interfaces/projects/ISelectOption';
 import { IProjectsToolbox } from '../interfaces/IProjectsToolbox';
+import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 const ProjectsToolbox: React.FunctionComponent<IProjectsToolbox> = ({
                                                                         allSelected,
                                                                         handleString,
+                                                                        onForceUpdateClick,
                                                                         onSelectAllClick,
                                                                         onSelectChange,
                                                                         onSelectSearchChange,
@@ -42,6 +44,11 @@ const ProjectsToolbox: React.FunctionComponent<IProjectsToolbox> = ({
                     <span className={'ml-1'}>Select all</span>
                 </div>
             }
+            <OverlayTrigger placement={'bottom'}
+                            overlay={<Tooltip id={`tooltip-force-update`}>Force project list update</Tooltip>}>
+                <Button onClick={onForceUpdateClick} className={'ml-2'}><i
+                    className="fas fa-sync"/></Button>
+            </OverlayTrigger>
         </div>
     );
 };

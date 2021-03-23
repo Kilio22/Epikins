@@ -55,6 +55,7 @@ class ProjectsRenderer extends React.Component<IProjectsRendererProps, IProjects
                 <ProjectsToolbox
                     allSelected={this.props.allSelected}
                     handleString={this.onSearchFieldChange}
+                    onForceUpdateClick={this.props.onForceUpdateClick}
                     onSelectAllClick={this.props.onSelectAllClick}
                     onSelectChange={this.onSelectChange}
                     onSelectSearchChange={this.onSelectSearchChange}

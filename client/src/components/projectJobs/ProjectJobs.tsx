@@ -37,6 +37,7 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams, I
 
         this.getProjectInformation = this.getProjectInformation.bind(this);
         this.getJobsByProject = this.getJobsByProject.bind(this);
+        this.updateJobs = this.updateJobs.bind(this);
         this.onCitySelected = this.onCitySelected.bind(this);
         this.onCheckboxChange = this.onCheckboxChange.bind(this);
         this.onBuildClick = this.onBuildClick.bind(this);
@@ -49,7 +50,7 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams, I
         if (!this.state.project) {
             await this.getProjectInformation();
         }
-        await this.getJobsByProject(true);
+        await this.getJobsByProject(false, true);
         this.setState({...this.state, isLoading: false});
     }
 
@@ -69,9 +70,16 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams, I
                                      selectedJobs={this.state.selectedJobs}
                                      onCheckboxChange={this.onCheckboxChange}
                                      onBuildClick={this.onBuildClick}
+                                     onForceUpdateClick={() => this.updateJobs(true)}
                                      onGlobalBuildClick={this.onGlobalBuildClick}
                                      routeProps={this.props.routeProps}/>
         );
+    }
+
+    async updateJobs(forceUpdate: boolean) {
+        this.setState({...this.state, isLoading: true});
+        await this.getJobsByProject(forceUpdate, true);
+        this.setState({...this.state, isLoading: false});
     }
 
     async onCitySelected(city: string) {
@@ -84,7 +92,7 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams, I
             clearTimeout(this.request);
             this.request = null;
         }
-        await this.getJobsByProject(true);
+        await this.getJobsByProject(false, true);
         this.setState({...this.state, isLoading: false});
     }
 
@@ -115,7 +123,7 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams, I
         }
     }
 
-    async getJobsByProject(shouldCallback: boolean) {
+    async getJobsByProject(forceUpdate: boolean, shouldCallback: boolean) {
         if (!this.state.project) {
             return;
         }
@@ -128,7 +136,7 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams, I
         }
 
         const res: IWorkgroupsData[] | null = await EpikinsApiService.getWorkgroupsData(
-            this.state.project.module, this.state.project.job.name, this.state.selectedCity, accessToken);
+            this.state.project.module, this.state.project.job.name, this.state.selectedCity, forceUpdate, accessToken);
 
         if (!this.mounted) {
             return;
@@ -144,7 +152,7 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams, I
             if (shouldCallback) {
                 this.request = setTimeout(async () => {
                     if (this.mounted) {
-                        await this.getJobsByProject(true);
+                        await this.getJobsByProject(false, true);
                     }
                 }, 5000);
             }
@@ -182,7 +190,7 @@ class ProjectJobs extends React.Component<IRouteProps<IProjectJobsMatchParams, I
 
     async handleBuildResponse(res: boolean) {
         if (res) {
-            await this.getJobsByProject(false);
+            await this.getJobsByProject(false, false);
         } else {
             if (this.context.changeAppStateByProperty) {
                 this.context.changeAppStateByProperty('errorMessage',

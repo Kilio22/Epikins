@@ -1,14 +1,15 @@
-import { ButtonGroup, Spinner } from 'react-bootstrap';
+import { Button, ButtonGroup, OverlayTrigger, Spinner, Tooltip } from 'react-bootstrap';
 import BuildDropdown from './BuildDropdown';
 import React from 'react';
-import { OnBuildClick } from '../../interfaces/Functions';
+import { OnBuildClick, OnButtonClick } from '../../interfaces/Functions';
 import { NativeSelect } from '@material-ui/core';
 
 interface IBuildToolboxProps {
     availableCities: string[],
     isBuilding: boolean,
     onBuildClick: OnBuildClick,
-    onCitySelected: OnBuildClick
+    onCitySelected: OnBuildClick,
+    onForceUpdateClick: OnButtonClick,
     onGlobalBuildClick: OnBuildClick,
     selectedCity: string,
     selectedJobs: string[],
@@ -19,6 +20,7 @@ const BuildToolbox: React.FunctionComponent<IBuildToolboxProps> = ({
                                                                        isBuilding,
                                                                        onBuildClick,
                                                                        onCitySelected,
+                                                                       onForceUpdateClick,
                                                                        onGlobalBuildClick,
                                                                        selectedCity,
                                                                        selectedJobs
@@ -51,6 +53,11 @@ const BuildToolbox: React.FunctionComponent<IBuildToolboxProps> = ({
                     })
                 }
             </NativeSelect>
+            <OverlayTrigger placement={'bottom'}
+                            overlay={<Tooltip id={`tooltip-force-update`}>Force workgroup list update</Tooltip>}>
+                <Button onClick={onForceUpdateClick} className={'ml-2'}><i
+                    className="fas fa-sync"/></Button>
+            </OverlayTrigger>
             {
                 isBuilding &&
                 <span>

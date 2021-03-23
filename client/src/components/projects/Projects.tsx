@@ -20,14 +20,13 @@ class Projects extends Component<IRouteProps, IProjectsState> {
 
         this.getProjects = this.getProjects.bind(this);
         this.onProjectClick = this.onProjectClick.bind(this);
+        this.updateProjects = this.updateProjects.bind(this);
 
         this.state = projectsInitialState;
     }
 
-    async componentDidMount() {
-        this.setState({...this.state, isLoading: true});
-        await this.getProjects();
-        this.setState({...this.state, isLoading: false});
+    componentDidMount() {
+        this.updateProjects(false);
     }
 
     render() {
@@ -38,6 +37,7 @@ class Projects extends Component<IRouteProps, IProjectsState> {
                 <ProjectsRenderer
                     allSelected={false}
                     changeAllSelected={null}
+                    onForceUpdateClick={() => this.updateProjects(true)}
                     onCheckboxClick={null}
                     onSelectAllClick={null}
                     projects={this.state.projects}
@@ -48,7 +48,13 @@ class Projects extends Component<IRouteProps, IProjectsState> {
         );
     }
 
-    async getProjects() {
+    async updateProjects(forceUpdate: boolean) {
+        this.setState({...this.state, isLoading: true});
+        await this.getProjects(forceUpdate);
+        this.setState({...this.state, isLoading: false});
+    }
+
+    async getProjects(forceUpdate: boolean) {
         const accessToken: string = await authServiceObj.getToken();
         if (accessToken === '') {
             if (this.context.changeAppStateByProperty != null) {
@@ -57,7 +63,7 @@ class Projects extends Component<IRouteProps, IProjectsState> {
             return;
         }
 
-        const res: IProject[] | null = await EpikinsApiService.getProjects(accessToken);
+        const res: IProject[] | null = await EpikinsApiService.getProjects(forceUpdate, accessToken);
         if (res) {
             let sortedProjects: IProject[] = res.sort((a, b) => {
                 return a.job.name.localeCompare(b.job.name);

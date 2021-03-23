@@ -22,9 +22,13 @@ class EpikinsApiService {
         return null;
     }
 
-    static async getWorkgroupsData(module: string, project: string, city: string, apiAccessToken: string): Promise<IWorkgroupsData[] | null> {
+    static async getWorkgroupsData(module: string, project: string, city: string, forceUpdate: boolean, apiAccessToken: string): Promise<IWorkgroupsData[] | null> {
         try {
-            const res: AxiosResponse<IWorkgroupsData[]> = await Axios.get<IWorkgroupsData[]>(apiBaseURI + '/projects/' + module + '/' + project + '/' + city, {headers: {'Authorization': apiAccessToken}});
+            const res: AxiosResponse<IWorkgroupsData[]> = await Axios.get<IWorkgroupsData[]>(apiBaseURI + '/projects/' + module + '/' + project + '/' + city, {
+                headers: {'Authorization': apiAccessToken}, params: {
+                    update: forceUpdate
+                }
+            });
             return res.data;
         } catch (e) {
             console.log(e);
@@ -32,9 +36,11 @@ class EpikinsApiService {
         }
     }
 
-    static async getProjects(apiAccessToken: string): Promise<IProject[] | null> {
+    static async getProjects(forceUpdate: boolean, apiAccessToken: string): Promise<IProject[] | null> {
         try {
-            const res = await Axios.get<IProject[]>(apiBaseURI + '/projects', {headers: {'Authorization': apiAccessToken}});
+            const res = await Axios.get<IProject[]>(apiBaseURI + '/projects', {
+                headers: {'Authorization': apiAccessToken}, params: {update: forceUpdate}
+            });
             return res.data;
         } catch (e) {
             console.log(e);

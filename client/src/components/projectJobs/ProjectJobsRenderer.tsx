@@ -48,7 +48,8 @@ class ProjectJobsRenderer extends React.Component<IProjectJobsRendererProps, IPr
                                   selectedJobs={this.props.selectedJobs}
                                   isBuilding={this.props.isBuilding}
                                   onBuildClick={this.props.onBuildClick}
-                                  onGlobalBuildClick={this.props.onGlobalBuildClick}/>
+                                  onGlobalBuildClick={this.props.onGlobalBuildClick}
+                                  onForceUpdateClick={this.props.onForceUpdateClick}/>
                 }
                 {
                     this.props.availableCities && workgroupsData.length !== 0 ?

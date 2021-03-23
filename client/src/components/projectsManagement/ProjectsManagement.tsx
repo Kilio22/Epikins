@@ -26,6 +26,7 @@ class ProjectsManagement extends Component<IRouteProps, IProjectsManagementState
         this.onSelectAllClick = this.onSelectAllClick.bind(this);
         this.getProjects = this.getProjects.bind(this);
         this.onProjectClick = this.onProjectClick.bind(this);
+        this.updateProjects = this.updateProjects.bind(this);
         this.changeProjectsManagementStateByProperty = this.changeProjectsManagementStateByProperty.bind(this);
 
         this.state = projectsManagementInitialState;
@@ -33,7 +34,7 @@ class ProjectsManagement extends Component<IRouteProps, IProjectsManagementState
 
     async componentDidMount() {
         this.setState({...this.state, isLoading: true});
-        await this.getProjects();
+        await this.getProjects(false);
         this.setState({...this.state, isLoading: false});
     }
 
@@ -49,10 +50,11 @@ class ProjectsManagement extends Component<IRouteProps, IProjectsManagementState
                                      project={this.state.clickedProject}
                                      projects={this.state.projects}
                                      changeProjectsManagementStateByProperty={this.changeProjectsManagementStateByProperty}
-                                     getProjects={this.getProjects}/>
+                                     getProjects={() => this.getProjects(false)}/>
                     }
                     <ProjectsRenderer allSelected={this.state.allSelected}
                                       changeAllSelected={this.changeAllSelected}
+                                      onForceUpdateClick={() => this.updateProjects(true)}
                                       onSelectAllClick={this.onSelectAllClick}
                                       onCheckboxClick={this.onCheckboxClick}
                                       projects={this.state.projects}
@@ -64,7 +66,7 @@ class ProjectsManagement extends Component<IRouteProps, IProjectsManagementState
         );
     }
 
-    async getProjects() {
+    async getProjects(forceUpdate: boolean) {
         const accessToken: string = await authServiceObj.getToken();
         if (accessToken === '') {
             if (this.context.changeAppStateByProperty != null) {
@@ -73,7 +75,7 @@ class ProjectsManagement extends Component<IRouteProps, IProjectsManagementState
             return;
         }
 
-        const res: IProject[] | null = await EpikinsApiService.getProjects(accessToken);
+        const res: IProject[] | null = await EpikinsApiService.getProjects(forceUpdate, accessToken);
         if (res) {
             const sortedProjects: IProject[] = res.sort((a, b) => {
                 return a.job.name.localeCompare(b.job.name);
@@ -94,6 +96,12 @@ class ProjectsManagement extends Component<IRouteProps, IProjectsManagementState
                 this.context.changeAppStateByProperty('errorMessage', 'Cannot fetch data, please try to reload the page.', true);
             }
         }
+    }
+
+    async updateProjects(forceUpdate: boolean) {
+        this.setState({...this.state, isLoading: true});
+        await this.getProjects(forceUpdate);
+        this.setState({...this.state, isLoading: false});
     }
 
     onSelectAllClick(checked: boolean, projects: IProject[]) {
