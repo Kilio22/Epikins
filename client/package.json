@@ -19,7 +19,7 @@
     "file-saver": "^2.0.5",
     "fuse.js": "^6.4.6",
     "jsonwebtoken": "^8.5.1",
-    "moment-timezone": "^0.5.33",
+    "moment-timezone": "^0.5.35",
     "popper.js": "^1.16.1",
     "react": "^17.0.1",
     "react-bootstrap": "^1.5.0",
